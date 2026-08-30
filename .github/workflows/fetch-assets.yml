@@ -1,0 +1,47 @@
+name: Fetch site assets
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "assets/manifest.txt"
+      - ".github/workflows/fetch-assets.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download images listed in manifest
+        run: |
+          mkdir -p assets/img
+          missing=0
+          while IFS= read -r url; do
+            [ -z "$url" ] && continue
+            name=$(basename "$url")
+            if [ ! -s "assets/img/$name" ]; then
+              echo "Fetching $name"
+              if ! curl -fsSL --retry 3 -o "assets/img/$name" "$url"; then
+                echo "FAILED: $url"
+                missing=$((missing+1))
+                rm -f "assets/img/$name"
+              fi
+            fi
+          done < assets/manifest.txt
+          echo "Missing: $missing"
+
+      - name: Commit downloaded assets
+        run: |
+          git config user.name "asset-mirror-bot"
+          git config user.email "actions@github.com"
+          git add -A assets/img
+          if git diff --cached --quiet; then
+            echo "No new assets."
+          else
+            git commit -m "Mirror site images from epicdevelopers.in"
+            git push
+          fi

@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: epicdevelopers-site
+    runtime: static
+    staticPublishPath: .
+    domains:
+      - epicdevelopers.in
+      - www.epicdevelopers.in
