@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=5">
+<link rel="stylesheet" href="/assets/style.css?v=6">
 <meta property="og:title" content="Epic Developers | Premium Plotted Developments & Farm Properties in Hyderabad">
 <meta property="og:description" content="Park Central at Dundigal, The Greens at Kadthal, Fortune Fields at Yacharam. Premium plots by Epic Developers, Hyderabad.">
 <meta property="og:image" content="https://www.epicdevelopers.in/assets/img/parkcentral-arch-front.jpg">
@@ -46,23 +46,25 @@
     <h1>Premium land. Thriving locations. Legacy addresses.</h1>
     <p class="lede">Plotted developments and farm properties planned meticulously and delivered with obsessive attention to detail.</p>
     <div class="finder" role="search">
-      <div class="f-field">
-        <label for="f-project">Project</label>
-        <select id="f-project">
-          <option value="/parkcentral/">Park Central &mdash; Dundigal</option>
-          <option value="/the-greens/">The Greens &mdash; Kadthal</option>
-          <option value="ff">Fortune Fields &mdash; Yacharam (Upcoming)</option>
-        </select>
+      <div class="f-field dd" id="dd-project">
+        <label>Project</label>
+        <button type="button" class="dd-btn" aria-haspopup="listbox" aria-expanded="false" data-value="/parkcentral/">Park Central &mdash; Dundigal</button>
+        <ul class="dd-list" role="listbox">
+          <li role="option" data-value="/parkcentral/" class="on">Park Central &mdash; Dundigal</li>
+          <li role="option" data-value="/the-greens/">The Greens &mdash; Kadthal</li>
+          <li role="option" data-value="ff">Fortune Fields &mdash; Yacharam <span>(Upcoming)</span></li>
+        </ul>
       </div>
-      <div class="f-field">
-        <label for="f-size">Plot size</label>
-        <select id="f-size">
-          <option>Any size</option>
-          <option>Up to 200 sq. yds.</option>
-          <option>200&ndash;300 sq. yds.</option>
-          <option>300+ sq. yds.</option>
-          <option>Half acre &ndash; 1 acre (farm)</option>
-        </select>
+      <div class="f-field dd" id="dd-size">
+        <label>Plot size</label>
+        <button type="button" class="dd-btn" aria-haspopup="listbox" aria-expanded="false" data-value="Any size">Any size</button>
+        <ul class="dd-list" role="listbox">
+          <li role="option" data-value="Any size" class="on">Any size</li>
+          <li role="option" data-value="Up to 200 sq. yds.">Up to 200 sq. yds.</li>
+          <li role="option" data-value="200&ndash;300 sq. yds.">200&ndash;300 sq. yds.</li>
+          <li role="option" data-value="300+ sq. yds.">300+ sq. yds.</li>
+          <li role="option" data-value="Half acre &ndash; 1 acre (farm)">Half acre &ndash; 1 acre (farm)</li>
+        </ul>
       </div>
       <button class="f-go" id="finder-go">Explore Plots</button>
     </div>

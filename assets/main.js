@@ -117,3 +117,47 @@ document.addEventListener("DOMContentLoaded", function () {
     v.pause(); v.removeAttribute("autoplay");
   }
 });
+
+// elegant custom dropdowns (finder)
+document.addEventListener("DOMContentLoaded", function () {
+  var dds = document.querySelectorAll(".dd");
+  dds.forEach(function (dd) {
+    var btn = dd.querySelector(".dd-btn");
+    var items = dd.querySelectorAll(".dd-list li");
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dds.forEach(function (o) { if (o !== dd) o.classList.remove("open"); });
+      dd.classList.toggle("open");
+      btn.setAttribute("aria-expanded", dd.classList.contains("open"));
+    });
+    items.forEach(function (li) {
+      li.addEventListener("click", function () {
+        items.forEach(function (o) { o.classList.remove("on"); });
+        li.classList.add("on");
+        btn.dataset.value = li.dataset.value;
+        btn.innerHTML = li.innerHTML;
+        dd.classList.remove("open");
+      });
+    });
+  });
+  document.addEventListener("click", function () {
+    dds.forEach(function (dd) { dd.classList.remove("open"); });
+  });
+
+  // rewire finder button to custom dropdowns
+  var goBtn = document.getElementById("finder-go");
+  if (goBtn) {
+    var fresh = goBtn.cloneNode(true);
+    goBtn.parentNode.replaceChild(fresh, goBtn);
+    fresh.addEventListener("click", function () {
+      var proj = document.querySelector("#dd-project .dd-btn").dataset.value;
+      var size = document.querySelector("#dd-size .dd-btn").dataset.value.replace(/\u2013/g, "-");
+      if (proj === "ff") {
+        window.open("https://wa.me/919143747747?text=" + encodeURIComponent(
+          "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam – Future City. Preferred size: " + size), "_blank");
+      } else {
+        window.location.href = proj;
+      }
+    });
+  }
+});
