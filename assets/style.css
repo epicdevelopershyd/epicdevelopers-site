@@ -397,3 +397,14 @@ section.flush { padding: 0; }
 .p-value { font-family: "Fraunces", serif; font-weight: 300; font-size: 2rem; margin-top: 12px; }
 .p-value span { font-size: 0.9rem; color: var(--stone); font-family: "Archivo", sans-serif; }
 .price-note { text-align: center; color: var(--stone); font-size: 0.92rem; max-width: 68ch; margin: 28px auto 0; }
+
+/* status badges readable on any imagery */
+.tile .status {
+  background: rgba(13, 11, 7, 0.62);
+  border-color: var(--champagne);
+  color: var(--champagne);
+  backdrop-filter: blur(3px);
+}
+.tile::after {
+  background: linear-gradient(to top, rgba(13,11,7,0.85) 0%, rgba(13,11,7,0.15) 55%, rgba(13,11,7,0.45) 100%);
+}
