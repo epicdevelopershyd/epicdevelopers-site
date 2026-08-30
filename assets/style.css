@@ -513,3 +513,15 @@ section.flush { padding: 0; }
 /* footer: align brand logo top with column headers */
 .site-footer .mega { align-items: start; }
 .site-footer .col.about img.logo { margin-top: -14px; margin-bottom: 22px; }
+
+/* mobile tile legibility */
+@media (max-width: 700px) {
+  /* lift the night-arch photo so its lit lettering clears the text zone */
+  .tile-pc .bg { background-position: center 12% !important; }
+  /* deepen the scrim behind tile text */
+  .tile::after {
+    background: linear-gradient(to top, rgba(13,11,7,0.94) 0%, rgba(13,11,7,0.55) 62%, rgba(13,11,7,0.45) 100%);
+  }
+  /* tighter badge */
+  .tile .status { font-size: 0.6rem; letter-spacing: 0.18em; padding: 6px 12px; max-width: 78%; }
+}
