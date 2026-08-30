@@ -330,3 +330,11 @@ section.tint { background: var(--paper-deep); }
 }
 
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* plaque treatment for hero logos with opaque white backgrounds */
+.page-hero img.proj-logo.plaque {
+  background: #fff;
+  padding: 18px 30px;
+  border: 1px solid var(--gold-soft);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+}
