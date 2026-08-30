@@ -48,3 +48,64 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+// hero slideshow with dots
+document.addEventListener("DOMContentLoaded", function () {
+  var slides = document.querySelectorAll(".hero .slide");
+  var dotsWrap = document.querySelector(".hero-dots");
+  if (slides.length > 1 && dotsWrap) {
+    var idx = 0, timer;
+    slides.forEach(function (_, i) {
+      var b = document.createElement("button");
+      if (i === 0) b.classList.add("on");
+      b.addEventListener("click", function () { go(i); restart(); });
+      dotsWrap.appendChild(b);
+    });
+    var dots = dotsWrap.querySelectorAll("button");
+    function go(i) {
+      slides[idx].classList.remove("on"); dots[idx].classList.remove("on");
+      idx = i % slides.length;
+      slides[idx].classList.add("on"); dots[idx].classList.add("on");
+    }
+    function tick() { go(idx + 1); }
+    function restart() { clearInterval(timer); timer = setInterval(tick, 5200); }
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) restart();
+  }
+
+  // finder bar
+  var goBtn = document.getElementById("finder-go");
+  if (goBtn) {
+    goBtn.addEventListener("click", function () {
+      var proj = document.getElementById("f-project").value;
+      var size = document.getElementById("f-size").value;
+      if (proj === "ff") {
+        window.open("https://wa.me/919143747747?text=" + encodeURIComponent(
+          "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam – Future City. Preferred size: " + size), "_blank");
+      } else {
+        window.location.href = proj;
+      }
+    });
+  }
+
+  // animated counters
+  var counts = document.querySelectorAll(".count");
+  if (counts.length && "IntersectionObserver" in window) {
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        cio.unobserve(e.target);
+        var to = parseInt(e.target.dataset.to, 10), start = null;
+        var dur = 1600;
+        function step(ts) {
+          if (!start) start = ts;
+          var p = Math.min((ts - start) / dur, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          e.target.textContent = Math.round(to * eased).toLocaleString("en-IN");
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    }, { threshold: 0.6 });
+    counts.forEach(function (c) { cio.observe(c); });
+  }
+});

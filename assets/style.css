@@ -335,3 +335,46 @@ section.flush { padding: 0; }
 }
 
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- dynamic hero: slideshow + finder ---------- */
+.hero .slides { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+.hero .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.8s ease; background-size: cover; background-position: center; }
+.hero .slide.on { opacity: 1; }
+.hero-dots { display: flex; gap: 10px; margin-top: 34px; }
+.hero-dots button { width: 34px; height: 3px; border: 0; background: rgba(255,255,255,0.35); cursor: pointer; transition: background 0.3s; }
+.hero-dots button.on { background: var(--champagne); }
+
+.finder {
+  margin-top: 40px;
+  display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 1px;
+  background: rgba(214,188,126,0.5);
+  border: 1px solid rgba(214,188,126,0.5);
+  max-width: 760px;
+  backdrop-filter: blur(6px);
+}
+.f-field { background: rgba(15,13,9,0.82); padding: 14px 20px 12px; }
+.f-field label { display: block; font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--champagne); margin-bottom: 4px; }
+.f-field select {
+  width: 100%; background: transparent; border: 0; color: #fff;
+  font: inherit; font-size: 0.95rem; cursor: pointer;
+}
+.f-field select:focus { outline: none; }
+.f-field select option { color: var(--ink); }
+.f-go {
+  background: var(--gold); color: #fff; border: 0; cursor: pointer;
+  font: inherit; font-size: 0.74rem; font-weight: 600;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  padding: 0 34px; transition: background 0.3s;
+}
+.f-go:hover { background: var(--champagne); color: var(--ink); }
+
+/* ---------- animated counters ---------- */
+.counters { padding: 84px 0; }
+.counters .stats { display: flex; flex-wrap: wrap; gap: 44px 90px; justify-content: center; text-align: center; }
+.counters .value { font-family: "Fraunces", serif; font-weight: 300; font-size: clamp(2.4rem, 4.5vw, 3.6rem); color: var(--ink); }
+.counters .label { font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--stone); margin-top: 8px; }
+
+@media (max-width: 900px) {
+  .finder { grid-template-columns: 1fr; }
+  .f-go { padding: 16px; }
+}
