@@ -1,4 +1,3 @@
-// Mobile nav
 document.addEventListener("DOMContentLoaded", function () {
   var toggle = document.querySelector(".nav-toggle");
   var nav = document.querySelector(".nav");
@@ -9,7 +8,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Contact form → WhatsApp (no backend needed)
+  // header turns solid after the hero
+  var header = document.querySelector(".site-header");
+  if (header && !header.classList.contains("solid")) {
+    var onScroll = function () {
+      header.classList.toggle("solid", window.scrollY > 60);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  // scroll reveal
+  var reveals = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && reveals.length) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.18 });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add("in"); });
+  }
+
+  // contact form -> WhatsApp
   var form = document.getElementById("enquiry-form");
   if (form) {
     form.addEventListener("submit", function (e) {
