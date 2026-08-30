@@ -482,3 +482,14 @@ section.flush { padding: 0; }
   to   { transform: scale(1.1) rotate(0.9deg) translateX(-22px); }
 }
 @media (prefers-reduced-motion: reduce) { .tile-acres .bg { animation: none !important; } }
+
+/* Eden Gardens: slow mist drift */
+.tile-eden .bg {
+  transform-origin: 50% 50%;
+  animation: mistDrift 9s ease-in-out infinite alternate;
+}
+@keyframes mistDrift {
+  from { transform: scale(1.05) translateX(0); }
+  to   { transform: scale(1.1) translateX(24px) translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) { .tile-eden .bg { animation: none !important; } }
