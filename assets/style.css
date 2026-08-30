@@ -525,3 +525,35 @@ section.flush { padding: 0; }
   /* tighter badge */
   .tile .status { font-size: 0.6rem; letter-spacing: 0.18em; padding: 6px 12px; max-width: 78%; }
 }
+
+/* ---------- button rows that wrap gracefully ---------- */
+.btn-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.ff-body .actions, .hero .actions { display: flex; flex-wrap: wrap; gap: 14px; }
+
+/* ---------- mobile polish pass ---------- */
+@media (max-width: 700px) {
+  body { font-size: 16px; }
+  h1 { font-size: clamp(1.9rem, 8vw, 2.4rem); }
+  h2 { font-size: clamp(1.6rem, 6.5vw, 2rem); }
+  .hero .inner { padding-bottom: 8vh; }
+  .hero .lede, .page-hero .intro { font-size: 1rem; }
+  .page-hero img.proj-logo { max-height: 78px; }
+  .page-hero .plot-tag { font-size: 0.62rem; letter-spacing: 0.18em; padding: 7px 14px; }
+  .stat-band { padding: 56px 0; }
+  .stat-band .stats { gap: 32px 48px; }
+  .stat-band .stat .value { font-size: 1.7rem; }
+  .counters .stats { gap: 32px 44px; }
+  .counters .value { font-size: 2rem; }
+  .ff-body { padding: 44px 28px; }
+  .ff-media img, .ff-map iframe { min-height: 240px; }
+  .form-card { padding: 28px 22px; }
+  .amenity { padding: 28px 16px; }
+  .amenity img { height: 40px; }
+  .price-cell { padding: 30px 20px; }
+  .p-value { font-size: 1.6rem; }
+  .layout-figure img { max-height: none; width: 100%; }
+  .pillar { padding: 32px 24px; }
+  .wa-float { width: 54px; height: 54px; right: 18px; bottom: 18px; }
+  .site-footer { padding: 64px 0 36px; }
+  section { padding: 60px 0; }
+}
