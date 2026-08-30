@@ -408,3 +408,7 @@ section.flush { padding: 0; }
 .tile::after {
   background: linear-gradient(to top, rgba(13,11,7,0.85) 0%, rgba(13,11,7,0.15) 55%, rgba(13,11,7,0.45) 100%);
 }
+
+/* even amenity grid: 5 x 2 on desktop, 2-up on mobile */
+.amenity-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 1100px) { .amenity-grid.cols-5 { grid-template-columns: repeat(2, 1fr); } }
