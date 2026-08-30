@@ -378,3 +378,11 @@ section.flush { padding: 0; }
   .finder { grid-template-columns: 1fr; }
   .f-go { padding: 16px; }
 }
+
+/* ---------- video hero ---------- */
+.hero-video {
+  position: absolute; inset: 0; z-index: 1;
+  width: 100%; height: 100%; object-fit: cover;
+}
+.hero .slides .slide { z-index: 0; }
+@media (prefers-reduced-motion: reduce) { .hero-video { display: none; } }

@@ -109,3 +109,11 @@ document.addEventListener("DOMContentLoaded", function () {
     counts.forEach(function (c) { cio.observe(c); });
   }
 });
+
+// pause hero video for reduced-motion users
+document.addEventListener("DOMContentLoaded", function () {
+  var v = document.querySelector(".hero-video");
+  if (v && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    v.pause(); v.removeAttribute("autoplay");
+  }
+});
