@@ -386,3 +386,14 @@ section.flush { padding: 0; }
 }
 .hero .slides .slide { z-index: 0; }
 @media (prefers-reduced-motion: reduce) { .hero-video { display: none; } }
+
+/* ---------- pricing grid ---------- */
+.price-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+}
+.price-cell { background: var(--paper); padding: 40px 28px; text-align: center; }
+.p-label { font-size: 0.7rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--stone); }
+.p-value { font-family: "Fraunces", serif; font-weight: 300; font-size: 2rem; margin-top: 12px; }
+.p-value span { font-size: 0.9rem; color: var(--stone); font-family: "Archivo", sans-serif; }
+.price-note { text-align: center; color: var(--stone); font-size: 0.92rem; max-width: 68ch; margin: 28px auto 0; }
