@@ -481,4 +481,4 @@ section.flush { padding: 0; }
   from { transform: scale(1.05) rotate(-0.4deg); }
   to   { transform: scale(1.1) rotate(0.9deg) translateX(-22px); }
 }
-@media (prefers-reduced-motion: reduce) { .bird, .tile-acres .bg { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .tile-acres .bg { animation: none !important; } }
