@@ -557,3 +557,13 @@ section.flush { padding: 0; }
   .site-footer { padding: 64px 0 36px; }
   section { padding: 60px 0; }
 }
+
+/* mobile: FF buttons stack cleanly full-width */
+@media (max-width: 700px) {
+  .ff-body .actions { flex-direction: column; align-items: stretch; }
+  .ff-body .actions .btn { width: 100%; text-align: center; }
+  /* keep floating WhatsApp clear of footer text */
+  .site-footer { padding-bottom: 110px; }
+  /* reinforce PC tile lettering clearance */
+  .tile-pc .bg { background-position: center 8% !important; }
+}
