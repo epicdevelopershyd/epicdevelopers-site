@@ -444,19 +444,6 @@ section.flush { padding: 0; }
 @media (max-width: 1000px) { .pillars { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .pillars { grid-template-columns: 1fr; } }
 
-/* ---------- hero scroll cue ---------- */
-.scroll-cue {
-  width: 1px; height: 64px; margin-top: 48px;
-  background: linear-gradient(var(--champagne), transparent);
-  position: relative; overflow: visible;
-}
-.scroll-cue::after {
-  content: ""; position: absolute; left: -2px; top: 0;
-  width: 5px; height: 5px; border-radius: 50%; background: var(--champagne);
-  animation: cueDrop 2.2s ease-in-out infinite;
-}
-@keyframes cueDrop { 0% { top: 0; opacity: 1; } 80% { top: 56px; opacity: 0; } 100% { top: 0; opacity: 0; } }
-
 /* ---------- ambient motion: Eden birds ---------- */
 .tile .birds { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .bird {
