@@ -360,3 +360,12 @@ section.tint { background: var(--paper-deep); }
   .ff-card { grid-template-columns: 1fr; }
   .ff-map iframe, .ff-media img { min-height: 260px; }
 }
+
+/* location line under project logo in page hero */
+.page-hero .hero-loc {
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin: -10px 0 18px;
+}
