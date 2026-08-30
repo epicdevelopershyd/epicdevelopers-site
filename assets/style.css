@@ -509,3 +509,7 @@ section.flush { padding: 0; }
 .page-hero .plot-tag { margin-bottom: 30px; }
 .page-hero img.proj-logo { max-height: 100px; margin: 0 auto 18px; }
 .page-hero .hero-loc { margin: 0 0 20px; }
+
+/* footer: align brand logo top with column headers */
+.site-footer .mega { align-items: start; }
+.site-footer .col.about img.logo { margin-top: -14px; margin-bottom: 22px; }
