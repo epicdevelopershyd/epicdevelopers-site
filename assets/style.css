@@ -503,3 +503,9 @@ section.flush { padding: 0; }
   color: #fff; background: rgba(13,11,7,0.62);
   padding: 6px 12px; backdrop-filter: blur(3px);
 }
+
+/* uniform hero stack across project pages */
+.page-hero { padding: 116px 0 78px; }
+.page-hero .plot-tag { margin-bottom: 30px; }
+.page-hero img.proj-logo { max-height: 100px; margin: 0 auto 18px; }
+.page-hero .hero-loc { margin: 0 0 20px; }
