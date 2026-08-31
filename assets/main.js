@@ -128,7 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   });
-  document.addEventListener("click", function () {
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.closest && e.target.closest(".dd")) return;
     dds.forEach(function (dd) { dd.classList.remove("open"); });
   });
 

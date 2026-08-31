@@ -647,3 +647,17 @@ section.flush { padding: 0; }
 .avail-panel .avail-table { flex: 0 0 auto; }
 .avail-panel .avail-cta { margin-top: auto; }
 .plan-permit-caption { text-align: center; font-size: 0.72rem; color: var(--stone); margin: 16px auto 0; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* Mobile dropdown must open downward — placed after base .dd-list to win source order */
+@media (max-width: 900px) {
+  .finder .dd .dd-list {
+    top: calc(100% + 10px);
+    bottom: auto;
+    transform: translateY(-8px);
+    max-height: 46vh;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    z-index: 200;
+    background: #14110b;
+  }
+  .finder .dd.open .dd-list { transform: none; }
+}
