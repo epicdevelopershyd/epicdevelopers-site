@@ -248,3 +248,78 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () { window.open(docUrl, "_blank", "noopener"); }, 300);
   });
 });
+
+// ---------- WhatsApp quick-menu (project-aware pre-filled messages) ----------
+document.addEventListener("DOMContentLoaded", function () {
+  var trigger = document.getElementById("wa-float");
+  if (!trigger) return;
+
+  var NUMBER = "917207370808";
+  var proj = document.body.getAttribute("data-project");        // e.g. "Park Central" or null
+  var city = document.body.getAttribute("data-project-city") || "";
+  // short, human phrase for the client's outgoing message
+  var about = proj ? (proj + (city ? ", " + city : "")) : "your projects";
+
+  // menu options: label + message builder
+  var opts = [
+    { label: "Get pricing & payment plan",
+      msg: "Hello Epic Developers, please share the pricing and payment plan for " + about + "." },
+    { label: "Book a site visit",
+      msg: "Hello Epic Developers, I'd like to schedule a site visit to " + about + ". Please suggest available times." },
+    { label: "Request a callback",
+      msg: "Hello Epic Developers, please call me back regarding " + about + ". My name is ___." },
+    { label: "Ask a question",
+      msg: "" }  // empty -> plain chat
+  ];
+
+  // styles
+  var css = document.createElement("style");
+  css.textContent =
+    ".wa-menu{position:fixed;z-index:9998;right:24px;bottom:92px;display:none;flex-direction:column;gap:0;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 18px 48px rgba(10,31,60,.28);width:270px;font-family:inherit}" +
+    ".wa-menu.on{display:flex}" +
+    ".wa-menu .wa-head{background:#0A1F3C;color:#fff;padding:14px 18px;font-family:'Sitka','Cambria',serif;font-size:1rem;line-height:1.3}" +
+    ".wa-menu .wa-head small{display:block;color:#C6A15B;font-family:inherit;font-size:.72rem;letter-spacing:.04em;margin-top:3px;text-transform:uppercase}" +
+    ".wa-menu button.wa-opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:none;border-top:1px solid #eef1f4;padding:14px 18px;font-size:.92rem;color:#0A1F3C;cursor:pointer;font-family:inherit}" +
+    ".wa-menu button.wa-opt:hover{background:#f6f2e9}" +
+    ".wa-menu button.wa-opt .wa-ic{width:18px;text-align:center;flex:none}" +
+    ".wa-backdrop{position:fixed;inset:0;z-index:9997;display:none}" +
+    ".wa-backdrop.on{display:block}";
+  document.head.appendChild(css);
+
+  var icons = ["\u20B9", "\uD83D\uDCCD", "\uD83D\uDCDE", "\uD83D\uDCAC"];
+
+  // backdrop (click-away)
+  var backdrop = document.createElement("div");
+  backdrop.className = "wa-backdrop";
+  document.body.appendChild(backdrop);
+
+  // menu
+  var menu = document.createElement("div");
+  menu.className = "wa-menu";
+  menu.setAttribute("role", "menu");
+  var head = '<div class="wa-head">How can we help?' +
+             (proj ? '<small>' + proj + '</small>' : '') + '</div>';
+  var body = opts.map(function (o, i) {
+    return '<button type="button" class="wa-opt" role="menuitem" data-i="' + i + '">' +
+           '<span class="wa-ic">' + icons[i] + '</span>' + o.label + '</button>';
+  }).join("");
+  menu.innerHTML = head + body;
+  document.body.appendChild(menu);
+
+  function open() { menu.classList.add("on"); backdrop.classList.add("on"); trigger.setAttribute("aria-expanded", "true"); }
+  function close() { menu.classList.remove("on"); backdrop.classList.remove("on"); trigger.setAttribute("aria-expanded", "false"); }
+  function toggle() { menu.classList.contains("on") ? close() : open(); }
+
+  trigger.addEventListener("click", function (e) { e.stopPropagation(); toggle(); });
+  backdrop.addEventListener("click", close);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+
+  menu.querySelectorAll(".wa-opt").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var o = opts[+b.getAttribute("data-i")];
+      var url = "https://wa.me/" + NUMBER + (o.msg ? "?text=" + encodeURIComponent(o.msg) : "");
+      window.open(url, "_blank", "noopener");
+      close();
+    });
+  });
+});
