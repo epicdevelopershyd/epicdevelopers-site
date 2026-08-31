@@ -629,3 +629,8 @@ section.flush { padding: 0; }
 .dd-list li span { color: var(--stone); font-size: 0.8rem; }
 .plan-price { font-size: 1.05rem; color: var(--ink); letter-spacing: 0.01em; }
 .plan-price strong { color: var(--gold); }
+.plan-legend { display: flex; justify-content: center; align-items: center; gap: 40px; margin: 28px auto 0; }
+.plan-legend .lg-item { display: inline-flex; align-items: center; gap: 12px; font-size: 1rem; color: var(--ink); letter-spacing: 0.02em; }
+.plan-legend .lg-swatch { width: 26px; height: 26px; border: 1.5px solid #b9b09a; border-radius: 3px; display: inline-block; }
+.plan-legend .lg-swatch.sold { background: #FFD277; }
+.plan-legend .lg-swatch.avail { background: #ffffff; }
