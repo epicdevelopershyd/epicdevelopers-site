@@ -352,3 +352,23 @@ document.addEventListener("DOMContentLoaded", function () {
   ov.addEventListener("click", function (e) { if (e.target.tagName !== "IMG") close(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
 });
+
+// ---------- precise landing on #layout after finder navigation ----------
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.location.hash !== "#layout") return;
+  var target = document.getElementById("layout");
+  if (!target) return;
+  var header = document.querySelector(".site-header");
+  function landExactly() {
+    var offset = (header ? header.getBoundingClientRect().height : 86) + 24;
+    var y = target.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top: Math.max(0, y), behavior: "auto" });
+  }
+  // correct after layout settles (fonts, reveal, images), several passes
+  requestAnimationFrame(landExactly);
+  setTimeout(landExactly, 150);
+  setTimeout(landExactly, 450);
+  setTimeout(landExactly, 900);
+  window.addEventListener("load", function () { setTimeout(landExactly, 60); });
+});
+
