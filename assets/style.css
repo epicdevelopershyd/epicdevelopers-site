@@ -627,3 +627,5 @@ section.flush { padding: 0; }
 .dd-list li.on { color: var(--champagne); }
 .dd-list li.on::before { content: "— "; color: var(--gold); }
 .dd-list li span { color: var(--stone); font-size: 0.8rem; }
+.plan-price { font-size: 1.05rem; color: var(--ink); letter-spacing: 0.01em; }
+.plan-price strong { color: var(--gold); }
