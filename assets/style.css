@@ -285,7 +285,7 @@ section.flush { padding: 0; }
 .layout-figure img { border: 1px solid var(--line); margin: 0 auto; max-height: 820px; width: auto; max-width: 100%; box-shadow: 0 20px 60px rgba(21,19,14,0.12); }
 .layout-figure figcaption { font-size: 0.76rem; color: var(--stone); margin-top: 16px; letter-spacing: 0.16em; text-transform: uppercase; }
 #layout { scroll-margin-top: 120px; }
-.plan-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 36px; align-items: start; max-width: 1180px; margin: 0 auto; }
+.plan-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 36px; align-items: start; max-width: 1240px; margin: 0 auto; }
 .plan-figure { margin: 0; text-align: center; }
 .plan-figure img { border: 1px solid var(--line); max-height: 820px; width: auto; max-width: 100%; box-shadow: 0 20px 60px rgba(21,19,14,0.12); cursor: zoom-in; }
 .plan-figure figcaption { font-size: 0.72rem; color: var(--stone); margin-top: 14px; letter-spacing: 0.14em; text-transform: uppercase; }
@@ -634,3 +634,12 @@ section.flush { padding: 0; }
 .plan-legend .lg-swatch { width: 26px; height: 26px; border: 1.5px solid #b9b09a; border-radius: 3px; display: inline-block; }
 .plan-legend .lg-swatch.sold { background: #FFD277; }
 .plan-legend .lg-swatch.avail { background: #ffffff; }
+.avail-table { width: 100%; border-collapse: collapse; margin: 0 0 14px; font-size: 0.86rem; }
+.avail-table thead th { font-family: inherit; font-weight: 600; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--stone); text-align: center; padding: 0 6px 10px; border-bottom: 1.5px solid rgba(198,161,91,0.5); }
+.avail-table thead th:first-child { text-align: left; }
+.avail-table tbody td { padding: 8px 6px; text-align: center; color: var(--ink); border-bottom: 1px solid rgba(198,161,91,0.18); }
+.avail-table tbody td:first-child { text-align: left; font-weight: 600; }
+.avail-table tbody tr:last-child td { border-bottom: 0; }
+.avail-table tr.diff td { background: rgba(198,161,91,0.12); }
+.avail-table tr.diff td:last-child { color: var(--gold); font-weight: 600; }
+.avail-foot { font-size: 0.72rem; color: var(--stone); line-height: 1.55; margin: 0 0 18px; }
