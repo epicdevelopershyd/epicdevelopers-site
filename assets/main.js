@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Email: " + (f.get("email") || "") + "\n" +
         "Property: " + (f.get("property") || "") + "\n" +
         "Message: " + (f.get("message") || "");
-      window.open("https://wa.me/919143747747?text=" + encodeURIComponent(msg), "_blank");
+      window.open("https://wa.me/917207370808?text=" + encodeURIComponent(msg), "_blank");
     });
   }
 });
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
       var proj = document.getElementById("f-project").value;
       var size = document.getElementById("f-size").value;
       if (proj === "ff") {
-        window.open("https://wa.me/919143747747?text=" + encodeURIComponent(
+        window.open("https://wa.me/917207370808?text=" + encodeURIComponent(
           "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam – Future City. Preferred size: " + size), "_blank");
       } else {
         window.location.href = proj;
@@ -153,11 +153,98 @@ document.addEventListener("DOMContentLoaded", function () {
       var proj = document.querySelector("#dd-project .dd-btn").dataset.value;
       var size = document.querySelector("#dd-size .dd-btn").dataset.value.replace(/\u2013/g, "-");
       if (proj === "ff") {
-        window.open("https://wa.me/919143747747?text=" + encodeURIComponent(
+        window.open("https://wa.me/917207370808?text=" + encodeURIComponent(
           "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam – Future City. Preferred size: " + size), "_blank");
       } else {
         window.location.href = proj;
       }
     });
   }
+});
+
+// ---------- lead capture on document download (name + mobile -> WhatsApp) ----------
+document.addEventListener("DOMContentLoaded", function () {
+  var dlLinks = document.querySelectorAll("a.doc-dl");
+  if (!dlLinks.length) return;
+
+  var LEAD_NUMBER = "917207370808";
+
+  // inject styles
+  var css = document.createElement("style");
+  css.textContent =
+    ".dl-overlay{position:fixed;inset:0;background:rgba(10,31,60,.72);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}" +
+    ".dl-overlay.on{display:flex}" +
+    ".dl-modal{background:#fff;max-width:420px;width:100%;border-radius:10px;padding:34px 30px;box-shadow:0 24px 60px rgba(0,0,0,.35);font-family:inherit;position:relative}" +
+    ".dl-modal h3{font-family:'Sitka','Cambria',serif;color:#0A1F3C;margin:0 0 6px;font-size:1.4rem}" +
+    ".dl-modal p.sub{color:#5a6472;margin:0 0 22px;font-size:.92rem;line-height:1.5}" +
+    ".dl-modal label{display:block;font-size:.8rem;color:#0A1F3C;margin:14px 0 6px;font-weight:600;letter-spacing:.02em}" +
+    ".dl-modal input{width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #d4d9e0;border-radius:6px;font-size:1rem;font-family:inherit;color:#0A1F3C}" +
+    ".dl-modal input:focus{outline:none;border-color:#C6A15B;box-shadow:0 0 0 2px rgba(198,161,91,.2)}" +
+    ".dl-modal .dl-err{color:#b3261e;font-size:.78rem;margin-top:6px;display:none}" +
+    ".dl-modal button.dl-go{margin-top:24px;width:100%;background:#C6A15B;color:#0A1F3C;border:none;padding:14px;border-radius:6px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.02em}" +
+    ".dl-modal button.dl-go:hover{background:#b8923f}" +
+    ".dl-modal .dl-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.5rem;color:#8a93a0;cursor:pointer;line-height:1}" +
+    ".dl-modal .dl-note{margin:16px 0 0;font-size:.76rem;color:#8a93a0;line-height:1.5}";
+  document.head.appendChild(css);
+
+  // inject modal markup
+  var overlay = document.createElement("div");
+  overlay.className = "dl-overlay";
+  overlay.innerHTML =
+    '<div class="dl-modal" role="dialog" aria-modal="true" aria-labelledby="dl-title">' +
+      '<button class="dl-close" aria-label="Close">&times;</button>' +
+      '<h3 id="dl-title">Get your document</h3>' +
+      '<p class="sub">Please share your details and we will open your download.</p>' +
+      '<label for="dl-name">Full name</label>' +
+      '<input id="dl-name" type="text" autocomplete="name" placeholder="Your name">' +
+      '<label for="dl-mobile">Mobile number</label>' +
+      '<input id="dl-mobile" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile">' +
+      '<div class="dl-err" id="dl-err">Please enter your name and a valid 10-digit mobile number.</div>' +
+      '<button class="dl-go" type="button">Download now</button>' +
+      '<p class="dl-note">Your download opens after you press send in WhatsApp. Our team will reach out with details.</p>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  var nameEl = overlay.querySelector("#dl-name");
+  var mobEl = overlay.querySelector("#dl-mobile");
+  var errEl = overlay.querySelector("#dl-err");
+  var pendingDoc = null, pendingTitle = null;
+
+  function openModal(doc, title) {
+    pendingDoc = doc; pendingTitle = title || "document";
+    errEl.style.display = "none";
+    nameEl.value = ""; mobEl.value = "";
+    overlay.classList.add("on");
+    setTimeout(function () { nameEl.focus(); }, 50);
+  }
+  function closeModal() { overlay.classList.remove("on"); pendingDoc = null; }
+
+  dlLinks.forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      openModal(a.getAttribute("href"), a.getAttribute("data-title"));
+    });
+  });
+
+  overlay.querySelector(".dl-close").addEventListener("click", closeModal);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
+
+  overlay.querySelector(".dl-go").addEventListener("click", function () {
+    var name = (nameEl.value || "").trim();
+    var mob = (mobEl.value || "").replace(/\D/g, "");
+    if (name.length < 2 || mob.length < 10) { errEl.style.display = "block"; return; }
+
+    var msg =
+      "New download request from the website.\n" +
+      "Document: " + pendingTitle + "\n" +
+      "Name: " + name + "\n" +
+      "Mobile: " + mob;
+    window.open("https://wa.me/" + LEAD_NUMBER + "?text=" + encodeURIComponent(msg), "_blank");
+
+    // open the actual document
+    var docUrl = pendingDoc;
+    closeModal();
+    setTimeout(function () { window.open(docUrl, "_blank", "noopener"); }, 300);
+  });
 });
