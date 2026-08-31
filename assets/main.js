@@ -311,3 +311,44 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+// ---------- layout-plan lightbox (tap to enlarge, pinch/scroll to zoom) ----------
+document.addEventListener("DOMContentLoaded", function () {
+  var fig = document.querySelector("figure#layout");
+  if (!fig) return;
+  var img = fig.querySelector("img");
+  if (!img) return;
+
+  // cue
+  fig.style.cursor = "zoom-in";
+  var cue = document.createElement("span");
+  cue.textContent = "Tap to enlarge";
+  cue.style.cssText = "display:inline-block;margin-top:10px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#7A745F";
+  img.insertAdjacentElement("afterend", cue);
+
+  // styles
+  var css = document.createElement("style");
+  css.textContent =
+    ".lb-ov{position:fixed;inset:0;background:rgba(10,14,20,.94);display:none;z-index:10000;cursor:zoom-out;overflow:auto;-webkit-overflow-scrolling:touch}" +
+    ".lb-ov.on{display:block}" +
+    ".lb-ov img{display:block;margin:0 auto;min-width:100%;width:auto;max-width:none;cursor:grab}" +
+    ".lb-close{position:fixed;top:16px;right:22px;z-index:10001;background:none;border:none;color:#fff;font-size:2rem;line-height:1;cursor:pointer;opacity:.85}" +
+    ".lb-hint{position:fixed;bottom:16px;left:0;right:0;text-align:center;color:#cfd3da;font-size:.75rem;letter-spacing:.1em;pointer-events:none;z-index:10001}";
+  document.head.appendChild(css);
+
+  var ov = document.createElement("div");
+  ov.className = "lb-ov";
+  ov.innerHTML =
+    '<button class="lb-close" aria-label="Close">&times;</button>' +
+    '<img src="' + img.getAttribute("src") + '" alt="' + (img.getAttribute("alt") || "Layout plan") + '">' +
+    '<div class="lb-hint">Scroll to explore &middot; tap outside to close</div>';
+  document.body.appendChild(ov);
+
+  function open() { ov.classList.add("on"); document.body.style.overflow = "hidden"; ov.scrollTop = 0; }
+  function close() { ov.classList.remove("on"); document.body.style.overflow = ""; }
+
+  fig.addEventListener("click", open);
+  ov.querySelector(".lb-close").addEventListener("click", function (e) { e.stopPropagation(); close(); });
+  ov.addEventListener("click", function (e) { if (e.target.tagName !== "IMG") close(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+});
