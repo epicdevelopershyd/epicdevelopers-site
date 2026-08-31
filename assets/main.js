@@ -73,19 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // finder bar
-  var goBtn = document.getElementById("finder-go");
-  if (goBtn) {
-    goBtn.addEventListener("click", function () {
-      var proj = document.getElementById("f-project").value;
-      var size = document.getElementById("f-size").value;
-      if (proj === "ff") {
-        window.open("https://wa.me/917207370808?text=" + encodeURIComponent(
-          "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam – Future City. Preferred size: " + size), "_blank");
-      } else {
-        window.location.href = proj;
-      }
-    });
-  }
+  // (finder button is wired below via the custom dropdown handler)
 
   // animated counters
   var counts = document.querySelectorAll(".count");
@@ -151,12 +139,12 @@ document.addEventListener("DOMContentLoaded", function () {
     goBtn.parentNode.replaceChild(fresh, goBtn);
     fresh.addEventListener("click", function () {
       var proj = document.querySelector("#dd-project .dd-btn").dataset.value;
-      var size = document.querySelector("#dd-size .dd-btn").dataset.value.replace(/\u2013/g, "-");
       if (proj === "ff") {
         window.open("https://wa.me/917207370808?text=" + encodeURIComponent(
-          "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam – Future City. Preferred size: " + size), "_blank");
+          "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam, Future City. Please share details."), "_blank");
       } else {
-        window.location.href = proj;
+        // land directly on the project's layout plan (availability view)
+        window.location.href = proj + "#layout";
       }
     });
   }
