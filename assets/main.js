@@ -314,7 +314,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // ---------- layout-plan lightbox (tap to enlarge, pinch/scroll to zoom) ----------
 document.addEventListener("DOMContentLoaded", function () {
-  var fig = document.querySelector("figure#layout");
+  var fig = document.querySelector(".plan-figure, figure#layout");
   if (!fig) return;
   var img = fig.querySelector("img");
   if (!img) return;
