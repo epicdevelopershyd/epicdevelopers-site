@@ -373,3 +373,21 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("load", function () { setTimeout(landExactly, 60); });
 });
 
+
+// ---------- align availability panel bottom with plan image bottom ----------
+document.addEventListener("DOMContentLoaded", function () {
+  var fig = document.querySelector(".plan-figure");
+  var panel = document.querySelector(".avail-panel");
+  if (!fig || !panel) return;
+  var img = fig.querySelector("img");
+  if (!img) return;
+  function sync() {
+    // match panel height to the image's rendered box height
+    if (window.matchMedia("(max-width: 900px)").matches) { panel.style.height = ""; return; }
+    var h = img.getBoundingClientRect().height;
+    if (h > 0) panel.style.height = h + "px";
+  }
+  if (img.complete) sync(); else img.addEventListener("load", sync);
+  window.addEventListener("resize", sync);
+  setTimeout(sync, 300);
+});
