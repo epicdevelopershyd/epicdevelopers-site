@@ -645,3 +645,4 @@ section.flush { padding: 0; }
 .avail-foot { font-size: 0.72rem; color: var(--stone); line-height: 1.55; margin: 0 0 18px; }
 .avail-panel .avail-table { flex: 0 0 auto; }
 .avail-panel .avail-cta { margin-top: auto; }
+.plan-permit-caption { text-align: center; font-size: 0.72rem; color: var(--stone); margin: 16px auto 0; letter-spacing: 0.14em; text-transform: uppercase; }

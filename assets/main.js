@@ -319,12 +319,13 @@ document.addEventListener("DOMContentLoaded", function () {
   var img = fig.querySelector("img");
   if (!img) return;
 
-  // cue
+  // cue (overlay, does not add layout height)
   fig.style.cursor = "zoom-in";
+  fig.style.position = fig.style.position || "relative";
   var cue = document.createElement("span");
   cue.textContent = "Tap to enlarge";
-  cue.style.cssText = "display:inline-block;margin-top:10px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#7A745F";
-  img.insertAdjacentElement("afterend", cue);
+  cue.style.cssText = "position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(10,31,60,.72);color:#fff;padding:5px 12px;border-radius:3px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;pointer-events:none";
+  fig.appendChild(cue);
 
   // styles
   var css = document.createElement("style");
