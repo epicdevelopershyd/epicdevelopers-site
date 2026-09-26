@@ -172,6 +172,7 @@ section.flush { padding: 12px 0; background: var(--paper); }
 .tile .bg {
   position: absolute; inset: 0; z-index: -1;
   background-size: cover; background-position: center;
+  transform: scale(1.06);
 }
 .tile::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
