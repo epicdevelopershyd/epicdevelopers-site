@@ -663,3 +663,9 @@ section.flush { padding: 0; }
   }
   .finder .dd.open .dd-list { transform: none; }
 }
+.tile .render-note {
+  position: absolute; bottom: 10px; right: 14px; z-index: 4;
+  font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(255,255,255,0.65); font-style: italic;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5); pointer-events: none;
+}
