@@ -669,3 +669,10 @@ section.flush { padding: 56px 0; background: var(--paper); }
   color: rgba(255,255,255,0.65); font-style: italic;
   text-shadow: 0 1px 3px rgba(0,0,0,0.5); pointer-events: none;
 }
+
+/* Custom scrollbar — blends into the site instead of a stark gutter */
+html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--mist); border-radius: 10px; border: 2px solid var(--paper); }
+::-webkit-scrollbar-thumb:hover { background: var(--stone); }
