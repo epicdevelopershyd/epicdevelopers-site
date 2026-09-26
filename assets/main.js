@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Email: " + (f.get("email") || "") + "\n" +
         "Property: " + (f.get("property") || "") + "\n" +
         "Message: " + (f.get("message") || "");
-      window.open("https://wa.me/917207370808?text=" + encodeURIComponent(msg), "_blank");
+      window.open("https://wa.me/919177681133?text=" + encodeURIComponent(msg), "_blank");
     });
   }
 });
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fresh.addEventListener("click", function () {
       var proj = document.querySelector("#dd-project .dd-btn").dataset.value;
       if (proj === "ff") {
-        window.open("https://wa.me/917207370808?text=" + encodeURIComponent(
+        window.open("https://wa.me/919177681133?text=" + encodeURIComponent(
           "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam, Future City. Please share details."), "_blank");
       } else {
         // land directly on the project's layout plan (availability view)
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var dlLinks = document.querySelectorAll("a.doc-dl");
   if (!dlLinks.length) return;
 
-  var LEAD_NUMBER = "917207370808";
+  var LEAD_NUMBER = "919177681133";
 
   // inject styles
   var css = document.createElement("style");
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var trigger = document.getElementById("wa-float");
   if (!trigger) return;
 
-  var NUMBER = "917207370808";
+  var NUMBER = "919177681133";
   var proj = document.body.getAttribute("data-project");        // e.g. "Park Central" or null
   var city = document.body.getAttribute("data-project-city") || "";
   // short, human phrase for the client's outgoing message
