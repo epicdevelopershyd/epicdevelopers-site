@@ -172,19 +172,17 @@ section.flush { padding: 12px 0; background: var(--paper); }
 .tile .bg {
   position: absolute; inset: 0; z-index: -1;
   background-size: cover; background-position: center;
-  transition: transform 1.2s ease;
 }
-.tile:hover .bg { transform: scale(1.045); }
 .tile::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(to top, rgba(13,11,7,0.85) 0%, rgba(13,11,7,0.15) 55%, rgba(13,11,7,0.25) 100%);
+  background: linear-gradient(to top, rgba(13,11,7,0.92) 0%, rgba(13,11,7,0.55) 32%, rgba(13,11,7,0.05) 60%, rgba(13,11,7,0.25) 100%);
 }
 .tile .inner {
   position: absolute; left: 0; right: 0; bottom: 0;
   max-width: var(--maxw); margin: 0 auto;
   padding: 0 32px 64px;
 }
-.tile .loc { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--champagne); }
+.tile .loc { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--champagne); text-shadow: 0 1px 6px rgba(0,0,0,0.7); }
 .tile .name { font-family: "Fraunces", serif; font-size: clamp(2.2rem, 4.6vw, 3.8rem); font-weight: 300; margin: 10px 0 6px; }
 .tile .tagline { color: var(--mist); font-size: 1.05rem; max-width: 52ch; }
 .tile .go { display: inline-block; margin-top: 22px; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: #fff; border-bottom: 1px solid var(--gold); padding-bottom: 6px; }
