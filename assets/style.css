@@ -18,6 +18,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow-x: hidden; max-width: 100%; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -156,9 +157,8 @@ h3 { font-size: 1.4rem; }
 /* ---------- sections ---------- */
 section { padding: 110px 0; }
 section.tint { background: var(--paper-deep); }
-section.flush { padding: 0; }
-#ongoing { padding-top: 56px; background: var(--paper); }
-@media (max-width: 900px) { #ongoing { padding-top: 36px; } }
+section.flush { padding: 56px 0; background: var(--paper); }
+@media (max-width: 900px) { section.flush { padding: 36px 0; } }
 .section-head { text-align: center; margin-bottom: 64px; }
 .section-head .survey { margin-top: 22px; }
 
