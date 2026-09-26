@@ -157,6 +157,8 @@ h3 { font-size: 1.4rem; }
 section { padding: 110px 0; }
 section.tint { background: var(--paper-deep); }
 section.flush { padding: 0; }
+#ongoing { padding-top: 56px; background: var(--paper); }
+@media (max-width: 900px) { #ongoing { padding-top: 36px; } }
 .section-head { text-align: center; margin-bottom: 64px; }
 .section-head .survey { margin-top: 22px; }
 
