@@ -155,7 +155,7 @@ h3 { font-size: 1.4rem; }
 .btn.gold:hover { background: var(--gold); color: #fff; }
 
 /* ---------- sections ---------- */
-section { padding: 12px 0; }
+section { padding: 110px 0; }
 section.tint { background: var(--paper-deep); }
 section.flush { padding: 12px 0; background: var(--paper); }
 @media (max-width: 900px) { section.flush { padding: 12px 0; } }
@@ -356,7 +356,7 @@ section.flush { padding: 12px 0; background: var(--paper); }
   .ff-card, .img-pair, .contact-grid, .site-footer .cols { grid-template-columns: 1fr; }
   .img-pair img { height: 260px; }
   .golden-list { columns: 1; }
-  section { padding: 12px 0; }
+  section { padding: 72px 0; }
   .page-hero { min-height: 64vh; padding: 120px 0 64px; }
 }
 
@@ -395,7 +395,7 @@ section.flush { padding: 12px 0; background: var(--paper); }
 .f-go:hover { background: var(--champagne); color: var(--ink); }
 
 /* ---------- animated counters ---------- */
-.counters { padding: 12px 0; }
+.counters { padding: 84px 0; }
 .counters .stats { display: flex; flex-wrap: wrap; gap: 44px 90px; justify-content: center; text-align: center; }
 .counters .value { font-family: "Fraunces", serif; font-weight: 300; font-size: clamp(2.4rem, 4.5vw, 3.6rem); color: var(--ink); }
 .counters .label { font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--stone); margin-top: 8px; }
@@ -569,7 +569,7 @@ section.flush { padding: 12px 0; background: var(--paper); }
   .pillar { padding: 32px 24px; }
   .wa-float { width: 54px; height: 54px; right: 18px; bottom: 18px; }
   .site-footer { padding: 64px 0 36px; }
-  section { padding: 12px 0; }
+  section { padding: 60px 0; }
 }
 
 /* mobile: FF buttons stack cleanly full-width */
