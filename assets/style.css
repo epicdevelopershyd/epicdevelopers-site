@@ -163,8 +163,8 @@ section.flush { padding: 24px 0; background: var(--paper); }
 .section-head .survey { margin-top: 22px; }
 
 /* ---------- full-bleed project tiles ---------- */
-.tiles { display: grid; gap: 0; }
-.tiles .tile + .tile { border-top: 1px solid var(--champagne); }
+.tiles { display: grid; gap: 12px; background: var(--paper); }
+.tiles .tile + .tile { border-top: none; }
 .tile {
   position: relative; display: block; text-decoration: none; color: #fff;
   min-height: 72vh; overflow: hidden; isolation: isolate;
