@@ -157,8 +157,8 @@ h3 { font-size: 1.4rem; }
 /* ---------- sections ---------- */
 section { padding: 110px 0; }
 section.tint { background: var(--paper-deep); }
-section.flush { padding: 0 0 12px; background: var(--paper); }
-@media (max-width: 900px) { section.flush { padding: 0 0 12px; } }
+section.flush { padding: 12px 0; background: var(--paper); }
+@media (max-width: 900px) { section.flush { padding: 12px 0; } }
 .section-head { text-align: center; margin-bottom: 64px; }
 .section-head .survey { margin-top: 22px; }
 
