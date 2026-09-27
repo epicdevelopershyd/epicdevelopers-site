@@ -116,7 +116,7 @@ h3 { font-size: 1.4rem; }
 
 /* ---------- cinematic hero (home) ---------- */
 .hero {
-  position: relative; min-height: 94vh;
+  position: relative; min-height: 100vh;
   display: flex; align-items: flex-end;
   background: var(--ink);
   isolation: isolate;
@@ -157,8 +157,8 @@ h3 { font-size: 1.4rem; }
 /* ---------- sections ---------- */
 section { padding: 110px 0; }
 section.tint { background: var(--paper-deep); }
-section.flush { padding: 12px 0; background: var(--paper); }
-@media (max-width: 900px) { section.flush { padding: 12px 0; } }
+section.flush { padding: 0 0 12px; background: var(--paper); }
+@media (max-width: 900px) { section.flush { padding: 0 0 12px; } }
 .section-head { text-align: center; margin-bottom: 64px; }
 .section-head .survey { margin-top: 22px; }
 
@@ -349,7 +349,7 @@ section.flush { padding: 12px 0; background: var(--paper); }
   .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(15,13,9,0.98); flex-direction: column; padding: 28px 32px; align-items: flex-start; gap: 22px; }
   .nav.open { display: flex; }
   .nav-toggle { display: block; }
-  .hero { min-height: 86vh; }
+  .hero { min-height: 100vh; }
   .tile { min-height: 60vh; }
   .tiles.pair { grid-template-columns: 1fr; }
   .ff-card, .img-pair, .contact-grid, .site-footer .cols { grid-template-columns: 1fr; }
