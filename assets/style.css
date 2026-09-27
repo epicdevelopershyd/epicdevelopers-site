@@ -687,3 +687,6 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
   position: relative; top: -0.35em;
 }
 @media (max-width: 640px){ .tile .name .dev-tag { display:block; margin:10px 0 0; } }
+
+/* small availability line under a stat value */
+.stat .sublabel { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-top: 4px; }
