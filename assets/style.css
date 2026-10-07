@@ -246,8 +246,9 @@ section.flush { padding: 12px 0; background: var(--paper); }
   color: var(--paper); background: var(--ink); isolation: isolate;
   padding: 140px 0 90px;
 }
+.page-hero { overflow: hidden; }
 .page-hero.has-bg::before {
-  content: ""; position: absolute; inset: 0; z-index: -2;
+  content: ""; position: absolute; inset: 0; top: calc(-1 * var(--hero-lift, 0%)); z-index: -2;   /* --hero-lift raises the picture so lettering on an arch does not sit behind the project logo */
   background-image: var(--hero-img);
   background-size: cover; background-position: center;
 }
@@ -832,4 +833,8 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 
 /* ---------- Park Central: the closing line of the opening passage stands on its own ---------- */
 .intro .intro-close { display: block; margin-top: 0.85em; }
+
+/* ---------- a picture with its label (site photo / artist's impression) ---------- */
+.img-pair figure.shot { position: relative; margin: 0; }
+.img-pair figure.shot img { display: block; }
 
