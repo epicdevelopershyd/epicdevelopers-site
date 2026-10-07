@@ -829,3 +829,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .site-footer p.since { display: flex; align-items: center; gap: 26px; margin: -18px 0 62px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.34em; line-height: 1.9; text-transform: uppercase; text-align: center; color: var(--champagne); }
 .site-footer p.since::before, .site-footer p.since::after { content: ""; flex: 1; min-width: 18px; height: 1px; background: rgba(214,188,126,0.3); }
 @media (max-width: 700px) { .site-footer p.since { gap: 14px; margin: -8px 0 44px; font-size: 0.68rem; letter-spacing: 0.26em; } }
+
+/* ---------- Park Central: the closing line of the opening passage stands on its own ---------- */
+.intro .intro-close { display: block; margin-top: 0.85em; }
+
