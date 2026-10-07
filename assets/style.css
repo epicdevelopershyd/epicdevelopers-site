@@ -699,12 +699,9 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 /* Plot 72 photo: wide screens only, framed so the plot marker stands clear of the headline */
 .hero .slide.wide-only { background-position: 0% 50%; transform-origin: 0% 55%; transform: scale(1.62); --kb-from: scale(1.62); --kb-to: scale(1.66); }
 
-/* ---------- Park Central tile: room for the longer status line ---------- */
-.tile .status { max-width: calc(100% - 64px); }
-@media (max-width: 700px) {
-  /* tag and text stack in flow, so the tile grows instead of the tag crowding the text */
-  .tile-pc { display: flex; flex-direction: column; }
-  .tile-pc .status { position: static; align-self: flex-start; margin: 34px 32px 0; max-width: calc(100% - 64px); }
-  .tile-pc .inner { position: static; width: 100%; margin: auto 0 0; padding-top: 28px; }
-}
-
+/* ---------- project tiles: the status tag and the text never collide ---------- */
+/* tag and text stack in flow, so a tile grows when space is short instead of the tag crowding the text;
+   where there is room the layout is identical to the absolute-positioned original */
+.tile { display: flex; flex-direction: column; }
+.tile .status { position: static; align-self: flex-start; margin: 34px 32px 0; max-width: calc(100% - 64px); }
+.tile .inner { position: static; width: 100%; margin: auto auto 0; padding-top: 28px; }
