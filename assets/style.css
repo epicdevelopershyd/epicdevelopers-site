@@ -838,3 +838,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .img-pair figure.shot { position: relative; margin: 0; }
 .img-pair figure.shot img { display: block; }
 
+/* ---------- page banner: two status tags side by side ---------- */
+.page-hero .tag-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 12px; margin-bottom: 26px; }
+.page-hero .tag-row .plot-tag { margin-bottom: 0; }
+
