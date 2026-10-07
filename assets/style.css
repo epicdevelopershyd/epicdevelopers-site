@@ -690,3 +690,11 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 
 /* small availability line under a stat value */
 .stat .sublabel { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-top: 4px; }
+
+/* ---------- photo hero (home): four-photo sequence, each with a slow drift ---------- */
+.hero .slide { animation: none; }
+.hero .slide.kb { animation: heroPhoto 9s linear both; }
+@keyframes heroPhoto { from { transform: var(--kb-from, scale(1)); } to { transform: var(--kb-to, scale(1.08)); } }
+@media (prefers-reduced-motion: reduce) { .hero .slide.kb { animation: none; } }
+/* Plot 72 photo: wide screens only, framed so the plot marker stands clear of the headline */
+.hero .slide.wide-only { background-position: 0% 50%; transform-origin: 0% 55%; transform: scale(1.62); --kb-from: scale(1.62); --kb-to: scale(1.66); }
