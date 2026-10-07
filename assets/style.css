@@ -705,7 +705,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .hero-stage::after { display: none; }
 .st-bg { position: absolute; inset: 87px 0 0 0; z-index: -2; overflow: hidden; background: radial-gradient(ellipse 80% 90% at 50% 40%, #211D15 0%, #15130E 55%, #0E0C08 100%); }   /* starts below the fixed header, so no arch hides behind it */
 /* each project's picture is shown whole and uncropped, on a plain dark ground */
-.st-img { position: absolute; inset: 0; opacity: 0; transition: opacity 1.1s ease; display: grid; justify-items: center; align-items: start; container-type: size; }
+.st-img { position: absolute; inset: 0; opacity: 0; /* no fade on the layer itself: the picture inside does its own fading, and a retired layer must vanish at once */ display: grid; justify-items: center; align-items: start; container-type: size; }
 .st-img.on, .st-img.out { opacity: 1; }
 .st-img.on { z-index: 2; }
 .st-img.out { z-index: 1; }
