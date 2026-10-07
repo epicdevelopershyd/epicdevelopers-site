@@ -722,7 +722,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .wslot-0 .wcap { left: 26px; bottom: 20px; }
 .wslot-0 .wcap b { font-size: 0.7rem; }
 .wslot-0 .wcap i { font-family: "Fraunces", Georgia, serif; font-size: 1.35rem; font-weight: 400; }
-.wnote { position: absolute; right: 10px; top: 9px; z-index: 1; font-size: 0.56rem; letter-spacing: 0.08em; font-style: italic; color: rgba(255,255,255,0.86); background: rgba(13,11,7,0.5); padding: 3px 8px; }
+.wnote { flex-basis: 100%; font-size: 0.5rem; letter-spacing: 0.06em; line-height: 1.5; color: rgba(255,255,255,0.72); }   /* a footnote under the caption, on the dark of the tile */
 .wl:focus-visible { outline: 2px solid var(--champagne); outline-offset: -4px; }
 /* where each picture is held, so the name on the arch stays in frame at every tile shape */
 .p-parkcentral .wimg { background-position: 27% 45%; }
@@ -745,7 +745,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
   .wslot-0 .wcap { left: 16px; bottom: 14px; }
   .wslot-0 .wcap b { font-size: 0.6rem; }
   .wslot-0 .wcap i { font-size: 1.12rem; }
-  .wnote { font-size: 0.5rem; right: 6px; top: 6px; padding: 2px 6px; }
+  .wnote { font-size: 0.44rem; }
 }
 @media (prefers-reduced-motion: reduce) { .wslot-0 .wl.on .wimg { transform: none; } }
 
