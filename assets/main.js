@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
     stage.style.setProperty("--dwell", DWELL + "ms");
     // the first picture ships with the page; the others arrive once the page itself has loaded
     function ready(i, then) {
-      var pic = imgs[i].firstElementChild, src = pic.getAttribute("data-src"), done = false;
+      var pic = imgs[i].querySelector(".st-pic"), src = pic.getAttribute("data-src"), done = false;
       function fin() { if (!done) { done = true; if (then) then(); } }
       if (src) { pic.removeAttribute("data-src"); pic.src = src; }
       // wait until the picture is fully decoded, so a sweep never reveals a half-drawn image
@@ -85,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (still) { next.classList.add("on"); prev.classList.remove("out"); busy = false; }
         else {
           next.classList.add("on", "in");
-          if (edge) { edge.classList.remove("run"); void edge.offsetWidth; edge.classList.add("run"); }
           setTimeout(function () { prev.classList.remove("out"); next.classList.remove("in"); busy = false; }, 1300);
         }
         k = i; mark(k);

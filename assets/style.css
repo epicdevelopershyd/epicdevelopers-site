@@ -704,28 +704,36 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .hero-stage { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(calc(100vh - 87px), auto); align-items: end; padding: 87px 0 0; min-height: 100vh; overflow: hidden; }
 .hero-stage::after { display: none; }
 .st-bg { position: absolute; inset: 87px 0 0 0; z-index: -2; overflow: hidden; background: var(--ink); }   /* starts below the fixed header, so no arch hides behind it */
-.st-img { position: absolute; inset: -1.5%; opacity: 0; }
+/* each project: a soft, out-of-focus wash of its own picture fills the stage, and the picture itself is shown whole, uncropped */
+.st-img { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease; display: grid; justify-items: center; align-items: start; container-type: size; }
 .st-img.on, .st-img.out { opacity: 1; }
 .st-img.on { z-index: 2; }
 .st-img.out { z-index: 1; }
-.st-pic { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: scale(1.03); will-change: transform; }
+.st-amb { position: absolute; inset: -9%; background-size: cover; background-position: 50% 50%; filter: blur(30px) brightness(0.5) saturate(1.2); transform: scale(1.08); animation: stAmb 26s ease-in-out infinite alternate; }
+@keyframes stAmb { from { transform: scale(1.08) translate3d(-1.5%, 0, 0); } to { transform: scale(1.2) translate3d(1.5%, -1%, 0); } }
+.st-frame { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; transform-origin: 50% 0%; will-change: transform; }
+.st-pic { display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 0%; }
 .st-pic:not([src]) { visibility: hidden; }
-.st-img.on .st-pic, .st-img.out .st-pic { animation: stPush 9s linear both; }
-.st-img.in { animation: stWipe 1.25s cubic-bezier(.77,0,.18,1) both; }
-.st-img.in .st-pic { animation: stEnter 1.25s cubic-bezier(.77,0,.18,1) both, stPush 9s linear 1.25s forwards; }
-@keyframes stPush { from { transform: scale(1.03) translate3d(0,0,0); } to { transform: scale(1.12) translate3d(-0.8%, -0.6%, 0); } }
-@keyframes stEnter { from { transform: scale(1.12) translate3d(4%,0,0); } to { transform: scale(1.03) translate3d(0,0,0); } }
+@supports (width: 1cqw) {
+  /* the frame takes the picture's own shape and the largest size that fits: nothing is cut off */
+  .st-frame { width: min(100cqw, calc(100cqh * var(--ar))); height: auto; aspect-ratio: var(--ar); box-shadow: 0 30px 90px rgba(0,0,0,0.5); }
+  .st-pic { object-fit: cover; }
+}
+.st-img.on .st-frame, .st-img.out .st-frame { animation: stFloat 9s linear both; }
+.st-img.in .st-frame { animation: stWipe 1.25s cubic-bezier(.77,0,.18,1) both, stFloat 9s linear both; }
+@keyframes stFloat { from { transform: scale(1); } to { transform: scale(1.035); } }
 @keyframes stWipe { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
-.st-edge { position: absolute; top: 0; bottom: 0; left: 100%; width: 2px; z-index: 3; background: var(--champagne); opacity: 0; pointer-events: none; }
-.st-edge.run { animation: stEdge 1.25s cubic-bezier(.77,0,.18,1) both; }
+.st-frame::after { content: ""; position: absolute; top: 0; bottom: 0; left: 100%; width: 2px; background: var(--champagne); opacity: 0; }
+.st-img.in .st-frame::after { animation: stEdge 1.25s cubic-bezier(.77,0,.18,1) both; }
 @keyframes stEdge { 0% { left: 100%; opacity: 0.95; } 85% { opacity: 0.95; } 100% { left: 0%; opacity: 0; } }
+.st-edge { display: none; }
 .st-scrim { position: absolute; inset: 87px 0 0 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(ellipse 58% 78% at 0% 100%, rgba(13,11,7,0.94) 0%, rgba(13,11,7,0.74) 42%, rgba(13,11,7,0) 78%),
-    radial-gradient(ellipse 58% 80% at 100% 100%, rgba(13,11,7,0.86) 0%, rgba(13,11,7,0.50) 40%, rgba(13,11,7,0) 72%),
-    linear-gradient(to top, rgba(13,11,7,0.72) 0%, rgba(13,11,7,0.18) 30%, rgba(13,11,7,0) 52%); }
+    radial-gradient(ellipse 52% 62% at 0% 100%, rgba(13,11,7,0.92) 0%, rgba(13,11,7,0.66) 42%, rgba(13,11,7,0) 78%),
+    radial-gradient(ellipse 56% 66% at 100% 100%, rgba(13,11,7,0.88) 0%, rgba(13,11,7,0.52) 42%, rgba(13,11,7,0) 76%),
+    linear-gradient(to top, rgba(13,11,7,0.66) 0%, rgba(13,11,7,0.12) 26%, rgba(13,11,7,0) 40%); }
 .hero-stage .inner { max-width: none; margin: 0; padding: 0 32px 7vh max(32px, calc((100vw - var(--maxw)) / 2 + 32px)); }
-.hero-stage h1 { max-width: none; font-size: clamp(1.7rem, min(3.3vw, 6.4vh), 3.2rem); line-height: 1.14; text-shadow: 0 2px 20px rgba(13,11,7,0.7), 0 0 2px rgba(13,11,7,0.35); }
+.hero-stage h1 { max-width: none; font-size: clamp(1.5rem, min(2.7vw, 5.4vh), 2.7rem); line-height: 1.16; text-shadow: 0 2px 20px rgba(13,11,7,0.7), 0 0 2px rgba(13,11,7,0.35); }
 .hero-stage h1 span { display: block; white-space: nowrap; }
 .hero-stage .lede { max-width: 42ch; margin-top: 20px; text-wrap: balance; color: #E9E3D4; text-shadow: 0 1px 14px rgba(13,11,7,0.6); }
 .hero-stage .eyebrow { text-shadow: 0 1px 12px rgba(13,11,7,0.8); }
@@ -752,11 +760,6 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .hero-stage.paused .st-card.on .st-bar { animation-play-state: paused; }
 @keyframes stBar { from { width: 0; } to { width: 100%; } }
 .st-card:focus-visible .st-thumb, .st-cap:focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
-.st-img.p-parkcentral .st-pic { object-position: 30% 42%; }
-.st-img.p-greens .st-pic { object-position: 50% 19%; }
-.st-img.p-fortunefields .st-pic { object-position: 50% 42%; }
-.st-img.p-edengardens .st-pic { object-position: 50% 45%; }
-.st-img.p-dreamacres .st-pic { object-position: 50% 36%; }
 @media (max-width: 1180px) { .st-cap strong { font-size: 1.7rem; } .st-side { padding-right: 104px; } }
 /* short windows (a laptop with toolbars open): the statement steps back so the arch keeps the stage */
 @media (min-width: 901px) and (max-height: 720px) {
@@ -769,7 +772,9 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
   /* phones and small tablets: the stage on top, then the rail, then the statement */
   .hero-stage { display: flex; flex-direction: column; align-items: stretch; min-height: 0; padding: 87px 0 0; }
   .st-bg { order: 1; } .st-side { order: 2; } .hero-stage .inner { order: 3; }
-  .st-bg { position: relative; inset: auto; z-index: 0; height: clamp(250px, 74vw, 56vh); }
+  .st-bg { position: relative; inset: auto; z-index: 0; height: clamp(240px, 70vw, 54vh); }
+  .st-img { align-items: center; }
+  .st-frame { transform-origin: 50% 50%; }
   .st-scrim { display: none; }
   .st-side { align-items: stretch; gap: 14px; padding: 18px 20px 4px; justify-self: auto; }
   .st-now, .st-cap { justify-items: start; text-align: left; }
@@ -786,7 +791,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
   .hero-stage h1 { font-size: clamp(1.5rem, 7.2vw, 2.6rem); text-shadow: none; }
   .hero-stage .lede, .hero-stage .eyebrow { text-shadow: none; }
 }
-@media (prefers-reduced-motion: reduce) { .st-pic { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .st-frame, .st-amb { transform: none; } }
 
 /* ---------- Park Central: site photographs ---------- */
 .pc-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
