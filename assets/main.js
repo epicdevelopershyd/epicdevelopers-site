@@ -10,9 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // header turns solid after the hero
   var header = document.querySelector(".site-header");
-  if (header && !header.classList.contains("solid")) {
+  if (header) {
+    var pinned = header.classList.contains("solid");           // inner pages keep the solid look from the top
     var onScroll = function () {
-      header.classList.toggle("solid", window.scrollY > 60);
+      var down = window.scrollY > 60;
+      if (!pinned) header.classList.toggle("solid", down);
+      header.classList.toggle("slim", down);                     // every page: the bar slims once you scroll
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
