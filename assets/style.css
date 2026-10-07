@@ -705,7 +705,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .hero-stage::after { display: none; }
 .st-bg { position: absolute; inset: 87px 0 0 0; z-index: -2; overflow: hidden; background: var(--ink); }   /* starts below the fixed header, so no arch hides behind it */
 /* each project: a soft, out-of-focus wash of its own picture fills the stage, and the picture itself is shown whole, uncropped */
-.st-img { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease; display: grid; justify-items: center; align-items: start; container-type: size; }
+.st-img { position: absolute; inset: 0; opacity: 0; transition: opacity 1.1s ease; display: grid; justify-items: center; align-items: start; container-type: size; }
 .st-img.on, .st-img.out { opacity: 1; }
 .st-img.on { z-index: 2; }
 .st-img.out { z-index: 1; }
@@ -719,13 +719,13 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
   .st-frame { width: min(100cqw, calc(100cqh * var(--ar))); height: auto; aspect-ratio: var(--ar); box-shadow: 0 30px 90px rgba(0,0,0,0.5); }
   .st-pic { object-fit: cover; }
 }
-.st-img.on .st-frame, .st-img.out .st-frame { animation: stFloat 9s linear both; }
-.st-img.in .st-frame { animation: stWipe 1.25s cubic-bezier(.77,0,.18,1) both, stFloat 9s linear both; }
+/* the change of scene: the arch on stage softens out of focus and melts into the wash; the next one comes forward into focus.
+   (animation order matters: the slow drift takes over the scale once the picture has settled, so nothing jumps) */
+.st-img.on .st-frame { animation: stFocusIn 1.7s cubic-bezier(.22,.68,.18,1) both, stFloat 9s linear 1.7s forwards; }
+.st-img.out .st-frame { animation: stFocusIn 1.7s cubic-bezier(.22,.68,.18,1) both, stFloat 9s linear 1.7s forwards, stFocusOut 1.15s cubic-bezier(.4,0,.6,1) forwards; }
+@keyframes stFocusIn { from { opacity: 0; filter: blur(26px); transform: scale(1.06); } 55% { opacity: 1; } to { opacity: 1; filter: blur(0); transform: scale(1); } }
+@keyframes stFocusOut { from { opacity: 1; filter: blur(0); } to { opacity: 0; filter: blur(20px); } }
 @keyframes stFloat { from { transform: scale(1); } to { transform: scale(1.035); } }
-@keyframes stWipe { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
-.st-frame::after { content: ""; position: absolute; top: 0; bottom: 0; left: 100%; width: 2px; background: var(--champagne); opacity: 0; }
-.st-img.in .st-frame::after { animation: stEdge 1.25s cubic-bezier(.77,0,.18,1) both; }
-@keyframes stEdge { 0% { left: 100%; opacity: 0.95; } 85% { opacity: 0.95; } 100% { left: 0%; opacity: 0; } }
 .st-edge { display: none; }
 .st-scrim { position: absolute; inset: 87px 0 0 0; z-index: -1; pointer-events: none;
   background:
@@ -786,7 +786,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
   .hero-stage h1 { font-size: clamp(1.5rem, 7.2vw, 2.6rem); text-shadow: none; }
   .hero-stage .lede, .hero-stage .eyebrow { text-shadow: none; }
 }
-@media (prefers-reduced-motion: reduce) { .st-frame, .st-amb { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .st-img .st-frame, .st-amb { animation: none !important; transform: none; filter: none; } .st-amb { filter: blur(30px) brightness(0.5) saturate(1.2); } }
 
 /* ---------- Park Central: site photographs ---------- */
 .pc-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }

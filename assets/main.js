@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var caps = Array.prototype.slice.call(stage.querySelectorAll(".st-cap"));
     var cards = Array.prototype.slice.call(stage.querySelectorAll(".st-card"));
     var edge = stage.querySelector(".st-edge");
-    var n = imgs.length, k = 0, timer = null, busy = false, DWELL = 5600;
+    var n = imgs.length, k = 0, timer = null, busy = false, DWELL = 6200;
     var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     stage.style.setProperty("--dwell", DWELL + "ms");
     // the first picture ships with the page; the others arrive once the page itself has loaded
@@ -80,12 +80,12 @@ document.addEventListener("DOMContentLoaded", function () {
       busy = true;
       ready(i, function () {
         var prev = imgs[k], next = imgs[i];
-        prev.classList.remove("on", "in"); prev.classList.add("out");
+        prev.classList.remove("on"); prev.classList.add("out");
         next.classList.remove("out");
         if (still) { next.classList.add("on"); prev.classList.remove("out"); busy = false; }
         else {
-          next.classList.add("on", "in");
-          setTimeout(function () { prev.classList.remove("out"); next.classList.remove("in"); busy = false; }, 1300);
+          next.classList.add("on");
+          setTimeout(function () { prev.classList.remove("out"); busy = false; }, 1300);
         }
         k = i; mark(k);
       });
