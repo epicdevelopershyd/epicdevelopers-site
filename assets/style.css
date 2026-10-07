@@ -842,3 +842,8 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .page-hero .tag-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 12px; margin-bottom: 26px; }
 .page-hero .tag-row .plot-tag { margin-bottom: 0; }
 
+/* ---------- a line that introduces a pair of pictures ---------- */
+.pair-head { text-align: center; margin: 0 auto 38px; max-width: 60ch; }
+.pair-head h3 { font-family: "Fraunces", Georgia, serif; font-weight: 400; font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1.15; color: var(--ink); }
+.pair-head p { margin-top: 12px; color: var(--muted, #6B665A); font-size: 1rem; }
+
