@@ -361,6 +361,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
   var fig = document.querySelector(".plan-figure, figure#layout");
   if (!fig) return;
+  if (fig.hasAttribute("data-no-enlarge")) return;      // this plan is shown as it is: no "Tap to enlarge" button, no pop-up
   var img = fig.querySelector("img");
   if (!img) return;
 
