@@ -691,17 +691,68 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 /* small availability line under a stat value */
 .stat .sublabel { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-top: 4px; }
 
-/* ---------- photo hero (home): four-photo sequence, each with a slow drift ---------- */
-.hero .slide { animation: none; }
-.hero .slide.kb { animation: heroPhoto 9s linear both; }
-@keyframes heroPhoto { from { transform: var(--kb-from, scale(1)); } to { transform: var(--kb-to, scale(1.08)); } }
-@media (prefers-reduced-motion: reduce) { .hero .slide.kb { animation: none; } }
-/* Plot 72 photo: wide screens only, framed so the plot marker stands clear of the headline */
-.hero .slide.wide-only { background-position: 0% 50%; transform-origin: 0% 55%; transform: scale(1.62); --kb-from: scale(1.62); --kb-to: scale(1.66); }
-
 /* ---------- project tiles: the status tag and the text never collide ---------- */
 /* tag and text stack in flow, so a tile grows when space is short instead of the tag crowding the text;
    where there is room the layout is identical to the absolute-positioned original */
 .tile { display: flex; flex-direction: column; }
 .tile .status { position: static; align-self: flex-start; margin: 34px 32px 0; max-width: calc(100% - 64px); }
 .tile .inner { position: static; width: 100%; margin: auto auto 0; padding-top: 28px; }
+
+/* ---------- home hero: the wall of arches ----------
+   Five entrances, all in view: one large, four small. Every few seconds they change places.
+   Statement on the left, the wall on the right; on narrow screens the wall sits above the statement. */
+.hero-wall { display: grid; grid-template-columns: minmax(0, 46fr) minmax(0, 54fr); grid-template-rows: minmax(calc(100vh - 87px), auto); align-items: stretch; padding: 87px 0 0; }
+.hero-wall::after { display: none; }
+.hero-wall .inner { order: 1; align-self: center; max-width: none; margin: 0; padding: 40px 40px 48px max(32px, calc((100vw - var(--maxw)) / 2 + 32px)); container-type: inline-size; }
+.hero-wall h1 { max-width: none; font-size: clamp(1.7rem, 2.6vw, 2.5rem); line-height: 1.18; }
+@supports (font-size: 1cqw) { .hero-wall h1 { font-size: clamp(1.45rem, 8.05cqw, 3.1rem); } }   /* sized to its column, so each sentence holds one line */
+.hero-wall h1 span { display: block; white-space: nowrap; }
+.hero-wall .lede { max-width: 40ch; text-wrap: balance; }
+.wall { order: 2; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 57fr 21.5fr 21.5fr; gap: 4px; background: var(--ink); min-height: 0; }
+.wslot { position: relative; overflow: hidden; background: var(--ink-soft); min-height: 0; }
+.wslot-0 { grid-column: 1 / -1; }
+.wl { position: absolute; inset: 0; display: block; opacity: 0; pointer-events: none; transition: opacity 1.3s ease; color: #fff; text-decoration: none; }
+.wl.on { opacity: 1; pointer-events: auto; }
+.wimg { position: absolute; inset: 0; background-size: cover; background-position: 50% 50%; transform: scale(1); transition: transform 10s linear; }
+.wslot-0 .wl.on .wimg { transform: scale(1.06); }
+.wl::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(13,11,7,0.78), rgba(13,11,7,0)); }
+.wcap { position: absolute; left: 18px; right: 18px; bottom: 13px; z-index: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+.wcap b { font-weight: 500; font-size: 0.62rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--champagne); }
+.wcap i { font-style: normal; font-size: 0.8rem; letter-spacing: 0.02em; color: #fff; }
+.wslot-0 .wcap { left: 26px; bottom: 20px; }
+.wslot-0 .wcap b { font-size: 0.7rem; }
+.wslot-0 .wcap i { font-family: "Fraunces", Georgia, serif; font-size: 1.35rem; font-weight: 400; }
+.wnote { position: absolute; right: 10px; top: 9px; z-index: 1; font-size: 0.56rem; letter-spacing: 0.08em; font-style: italic; color: rgba(255,255,255,0.86); background: rgba(13,11,7,0.5); padding: 3px 8px; }
+.wl:focus-visible { outline: 2px solid var(--champagne); outline-offset: -4px; }
+/* where each picture is held, so the name on the arch stays in frame at every tile shape */
+.p-parkcentral .wimg { background-position: 27% 45%; }
+.p-greens .wimg { background-position: 50% 22%; }
+.p-fortunefields .wimg { background-position: 50% 45%; }
+.p-edengardens .wimg { background-position: 50% 50%; }
+.p-dreamacres .wimg { background-position: 50% 38%; }
+@media (max-width: 1023px) {
+  .hero-wall { display: block; min-height: 0; padding: 87px 0 0; }
+  .hero-wall .inner { padding: 34px 32px 44px; }
+  .hero-wall h1 { font-size: clamp(1.4rem, 6.3vw, 2.6rem); }
+  @supports (font-size: 1cqw) { .hero-wall h1 { font-size: clamp(1.4rem, 8.05cqw, 2.9rem); } }
+  .wall { grid-template-rows: none; gap: 3px; }
+  .wslot { aspect-ratio: 2 / 1; }
+  .wslot-0 { aspect-ratio: 16 / 9.4; }
+  .wcap { left: 11px; right: 8px; bottom: 8px; gap: 1px 8px; }
+  .wcap b { font-size: 0.5rem; letter-spacing: 0.18em; }
+  .wcap i { font-size: 0.68rem; }
+  .wslot:not(.wslot-0) .wn { display: none; }                 /* small tiles: the arch itself carries the name */
+  .wslot-0 .wcap { left: 16px; bottom: 14px; }
+  .wslot-0 .wcap b { font-size: 0.6rem; }
+  .wslot-0 .wcap i { font-size: 1.12rem; }
+  .wnote { font-size: 0.5rem; right: 6px; top: 6px; padding: 2px 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .wslot-0 .wl.on .wimg { transform: none; } }
+
+
+/* ---------- Park Central: site photographs ---------- */
+.pc-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pc-gallery figure { margin: 0; position: relative; overflow: hidden; background: var(--paper-deep); }
+.pc-gallery img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.pc-gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 34px 18px 13px; color: #fff; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; background: linear-gradient(to top, rgba(13,11,7,0.72), rgba(13,11,7,0)); }
+@media (max-width: 560px) { .pc-gallery { grid-template-columns: 1fr; } }

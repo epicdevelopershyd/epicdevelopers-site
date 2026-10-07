@@ -49,58 +49,41 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// hero photo sequence (dots optional)
+// home hero: the wall of arches. Five slots, five projects; every few seconds each project moves on one slot.
 document.addEventListener("DOMContentLoaded", function () {
-  var slides = document.querySelectorAll(".hero .slide");
-  var dotsWrap = document.querySelector(".hero-dots");
-  if (slides.length > 1) {
-    var idx = 0, timer, dots = [];
-    var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (dotsWrap) {
-      slides.forEach(function (_, i) {
-        var b = document.createElement("button");
-        if (i === 0) b.classList.add("on");
-        b.addEventListener("click", function () { go(i); restart(); });
-        dotsWrap.appendChild(b);
+  var wall = document.getElementById("arch-wall");
+  if (wall) {
+    var slots = Array.prototype.slice.call(wall.querySelectorAll(".wslot"));
+    var own = slots.map(function (s) { return s.querySelector(".wl"); });
+    var n = own.length;
+    // each slot gets a copy of every project (the page itself ships one per slot, so it reads fine without script)
+    slots.forEach(function (slot, si) {
+      own.forEach(function (layer, pi) {
+        if (pi === si) return;
+        var c = layer.cloneNode(true); c.classList.remove("on"); c.setAttribute("tabindex", "-1"); c.setAttribute("aria-hidden", "true");
+        slot.appendChild(c);
       });
-      dots = dotsWrap.querySelectorAll("button");
-    }
-    // a photo marked data-min is used only on screens at least that wide
-    function fits(s) { var m = s.getAttribute("data-min"); return !m || window.innerWidth >= parseInt(m, 10); }
-    // later photos load after the page itself, and a photo is never shown before it has arrived
-    function load() {
-      slides.forEach(function (s) {
-        var src = s.getAttribute("data-bg");
-        if (s.getAttribute("data-ready") || s.getAttribute("data-loading") || !fits(s)) return;
-        if (!src) { s.setAttribute("data-ready", "1"); return; }
-        s.setAttribute("data-loading", "1");
-        var im = new Image();
-        im.onload = function () { s.style.backgroundImage = "url('" + src + "')"; s.setAttribute("data-ready", "1"); };
-        im.src = src;
+    });
+    var k = 0, timer = null;
+    function show() {
+      slots.forEach(function (slot, si) {
+        var want = String((si + k) % n);
+        slot.querySelectorAll(".wl").forEach(function (l) {
+          var on = l.getAttribute("data-p") === want;
+          l.style.transitionDelay = (si * 0.14) + "s";
+          l.classList.toggle("on", on);
+          if (on) { l.removeAttribute("tabindex"); l.removeAttribute("aria-hidden"); } else { l.setAttribute("tabindex", "-1"); l.setAttribute("aria-hidden", "true"); }
+        });
       });
     }
-    if (document.readyState === "complete") load(); else window.addEventListener("load", load);
-    window.addEventListener("resize", function () { if (document.readyState === "complete") load(); });
-    function go(i) {
-      var n = i % slides.length;
-      if (n === idx) return;
-      slides[idx].classList.remove("on"); if (dots[idx]) dots[idx].classList.remove("on");
-      idx = n;
-      var s = slides[idx];
-      s.classList.remove("kb"); void s.offsetWidth; s.classList.add("kb");
-      s.classList.add("on"); if (dots[idx]) dots[idx].classList.add("on");
+    function start() { if (!timer) timer = setInterval(function () { k = (k + 1) % n; show(); }, 5600); }
+    function stop() { clearInterval(timer); timer = null; }
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      start();
+      wall.addEventListener("mouseenter", stop); wall.addEventListener("mouseleave", start);     // hold still while someone is choosing a tile
+      wall.addEventListener("focusin", stop); wall.addEventListener("focusout", start);
+      document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else start(); });
     }
-    // next photo that has arrived and suits this screen; if none yet, hold the current one
-    function next() {
-      for (var k = 1; k < slides.length; k++) {
-        var n = (idx + k) % slides.length;
-        if (slides[n].getAttribute("data-ready") && fits(slides[n])) return n;
-      }
-      return idx;
-    }
-    function tick() { go(next()); }
-    function restart() { clearInterval(timer); timer = setInterval(tick, 6500); }
-    if (!still) restart();
   }
 
   // finder bar

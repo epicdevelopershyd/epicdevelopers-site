@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=23">
+<link rel="stylesheet" href="/assets/style.css?v=24">
 <meta property="og:title" content="Epic Developers">
 <meta property="og:description" content="Premium developers of approved open plot layouts and select farm sites in Hyderabad since 2016. Now selling: Park Central at Dundigal and The Greens at Kadthal. Launching soon: Fortune Fields at Yacharam. Delivered and sold out: Eden Gardens at Mokila and Dream Acres at Dasarlapally.">
 <meta property="og:image" content="https://epicdevelopers.in/assets/img/share-arch.jpg">
@@ -34,16 +34,42 @@
   </div>
 </header>
 
-<section class="hero">
-  <div class="slides">
-    <div class="bg slide on kb" style="background-image:url('/assets/img/parkcentral-hero-1-gate.jpg'); background-position:45% 30%; transform-origin:45% 42%; --kb-from:scale(1); --kb-to:scale(1.08)"></div>
-    <div class="bg slide" data-bg="/assets/img/parkcentral-hero-2-avenue.jpg" style="background-position:55% 28%; transform-origin:55% 38%; --kb-from:scale(1.08); --kb-to:scale(1)"></div>
-    <div class="bg slide" data-bg="/assets/img/parkcentral-hero-3-road.jpg" style="background-position:52% 34%; transform-origin:52% 46%; --kb-from:scale(1); --kb-to:scale(1.08)"></div>
-    <div class="bg slide wide-only" data-min="1200" data-bg="/assets/img/parkcentral-hero-4-plot72.jpg"></div>
+<section class="hero hero-wall">
+  <div class="wall" id="arch-wall">
+    <div class="wslot wslot-0">
+      <a class="wl on p-parkcentral" href="/parkcentral/" data-p="0" aria-label="Park Central, Dundigal &mdash; Selling now">
+        <span class="wimg" style="background-image:url('/assets/img/arch-parkcentral.jpg')"></span>
+        <span class="wcap"><b>Selling now</b><i><span class="wn">Park Central, </span>Dundigal</i></span>
+      </a>
+    </div>
+    <div class="wslot wslot-1">
+      <a class="wl on p-greens" href="/the-greens/" data-p="1" aria-label="The Greens, Kadthal &mdash; Selling now">
+        <span class="wimg" style="background-image:url('/assets/img/arch-greens.jpg')"></span>
+        <span class="wcap"><b>Selling now</b><i><span class="wn">The Greens, </span>Kadthal</i></span><span class="wnote">Artist&rsquo;s impression</span>
+      </a>
+    </div>
+    <div class="wslot wslot-2">
+      <a class="wl on p-fortunefields" href="/#upcoming" data-p="2" aria-label="Fortune Fields, Yacharam &mdash; Launching soon">
+        <span class="wimg" style="background-image:url('/assets/img/arch-fortunefields.jpg')"></span>
+        <span class="wcap"><b>Launching soon</b><i><span class="wn">Fortune Fields, </span>Yacharam</i></span><span class="wnote">Artist&rsquo;s impression</span>
+      </a>
+    </div>
+    <div class="wslot wslot-3">
+      <a class="wl on p-edengardens" href="/edengardens/" data-p="3" aria-label="Eden Gardens, Mokila &mdash; Delivered">
+        <span class="wimg" style="background-image:url('/assets/img/arch-edengardens.jpg')"></span>
+        <span class="wcap"><b>Delivered</b><i><span class="wn">Eden Gardens, </span>Mokila</i></span>
+      </a>
+    </div>
+    <div class="wslot wslot-4">
+      <a class="wl on p-dreamacres" href="/dreamacres/" data-p="4" aria-label="Dream Acres, Dasarlapally &mdash; Delivered">
+        <span class="wimg" style="background-image:url('/assets/img/arch-dreamacres.jpg')"></span>
+        <span class="wcap"><b>Delivered</b><i><span class="wn">Dream Acres, </span>Dasarlapally</i></span>
+      </a>
+    </div>
   </div>
   <div class="inner">
     <span class="eyebrow">Epic Developers &middot; Hyderabad &middot; Since 2016</span>
-    <h1>Premium land. Thriving locations. Legacy addresses.</h1>
+    <h1><span>Premium land.</span> <span>Thriving locations.</span> <span>Legacy addresses.</span></h1>
     <p class="lede">Plotted developments and farm properties planned meticulously and delivered with obsessive attention to detail.</p>
   </div>
 </section>
@@ -213,6 +239,6 @@
   <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M16 3C9.4 3 4 8.3 4 14.9c0 2.6.8 5 2.3 7L4 29l7.3-2.3c1.9 1 4 1.6 6.2 1.6h.5c6.6 0 12-5.3 12-11.9C30 8.3 24.6 3 16 3zm7 16.9c-.3.8-1.7 1.6-2.4 1.7-.6.1-1.4.2-2.3-.1-.5-.2-1.2-.4-2.1-.8-3.7-1.6-6.1-5.3-6.3-5.6-.2-.2-1.5-2-1.5-3.8s1-2.7 1.3-3.1c.3-.3.7-.4 1-.4h.7c.2 0 .5-.1.8.6.3.8 1.1 2.7 1.2 2.9.1.2.2.4 0 .7-.1.2-.2.4-.4.6l-.6.7c-.2.2-.4.4-.2.8.2.3 1 1.6 2.1 2.6 1.4 1.3 2.6 1.7 3 1.9.4.2.6.1.8-.1.2-.2 1-1.1 1.2-1.5.3-.4.5-.3.9-.2.4.1 2.2 1.1 2.6 1.3.4.2.6.3.7.4.1.3.1 1-.2 1.8z"/></svg>
 </button>
 
-<script src="/assets/main.js?v=22"></script>
+<script src="/assets/main.js?v=24"></script>
 </body>
 </html>
