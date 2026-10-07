@@ -698,57 +698,95 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .tile .status { position: static; align-self: flex-start; margin: 34px 32px 0; max-width: calc(100% - 64px); }
 .tile .inner { position: static; width: 100%; margin: auto auto 0; padding-top: 28px; }
 
-/* ---------- home hero: the wall of arches ----------
-   Five entrances, all in view: one large, four small. Every few seconds they change places.
-   Statement on the left, the wall on the right; on narrow screens the wall sits above the statement. */
-.hero-wall { display: grid; grid-template-columns: minmax(0, 46fr) minmax(0, 54fr); grid-template-rows: minmax(calc(100vh - 87px), auto); align-items: stretch; padding: 87px 0 0; }
-.hero-wall::after { display: none; }
-.hero-wall .inner { order: 1; align-self: center; max-width: none; margin: 0; padding: 40px 40px 48px max(32px, calc((100vw - var(--maxw)) / 2 + 32px)); container-type: inline-size; }
-.hero-wall h1 { max-width: none; font-size: clamp(1.7rem, 2.6vw, 2.5rem); line-height: 1.18; }
-@supports (font-size: 1cqw) { .hero-wall h1 { font-size: clamp(1.45rem, 8.05cqw, 3.1rem); } }   /* sized to its column, so each sentence holds one line */
-.hero-wall h1 span { display: block; white-space: nowrap; }
-.hero-wall .lede { max-width: 40ch; text-wrap: balance; }
-.wall { order: 2; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 57fr 21.5fr 21.5fr; gap: 4px; background: var(--ink); min-height: 0; }
-.wslot { position: relative; overflow: hidden; background: var(--ink-soft); min-height: 0; }
-.wslot-0 { grid-column: 1 / -1; }
-.wl { position: absolute; inset: 0; display: block; opacity: 0; pointer-events: none; transition: opacity 1.3s ease; color: #fff; text-decoration: none; }
-.wl.on { opacity: 1; pointer-events: auto; }
-.wimg { position: absolute; inset: 0; background-size: cover; background-position: 50% 50%; transform: scale(1); transition: transform 10s linear; }
-.wslot-0 .wl.on .wimg { transform: scale(1.06); }
-.wl::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgba(13,11,7,0.78), rgba(13,11,7,0)); }
-.wcap { position: absolute; left: 18px; right: 18px; bottom: 13px; z-index: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
-.wcap b { font-weight: 500; font-size: 0.62rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--champagne); }
-.wcap i { font-style: normal; font-size: 0.8rem; letter-spacing: 0.02em; color: #fff; }
-.wslot-0 .wcap { left: 26px; bottom: 20px; }
-.wslot-0 .wcap b { font-size: 0.7rem; }
-.wslot-0 .wcap i { font-family: "Fraunces", Georgia, serif; font-size: 1.35rem; font-weight: 400; }
-.wnote { flex-basis: 100%; font-size: 0.5rem; letter-spacing: 0.06em; line-height: 1.5; color: rgba(255,255,255,0.72); }   /* a footnote under the caption, on the dark of the tile */
-.wl:focus-visible { outline: 2px solid var(--champagne); outline-offset: -4px; }
-/* where each picture is held, so the name on the arch stays in frame at every tile shape */
-.p-parkcentral .wimg { background-position: 27% 45%; }
-.p-greens .wimg { background-position: 50% 22%; }
-.p-fortunefields .wimg { background-position: 50% 45%; }
-.p-edengardens .wimg { background-position: 50% 50%; }
-.p-dreamacres .wimg { background-position: 50% 38%; }
-@media (max-width: 1023px) {
-  .hero-wall { display: block; min-height: 0; padding: 87px 0 0; }
-  .hero-wall .inner { padding: 34px 32px 44px; }
-  .hero-wall h1 { font-size: clamp(1.4rem, 6.3vw, 2.6rem); }
-  @supports (font-size: 1cqw) { .hero-wall h1 { font-size: clamp(1.4rem, 8.05cqw, 2.9rem); } }
-  .wall { grid-template-rows: none; gap: 3px; }
-  .wslot { aspect-ratio: 2 / 1; }
-  .wslot-0 { aspect-ratio: 16 / 9.4; }
-  .wcap { left: 11px; right: 8px; bottom: 8px; gap: 1px 8px; }
-  .wcap b { font-size: 0.5rem; letter-spacing: 0.18em; }
-  .wcap i { font-size: 0.68rem; }
-  .wslot:not(.wslot-0) .wn { display: none; }                 /* small tiles: the arch itself carries the name */
-  .wslot-0 .wcap { left: 16px; bottom: 14px; }
-  .wslot-0 .wcap b { font-size: 0.6rem; }
-  .wslot-0 .wcap i { font-size: 1.12rem; }
-  .wnote { font-size: 0.44rem; }
+/* ---------- home hero: the stage ----------
+   One entrance at a time fills the screen and never sits still: it drifts forward, and the next one sweeps in
+   behind a thin gold line. All five stay in view on a rail; the rail shows whose turn it is and lets you choose. */
+.hero-stage { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: minmax(calc(100vh - 87px), auto); align-items: end; padding: 87px 0 0; min-height: 100vh; overflow: hidden; }
+.hero-stage::after { display: none; }
+.st-bg { position: absolute; inset: 87px 0 0 0; z-index: -2; overflow: hidden; background: var(--ink); }   /* starts below the fixed header, so no arch hides behind it */
+.st-img { position: absolute; inset: -1.5%; opacity: 0; }
+.st-img.on, .st-img.out { opacity: 1; }
+.st-img.on { z-index: 2; }
+.st-img.out { z-index: 1; }
+.st-pic { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: scale(1.03); will-change: transform; }
+.st-pic:not([src]) { visibility: hidden; }
+.st-img.on .st-pic, .st-img.out .st-pic { animation: stPush 9s linear both; }
+.st-img.in { animation: stWipe 1.25s cubic-bezier(.77,0,.18,1) both; }
+.st-img.in .st-pic { animation: stEnter 1.25s cubic-bezier(.77,0,.18,1) both, stPush 9s linear 1.25s forwards; }
+@keyframes stPush { from { transform: scale(1.03) translate3d(0,0,0); } to { transform: scale(1.12) translate3d(-0.8%, -0.6%, 0); } }
+@keyframes stEnter { from { transform: scale(1.12) translate3d(4%,0,0); } to { transform: scale(1.03) translate3d(0,0,0); } }
+@keyframes stWipe { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+.st-edge { position: absolute; top: 0; bottom: 0; left: 100%; width: 2px; z-index: 3; background: var(--champagne); opacity: 0; pointer-events: none; }
+.st-edge.run { animation: stEdge 1.25s cubic-bezier(.77,0,.18,1) both; }
+@keyframes stEdge { 0% { left: 100%; opacity: 0.95; } 85% { opacity: 0.95; } 100% { left: 0%; opacity: 0; } }
+.st-scrim { position: absolute; inset: 87px 0 0 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 58% 78% at 0% 100%, rgba(13,11,7,0.94) 0%, rgba(13,11,7,0.74) 42%, rgba(13,11,7,0) 78%),
+    radial-gradient(ellipse 58% 80% at 100% 100%, rgba(13,11,7,0.86) 0%, rgba(13,11,7,0.50) 40%, rgba(13,11,7,0) 72%),
+    linear-gradient(to top, rgba(13,11,7,0.72) 0%, rgba(13,11,7,0.18) 30%, rgba(13,11,7,0) 52%); }
+.hero-stage .inner { max-width: none; margin: 0; padding: 0 32px 7vh max(32px, calc((100vw - var(--maxw)) / 2 + 32px)); }
+.hero-stage h1 { max-width: none; font-size: clamp(1.7rem, min(3.3vw, 6.4vh), 3.2rem); line-height: 1.14; text-shadow: 0 2px 20px rgba(13,11,7,0.7), 0 0 2px rgba(13,11,7,0.35); }
+.hero-stage h1 span { display: block; white-space: nowrap; }
+.hero-stage .lede { max-width: 42ch; margin-top: 20px; text-wrap: balance; color: #E9E3D4; text-shadow: 0 1px 14px rgba(13,11,7,0.6); }
+.hero-stage .eyebrow { text-shadow: 0 1px 12px rgba(13,11,7,0.8); }
+/* right-hand side: who is on stage, and the rail of all five */
+.st-side { justify-self: end; display: flex; flex-direction: column; align-items: flex-end; gap: 22px; padding: 0 118px 7vh 32px; color: #fff; }
+.st-now { display: grid; justify-items: end; }
+.st-cap { grid-area: 1 / 1; display: grid; justify-items: end; gap: 3px; text-align: right; color: #fff; text-decoration: none; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity 0.6s ease, transform 0.8s cubic-bezier(.2,.7,.2,1); }
+.st-cap.on { opacity: 1; transform: none; pointer-events: auto; transition-delay: 0.45s; }
+.st-cap b { font-weight: 600; font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--champagne); text-shadow: 0 1px 12px rgba(13,11,7,0.85); }
+.st-cap strong { font-family: "Fraunces", Georgia, serif; font-weight: 400; font-size: clamp(1.6rem, 2.5vw, 2.5rem); line-height: 1.1; text-shadow: 0 2px 22px rgba(13,11,7,0.5); }
+.st-cap i { font-style: normal; font-size: 0.9rem; letter-spacing: 0.06em; color: #E9E3D4; }
+.st-cap small { font-size: 0.52rem; letter-spacing: 0.06em; color: rgba(255,255,255,0.72); }
+.st-cap .go { margin-top: 10px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; border-bottom: 1px solid var(--gold); padding-bottom: 5px; }
+.st-cap:hover .go { color: var(--champagne); }
+.st-rail { display: flex; gap: 10px; }
+.st-card { position: relative; width: clamp(88px, 8.6vw, 136px); padding: 0; border: 0; background: none; color: #fff; cursor: pointer; text-align: left; font: inherit; }
+.st-thumb { display: block; width: 100%; aspect-ratio: 16 / 9; background-size: cover; background-position: 50% 35%; opacity: 0.62; filter: saturate(0.8); transition: opacity 0.4s, filter 0.4s, transform 0.5s cubic-bezier(.2,.7,.2,1); outline: 1px solid rgba(255,255,255,0.22); outline-offset: -1px; }
+.st-card:hover .st-thumb, .st-card.on .st-thumb { opacity: 1; filter: none; }
+.st-card.on .st-thumb { transform: translateY(-5px); outline-color: var(--champagne); }
+.st-card em { display: block; margin-top: 8px; font-style: normal; font-size: 0.56rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-card.on em { color: var(--champagne); }
+.st-bar { position: absolute; left: 0; top: -5px; height: 2px; width: 0; background: var(--champagne); }
+.st-card.on .st-bar { animation: stBar var(--dwell, 5.6s) linear both; }
+.hero-stage.paused .st-card.on .st-bar { animation-play-state: paused; }
+@keyframes stBar { from { width: 0; } to { width: 100%; } }
+.st-card:focus-visible .st-thumb, .st-cap:focus-visible { outline: 2px solid var(--champagne); outline-offset: 3px; }
+.st-img.p-parkcentral .st-pic { object-position: 30% 42%; }
+.st-img.p-greens .st-pic { object-position: 50% 19%; }
+.st-img.p-fortunefields .st-pic { object-position: 50% 42%; }
+.st-img.p-edengardens .st-pic { object-position: 50% 45%; }
+.st-img.p-dreamacres .st-pic { object-position: 50% 36%; }
+@media (max-width: 1180px) { .st-cap strong { font-size: 1.7rem; } .st-side { padding-right: 104px; } }
+/* short windows (a laptop with toolbars open): the statement steps back so the arch keeps the stage */
+@media (min-width: 901px) and (max-height: 720px) {
+  .hero-stage .lede { display: none; }
+  .hero-stage .inner, .st-side { padding-bottom: 5vh; }
+  .st-side { gap: 14px; }
+  .st-cap .go { margin-top: 6px; }
 }
-@media (prefers-reduced-motion: reduce) { .wslot-0 .wl.on .wimg { transform: none; } }
-
+@media (max-width: 900px) {
+  /* phones and small tablets: the stage on top, then the rail, then the statement */
+  .hero-stage { display: flex; flex-direction: column; align-items: stretch; min-height: 0; padding: 87px 0 0; }
+  .st-bg { order: 1; } .st-side { order: 2; } .hero-stage .inner { order: 3; }
+  .st-bg { position: relative; inset: auto; z-index: 0; height: clamp(250px, 74vw, 56vh); }
+  .st-scrim { display: none; }
+  .st-side { align-items: stretch; gap: 14px; padding: 18px 20px 4px; justify-self: auto; }
+  .st-now, .st-cap { justify-items: start; text-align: left; }
+  .st-cap { grid-template-columns: auto 1fr; align-items: baseline; column-gap: 12px; }
+  .st-cap strong { grid-column: 1 / -1; grid-row: 1; font-size: 1.7rem; }
+  .st-cap b { grid-row: 2; } .st-cap i { grid-row: 2; }
+  .st-cap small { grid-column: 1 / -1; }
+  .st-cap .go { display: none; }
+  .st-rail { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding-top: 6px; }
+  .st-card { width: auto; }
+  .st-card em { font-size: 0.46rem; letter-spacing: 0.1em; white-space: normal; line-height: 1.35; margin-top: 6px; }
+  .st-card.on .st-thumb { transform: none; }
+  .hero-stage .inner { padding: 30px 20px 44px; width: auto; }
+  .hero-stage h1 { font-size: clamp(1.5rem, 7.2vw, 2.6rem); text-shadow: none; }
+  .hero-stage .lede, .hero-stage .eyebrow { text-shadow: none; }
+}
+@media (prefers-reduced-motion: reduce) { .st-pic { transform: none; } }
 
 /* ---------- Park Central: site photographs ---------- */
 .pc-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -756,3 +794,12 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
 .pc-gallery img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
 .pc-gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 34px 18px 13px; color: #fff; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; background: linear-gradient(to top, rgba(13,11,7,0.72), rgba(13,11,7,0)); }
 @media (max-width: 560px) { .pc-gallery { grid-template-columns: 1fr; } }
+
+/* ---------- header: the menu holds one line on small laptops and tablets held sideways ---------- */
+.nav a { white-space: nowrap; }
+@media (min-width: 901px) and (max-width: 1180px) {
+  .site-header .bar { gap: 16px; padding-left: 24px; padding-right: 24px; }
+  .nav { gap: 20px; }
+  .nav a { letter-spacing: 0.14em; }
+}
+

@@ -49,41 +49,69 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// home hero: the wall of arches. Five slots, five projects; every few seconds each project moves on one slot.
+// home hero: the stage. One entrance fills the screen, the next sweeps in; a rail shows all five and whose turn it is.
 document.addEventListener("DOMContentLoaded", function () {
-  var wall = document.getElementById("arch-wall");
-  if (wall) {
-    var slots = Array.prototype.slice.call(wall.querySelectorAll(".wslot"));
-    var own = slots.map(function (s) { return s.querySelector(".wl"); });
-    var n = own.length;
-    // each slot gets a copy of every project (the page itself ships one per slot, so it reads fine without script)
-    slots.forEach(function (slot, si) {
-      own.forEach(function (layer, pi) {
-        if (pi === si) return;
-        var c = layer.cloneNode(true); c.classList.remove("on"); c.setAttribute("tabindex", "-1"); c.setAttribute("aria-hidden", "true");
-        slot.appendChild(c);
-      });
-    });
-    var k = 0, timer = null;
-    function show() {
-      slots.forEach(function (slot, si) {
-        var want = String((si + k) % n);
-        slot.querySelectorAll(".wl").forEach(function (l) {
-          var on = l.getAttribute("data-p") === want;
-          l.style.transitionDelay = (si * 0.14) + "s";
-          l.classList.toggle("on", on);
-          if (on) { l.removeAttribute("tabindex"); l.removeAttribute("aria-hidden"); } else { l.setAttribute("tabindex", "-1"); l.setAttribute("aria-hidden", "true"); }
-        });
+  var stage = document.getElementById("stage");
+  if (stage) {
+    var imgs = Array.prototype.slice.call(stage.querySelectorAll(".st-img"));
+    var caps = Array.prototype.slice.call(stage.querySelectorAll(".st-cap"));
+    var cards = Array.prototype.slice.call(stage.querySelectorAll(".st-card"));
+    var edge = stage.querySelector(".st-edge");
+    var n = imgs.length, k = 0, timer = null, busy = false, DWELL = 5600;
+    var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    stage.style.setProperty("--dwell", DWELL + "ms");
+    // the first picture ships with the page; the others arrive once the page itself has loaded
+    function ready(i, then) {
+      var pic = imgs[i].firstElementChild, src = pic.getAttribute("data-src"), done = false;
+      function fin() { if (!done) { done = true; if (then) then(); } }
+      if (src) { pic.removeAttribute("data-src"); pic.src = src; }
+      // wait until the picture is fully decoded, so a sweep never reveals a half-drawn image
+      if (pic.decode) pic.decode().then(fin, fin); else if (pic.complete) fin(); else { pic.onload = fin; pic.onerror = fin; }
+    }
+    function preloadAll() { imgs.forEach(function (_, i) { ready(i); }); }
+    if (document.readyState === "complete") preloadAll(); else window.addEventListener("load", preloadAll);
+    function mark(i) {
+      caps.forEach(function (c, x) { c.classList.toggle("on", x === i); if (x === i) c.removeAttribute("tabindex"); else c.setAttribute("tabindex", "-1"); });
+      cards.forEach(function (c, x) { c.classList.remove("on"); if (x === i) { void c.offsetWidth; c.classList.add("on"); } c.setAttribute("aria-pressed", x === i ? "true" : "false"); });
+    }
+    function go(i) {
+      i = (i + n) % n;
+      if (i === k || busy) return;
+      busy = true;
+      ready(i, function () {
+        var prev = imgs[k], next = imgs[i];
+        prev.classList.remove("on", "in"); prev.classList.add("out");
+        next.classList.remove("out");
+        if (still) { next.classList.add("on"); prev.classList.remove("out"); busy = false; }
+        else {
+          next.classList.add("on", "in");
+          if (edge) { edge.classList.remove("run"); void edge.offsetWidth; edge.classList.add("run"); }
+          setTimeout(function () { prev.classList.remove("out"); next.classList.remove("in"); busy = false; }, 1300);
+        }
+        k = i; mark(k);
       });
     }
-    function start() { if (!timer) timer = setInterval(function () { k = (k + 1) % n; show(); }, 5600); }
-    function stop() { clearInterval(timer); timer = null; }
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      start();
-      wall.addEventListener("mouseenter", stop); wall.addEventListener("mouseleave", start);     // hold still while someone is choosing a tile
-      wall.addEventListener("focusin", stop); wall.addEventListener("focusout", start);
-      document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else start(); });
+    function start() { if (!timer && !still) { timer = setInterval(function () { go(k + 1); }, DWELL); stage.classList.remove("paused"); } }
+    function stop() { clearInterval(timer); timer = null; stage.classList.add("paused"); }
+    cards.forEach(function (c, i) { c.addEventListener("click", function () { stop(); go(i); start(); }); });
+    var side = stage.querySelector(".st-side");
+    if (side) { side.addEventListener("mouseenter", stop); side.addEventListener("mouseleave", start); side.addEventListener("focusin", stop); side.addEventListener("focusout", start); }
+    document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else start(); });
+    // the picture leans a little toward the pointer
+    var bg = stage.querySelector(".st-bg");
+    if (bg && !still && window.matchMedia("(hover: hover) and (min-width: 901px)").matches) {
+      stage.addEventListener("mousemove", function (e) {
+        var r = stage.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        bg.style.transform = "translate3d(" + (-x * 14).toFixed(1) + "px," + (-y * 9).toFixed(1) + "px,0)";
+      });
+      bg.style.transition = "transform 0.9s cubic-bezier(.2,.7,.2,1)";
+      stage.addEventListener("mouseleave", function () { bg.style.transform = ""; });
     }
+    mark(0); start();
+    // swipe on touch screens
+    var sx = null;
+    bg.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    bg.addEventListener("touchend", function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) { stop(); go(k + (dx < 0 ? 1 : -1)); start(); } }, { passive: true });
   }
 
   // finder bar
