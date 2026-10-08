@@ -28,10 +28,11 @@ var EpicLead = (function () {
   var now = fromUrl();
   if (now) { src = now; try { window.sessionStorage.setItem(KEY, src); } catch (e) {} }
 
-  function ref() {
+  function where() {
     var page = document.body ? (document.body.getAttribute("data-ref") || "") : "";
-    return "(Ref: " + (src || "Website") + (page ? " " + page : "") + ")";
+    return (src || "Website") + (page ? " " + page : "");
   }
+  function ref() { return "(Ref: " + where() + ")"; }
   // add the reference to a pre-filled message
   function tag(msg) { return msg ? msg + "\n" + ref() : msg; }
   // add the reference to a wa.me link that already carries a message
@@ -72,7 +73,21 @@ var EpicLead = (function () {
     else if (/\.pdf(\?|$)/i.test(href)) track("download", (href.split("/").pop() || "").split("?")[0]);
   }, true);
 
-  return { tag: tag, track: track, ref: ref };
+  // Enquiries are saved to a Google Sheet through this link. While it is empty nothing is saved
+  // and the forms hand the visitor over to WhatsApp instead.
+  var ENQUIRY_URL = "";
+  function save(data) {
+    if (!ENQUIRY_URL) return Promise.reject(new Error("no sheet"));
+    data.source = where();
+    data.page = window.location.pathname;
+    return fetch(ENQUIRY_URL, {
+      method: "POST", mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(data)
+    });
+  }
+
+  return { tag: tag, track: track, ref: ref, save: save, saves: !!ENQUIRY_URL };
 })();
 
 // phone action bar: appears once the first screen has been scrolled past
@@ -135,6 +150,8 @@ document.addEventListener("DOMContentLoaded", function () {
         "Property: " + (f.get("property") || "") + "\n" +
         "Message: " + (f.get("message") || "");
       EpicLead.track("form", "contact");
+      EpicLead.save({ project: f.get("property") || "", name: f.get("name") || "", mobile: f.get("mobile") || "",
+        email: f.get("email") || "", message: f.get("message") || "", form: "contact" }).catch(function () {});
       window.open("https://wa.me/919177681133?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
     });
   }
@@ -527,4 +544,65 @@ document.addEventListener("DOMContentLoaded", function () {
   if (img.complete) sync(); else img.addEventListener("load", sync);
   window.addEventListener("resize", sync);
   setTimeout(sync, 300);
+});
+
+
+// ---------- call-back form (project pages) ----------
+document.addEventListener("DOMContentLoaded", function () {
+  var forms = document.querySelectorAll("form.cb-form");
+  if (!forms.length) return;
+  var NUMBER = "919177681133";
+
+  forms.forEach(function (form) {
+    var box = form.parentNode;
+    var err = box.querySelector(".cb-err"), note = box.querySelector(".cb-note"), done = box.querySelector(".cb-done");
+    var btn = form.querySelector("button[type=submit]"), label = btn.textContent;
+    var project = form.getAttribute("data-project") || "", place = form.getAttribute("data-place") || "";
+
+    function finish(name, mobile, viaWhatsApp) {
+      form.hidden = true; err.hidden = true; note.hidden = true;
+      var head = box.querySelector(".cb-head"); if (head) head.hidden = true;
+      done.querySelector(".cb-done-title").textContent = "Thank you, " + name + ".";
+      var text = done.querySelector(".cb-done-text");
+      if (viaWhatsApp) {
+        text.textContent = "WhatsApp has opened with your details. Press send there and we will call you on " + mobile + ".";
+      } else {
+        text.textContent = "We will call you on " + mobile + " shortly. ";
+        var a = document.createElement("a");
+        a.href = "https://wa.me/" + NUMBER + "?text=" + encodeURIComponent("Hello Epic Developers, I have just asked for a call back about " + project + ".");
+        a.target = "_blank"; a.rel = "noopener"; a.setAttribute("data-lead", "after-form");
+        a.textContent = "Or message us on WhatsApp now.";
+        text.appendChild(a);
+      }
+      done.hidden = false;
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (btn.disabled) return;
+      var name = (form.elements.name.value || "").replace(/\s+/g, " ").trim();
+      var digits = (form.elements.mobile.value || "").replace(/\D/g, "");
+      if (digits.length === 12 && digits.indexOf("91") === 0) digits = digits.slice(2);
+      if (digits.length === 11 && digits.charAt(0) === "0") digits = digits.slice(1);
+      if (name.length < 2 || !/^[6-9]\d{9}$/.test(digits)) { err.hidden = false; return; }
+      err.hidden = true;
+      if (form.elements.company.value) { finish(name, digits, false); return; }   // filled only by robots
+
+      var mobile = digits.slice(0, 5) + " " + digits.slice(5);
+      EpicLead.track("form", "callback");
+
+      function handOver() {
+        var msg = "Hello Epic Developers, please call me back about " + project + (place ? ", " + place : "") + ".\n" +
+                  "Name: " + name + "\nMobile: " + digits;
+        window.open("https://wa.me/" + NUMBER + "?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
+        finish(name, mobile, true);
+      }
+      if (!EpicLead.saves) { handOver(); return; }
+
+      btn.disabled = true; btn.textContent = "Sending";
+      EpicLead.save({ project: project, name: name, mobile: digits, form: "callback" })
+        .then(function () { finish(name, mobile, false); })
+        .catch(function () { btn.disabled = false; btn.textContent = label; handOver(); });
+    });
+  });
 });
