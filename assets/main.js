@@ -1,3 +1,90 @@
+// ---------- enquiry counting ----------
+// Every WhatsApp enquiry carries a short reference saying where the visitor came from
+// (Facebook, Google, or the website itself), so each lead can be counted in the chat.
+// Clicks are also reported to the Meta Pixel when a Pixel ID is set below.
+var EpicLead = (function () {
+  var PIXEL_ID = "";                       // Meta Pixel ID. Empty keeps the pixel switched off.
+  var KEY = "epic_src";
+
+  function fromUrl() {
+    var q;
+    try { q = new URLSearchParams(window.location.search); } catch (e) { return ""; }
+    var us = (q.get("utm_source") || "").toLowerCase();
+    var camp = (q.get("utm_campaign") || "").replace(/[^\w\- ]/g, "").slice(0, 24);
+    var name = "";
+    if (q.get("fbclid") || /^(fb|facebook|ig|instagram|meta)$/.test(us)) name = "Facebook";
+    else if (q.get("gclid") || us === "google") name = "Google ad";
+    else if (us) name = us.replace(/[^\w\- ]/g, "").slice(0, 20);
+    if (!name) {
+      var r = document.referrer || "";
+      if (/google\./i.test(r)) name = "Google";
+      else if (/facebook\.|instagram\./i.test(r)) name = "Facebook";
+    }
+    return name ? name + (camp ? " " + camp : "") : "";
+  }
+
+  var src = "";
+  try { src = window.sessionStorage.getItem(KEY) || ""; } catch (e) {}
+  var now = fromUrl();
+  if (now) { src = now; try { window.sessionStorage.setItem(KEY, src); } catch (e) {} }
+
+  function ref() {
+    var page = document.body ? (document.body.getAttribute("data-ref") || "") : "";
+    return "(Ref: " + (src || "Website") + (page ? " " + page : "") + ")";
+  }
+  // add the reference to a pre-filled message
+  function tag(msg) { return msg ? msg + "\n" + ref() : msg; }
+  // add the reference to a wa.me link that already carries a message
+  function tagUrl(url) {
+    var i = url.indexOf("?text=");
+    if (i < 0) return url;
+    var msg;
+    try { msg = decodeURIComponent(url.slice(i + 6)); } catch (e) { return url; }
+    if (msg.indexOf("(Ref: ") >= 0) return url;
+    return url.slice(0, i + 6) + encodeURIComponent(tag(msg));
+  }
+  function track(kind, where) {
+    try {
+      var proj = document.body.getAttribute("data-project") || "Epic Developers";
+      if (window.fbq) window.fbq("track", kind === "download" ? "ViewContent" : (kind === "form" ? "Lead" : "Contact"),
+        { content_name: kind + (where ? ":" + where : ""), content_category: proj });
+      if (window.gtag) window.gtag("event", kind + "_click", { place: where || "", project: proj });
+    } catch (e) {}
+  }
+
+  if (PIXEL_ID) {
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = "2.0"; n.queue = [];
+      t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+    window.fbq("init", PIXEL_ID);
+    window.fbq("track", "PageView");
+  }
+
+  // every WhatsApp link, phone link and document on the page
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+    if (!a) return;
+    var href = a.getAttribute("href") || "", where = a.getAttribute("data-lead") || "";
+    if (href.indexOf("wa.me/") >= 0) { a.setAttribute("href", tagUrl(href)); track("whatsapp", where || "link"); }
+    else if (href.indexOf("tel:") === 0) track("call", where || "link");
+    else if (/\.pdf(\?|$)/i.test(href)) track("download", (href.split("/").pop() || "").split("?")[0]);
+  }, true);
+
+  return { tag: tag, track: track, ref: ref };
+})();
+
+// phone action bar: appears once the first screen has been scrolled past
+document.addEventListener("DOMContentLoaded", function () {
+  var bar = document.getElementById("lead-bar");
+  if (!bar) return;
+  document.body.classList.add("has-lead-bar");
+  var show = function () { bar.classList.toggle("on", window.scrollY > 420); };
+  window.addEventListener("scroll", show, { passive: true });
+  show();
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   var toggle = document.querySelector(".nav-toggle");
   var nav = document.querySelector(".nav");
@@ -47,7 +134,8 @@ document.addEventListener("DOMContentLoaded", function () {
         "Email: " + (f.get("email") || "") + "\n" +
         "Property: " + (f.get("property") || "") + "\n" +
         "Message: " + (f.get("message") || "");
-      window.open("https://wa.me/919177681133?text=" + encodeURIComponent(msg), "_blank");
+      EpicLead.track("form", "contact");
+      window.open("https://wa.me/919177681133?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
     });
   }
 });
@@ -185,8 +273,9 @@ document.addEventListener("DOMContentLoaded", function () {
     fresh.addEventListener("click", function () {
       var proj = document.querySelector("#dd-project .dd-btn").dataset.value;
       if (proj === "ff") {
-        window.open("https://wa.me/919177681133?text=" + encodeURIComponent(
-          "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam, Future City. Please share details."), "_blank");
+        EpicLead.track("whatsapp", "finder");
+        window.open("https://wa.me/919177681133?text=" + encodeURIComponent(EpicLead.tag(
+          "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam, Future City. Please share details.")), "_blank");
       } else {
         // land directly on the project's layout plan (availability view)
         window.location.href = proj + "#layout";
@@ -273,7 +362,8 @@ document.addEventListener("DOMContentLoaded", function () {
       "Document: " + pendingTitle + "\n" +
       "Name: " + name + "\n" +
       "Mobile: " + mob;
-    window.open("https://wa.me/" + LEAD_NUMBER + "?text=" + encodeURIComponent(msg), "_blank");
+    EpicLead.track("form", "download");
+    window.open("https://wa.me/" + LEAD_NUMBER + "?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
 
     // open the actual document
     var docUrl = pendingDoc;
@@ -350,7 +440,8 @@ document.addEventListener("DOMContentLoaded", function () {
   menu.querySelectorAll(".wa-opt").forEach(function (b) {
     b.addEventListener("click", function () {
       var o = opts[+b.getAttribute("data-i")];
-      var url = "https://wa.me/" + NUMBER + (o.msg ? "?text=" + encodeURIComponent(o.msg) : "");
+      var url = "https://wa.me/" + NUMBER + (o.msg ? "?text=" + encodeURIComponent(EpicLead.tag(o.msg)) : "");
+      EpicLead.track("whatsapp", "menu:" + o.label);
       window.open(url, "_blank", "noopener");
       close();
     });
