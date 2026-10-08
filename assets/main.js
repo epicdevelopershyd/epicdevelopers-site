@@ -75,16 +75,23 @@ var EpicLead = (function () {
 
   // Enquiries are saved to a Google Sheet through this link. While it is empty nothing is saved
   // and the forms hand the visitor over to WhatsApp instead.
-  var ENQUIRY_URL = "";
+  var ENQUIRY_URL = "https://script.google.com/macros/s/AKfycbwZZOSMOCHIbgmbmUj7NQI9xywmc__MnQSnioXVf-eqGCrAuvjywUAHo2rr6vK0ZBxRwg/exec";
+  // Resolves only when the Sheet has answered "ok". Anything else (no answer in 12 seconds, an error
+  // page, a wrong link) rejects, and the form then hands the visitor over to WhatsApp, so no enquiry is lost.
   function save(data) {
     if (!ENQUIRY_URL) return Promise.reject(new Error("no sheet"));
     data.source = where();
     data.page = window.location.pathname;
-    return fetch(ENQUIRY_URL, {
-      method: "POST", mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(data)
-    });
+    var opts = { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) };
+    var timer = null;
+    if (window.AbortController) {
+      var stop = new AbortController();
+      opts.signal = stop.signal;
+      timer = setTimeout(function () { stop.abort(); }, 12000);
+    }
+    return fetch(ENQUIRY_URL, opts)
+      .then(function (r) { if (!r.ok) throw new Error("not saved"); return r.text(); })
+      .then(function (t) { if (timer) clearTimeout(timer); if (t.trim() !== "ok") throw new Error("not saved"); });
   }
 
   return { tag: tag, track: track, ref: ref, save: save, saves: !!ENQUIRY_URL };
