@@ -905,3 +905,7 @@ section.cb-band { background: var(--ink); color: var(--paper); padding: 84px 0; 
   .cb-form { flex-direction: column; }
   .cb-form .btn { white-space: normal; }
 }
+
+/* ---------- "Selling now": the one filled tag, so it is the first thing read ---------- */
+.page-hero .tag-row .plot-tag.now { background: var(--champagne); border-color: var(--champagne); color: var(--ink); font-weight: 600; }
+
