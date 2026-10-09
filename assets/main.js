@@ -580,21 +580,45 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!forms.length) return;
   var NUMBER = "919177681133";
 
+  // The visitor's own time zone, read from their device, so the team knows when it is day for them.
+  function theirTime() {
+    var tz = "";
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+    var known = {
+      "America/Los_Angeles": "US Pacific time (California)", "America/Chicago": "US Central time (Dallas, Chicago)",
+      "America/New_York": "US Eastern time (New York)", "America/Denver": "US Mountain time (Denver)",
+      "America/Phoenix": "Arizona time", "America/Toronto": "Canada Eastern time (Toronto)",
+      "America/Vancouver": "Canada Pacific time (Vancouver)", "Europe/London": "UK time",
+      "Asia/Dubai": "UAE time (Dubai)", "Asia/Kolkata": "India time", "Asia/Calcutta": "India time"
+    };
+    var label = known[tz] || (tz ? tz.split("/").pop().replace(/_/g, " ") + " time" : "time zone not known");
+    var now = new Date(), gap = -now.getTimezoneOffset() - 330, m = Math.abs(gap);   // minutes from India time
+    var apart = gap === 0 ? "the same time as India"
+      : Math.floor(m / 60) + " h" + (m % 60 ? " " + (m % 60) + " min" : "") + (gap < 0 ? " behind India" : " ahead of India");
+    var h = now.getHours(), clock = ((h + 11) % 12 + 1) + ":" + ("0" + now.getMinutes()).slice(-2) + (h < 12 ? " AM" : " PM");
+    return { label: label, note: "Visitor is on " + label + ", " + apart + ". It was " + clock +
+      " there when this was sent. Message on WhatsApp first to fix a time for the call." };
+  }
+
   forms.forEach(function (form) {
     var box = form.parentNode;
     var err = box.querySelector(".cb-err"), note = box.querySelector(".cb-note"), done = box.querySelector(".cb-done");
     var btn = form.querySelector("button[type=submit]"), label = btn.textContent;
     var project = form.getAttribute("data-project") || "", place = form.getAttribute("data-place") || "";
 
-    function finish(name, mobile, viaWhatsApp) {
+    function finish(name, mobile, viaWhatsApp, abroad) {
       form.hidden = true; err.hidden = true; note.hidden = true;
       var head = box.querySelector(".cb-head"); if (head) head.hidden = true;
       done.querySelector(".cb-done-title").textContent = "Thank you, " + name + ".";
       var text = done.querySelector(".cb-done-text");
       if (viaWhatsApp) {
-        text.textContent = "WhatsApp has opened with your details. Press send there and we will call you on " + mobile + ".";
+        text.textContent = abroad
+          ? "WhatsApp has opened with your details. Press send there and we will reply to fix a time that suits you."
+          : "WhatsApp has opened with your details. Press send there and we will call you on " + mobile + ".";
       } else {
-        text.textContent = "We will call you on " + mobile + " shortly. ";
+        text.textContent = abroad
+          ? "We will message you on WhatsApp at " + mobile + " to fix a time that suits you. "
+          : "We will call you on " + mobile + " shortly. ";
         var a = document.createElement("a");
         a.href = "https://wa.me/" + NUMBER + "?text=" + encodeURIComponent("Hello Epic Developers, I have just asked for a call back about " + project + ".");
         a.target = "_blank"; a.rel = "noopener"; a.setAttribute("data-lead", "after-form");
@@ -625,22 +649,26 @@ document.addEventListener("DOMContentLoaded", function () {
       err.hidden = true;
       // written with a space after the country code, so a spreadsheet keeps it as text and keeps the +
       if (abroad) { var cut = digits.length > 10 ? digits.length - 10 : 2; digits = "+" + digits.slice(0, cut) + " " + digits.slice(cut); }
-      if (form.elements.company.value) { finish(name, digits, false); return; }   // filled only by robots
+      if (form.elements.company.value) { finish(name, digits, false, abroad); return; }   // filled only by robots
 
       var mobile = abroad ? digits : digits.slice(0, 5) + " " + digits.slice(5);
+      var zone = abroad ? theirTime() : null;
       EpicLead.track("form", "callback");
 
       function handOver() {
         var msg = "Hello Epic Developers, please call me back about " + project + (place ? ", " + place : "") + ".\n" +
-                  "Name: " + name + "\nMobile: " + digits;
+                  "Name: " + name + "\nMobile: " + digits + (zone ? "\nMy time zone: " + zone.label : "");
         window.open("https://wa.me/" + NUMBER + "?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
-        finish(name, mobile, true);
+        finish(name, mobile, true, abroad);
       }
       if (!EpicLead.saves) { handOver(); return; }
 
       btn.disabled = true; btn.textContent = "Sending";
-      EpicLead.save({ project: project, name: name, mobile: digits, form: "callback" })
-        .then(function () { finish(name, mobile, false); })
+      // for a visitor abroad the time zone sits beside the number, where the person about to dial will see it
+      var lead = { project: project, name: name, mobile: digits, form: "callback" };
+      if (zone) { lead.mobile = digits + " (" + zone.label.replace(/ \(.*\)$/, "") + ")"; lead.message = zone.note; lead.timezone = zone.label; }
+      EpicLead.save(lead)
+        .then(function () { finish(name, mobile, false, abroad); })
         .catch(function () { btn.disabled = false; btn.textContent = label; handOver(); });
     });
   });
