@@ -56,6 +56,8 @@ var EpicLead = (function () {
         { content_name: kind + (where ? ":" + where : ""), content_category: proj });
       if (window.gtag) {
         window.gtag("event", kind + "_click", { place: where || "", project: proj });
+        // Google Ads already has a "Submit lead form" conversion that listens for this event name
+        if (kind === "form") window.gtag("event", "form_submit", { form_name: where || "", project: proj });
         if (GOOGLE_CONVERSIONS[kind]) window.gtag("event", "conversion", { send_to: GOOGLE_CONVERSIONS[kind] });
       }
     } catch (e) {}
@@ -606,14 +608,26 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       if (btn.disabled) return;
       var name = (form.elements.name.value || "").replace(/\s+/g, " ").trim();
-      var digits = (form.elements.mobile.value || "").replace(/\D/g, "");
-      if (digits.length === 12 && digits.indexOf("91") === 0) digits = digits.slice(2);
-      if (digits.length === 11 && digits.charAt(0) === "0") digits = digits.slice(1);
-      if (name.length < 2 || !/^[6-9]\d{9}$/.test(digits)) { err.hidden = false; return; }
+      var typed = (form.elements.mobile.value || "").trim();
+      var digits = typed.replace(/\D/g, "");
+      // A number written with a country code other than India's (+1 469 ..., 0044 ...) is taken as it is.
+      // So is an 11-digit number starting with 1, which is how a US or Canadian number is usually typed.
+      var abroad = false;
+      if (/^00/.test(typed)) digits = digits.slice(2);
+      if ((/^(\+|00)/.test(typed) && digits.indexOf("91") !== 0) || (digits.length === 11 && digits.charAt(0) === "1")) {
+        abroad = digits.length >= 8 && digits.length <= 15;
+      }
+      if (!abroad) {
+        if (digits.length === 12 && digits.indexOf("91") === 0) digits = digits.slice(2);
+        if (digits.length === 11 && digits.charAt(0) === "0") digits = digits.slice(1);
+      }
+      if (name.length < 2 || !(abroad || /^[6-9]\d{9}$/.test(digits))) { err.hidden = false; return; }
       err.hidden = true;
+      // written with a space after the country code, so a spreadsheet keeps it as text and keeps the +
+      if (abroad) { var cut = digits.length > 10 ? digits.length - 10 : 2; digits = "+" + digits.slice(0, cut) + " " + digits.slice(cut); }
       if (form.elements.company.value) { finish(name, digits, false); return; }   // filled only by robots
 
-      var mobile = digits.slice(0, 5) + " " + digits.slice(5);
+      var mobile = abroad ? digits : digits.slice(0, 5) + " " + digits.slice(5);
       EpicLead.track("form", "callback");
 
       function handOver() {
