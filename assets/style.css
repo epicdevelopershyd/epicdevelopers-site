@@ -798,10 +798,9 @@ html { scrollbar-width: thin; scrollbar-color: var(--mist) var(--paper); }
   .st-scrim { display: none; }
   .st-side { align-items: stretch; gap: 14px; padding: 18px 20px 4px; justify-self: auto; }
   .st-now, .st-cap { justify-items: start; text-align: left; }
-  .st-cap { grid-template-columns: auto 1fr; align-items: baseline; column-gap: 12px; }
-  .st-cap strong { grid-column: 1 / -1; grid-row: 1; font-size: 1.7rem; }
-  .st-cap b { grid-row: 2; } .st-cap i { grid-row: 2; }
-  .st-cap small { grid-column: 1 / -1; }
+  /* same order as on a laptop: status on top, then the project name, then the place */
+  .st-cap { gap: 5px; align-content: start; }      /* every project's lines start at the same height */
+  .st-cap strong { font-size: 1.7rem; }
   .st-cap .go { display: none; }
   .st-rail { padding-top: 2px; }
   .hero-stage .inner { padding: 30px 20px 44px; width: auto; }
