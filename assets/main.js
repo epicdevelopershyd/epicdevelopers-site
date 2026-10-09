@@ -5,10 +5,10 @@
 // and to Google Ads when a Google tag ID is set below.
 var EpicLead = (function () {
   var PIXEL_ID = "";                       // Meta Pixel ID. Empty keeps the pixel switched off.
-  var GOOGLE_TAG_ID = "";                  // Google Ads tag ID, like "AW-123456789". Empty keeps it switched off.
-  // The label Google Ads gives each conversion action (the part after the slash in "AW-123456789/AbCdEf").
-  // An enquiry type with an empty label is not reported as a conversion.
-  var GOOGLE_LABELS = { whatsapp: "", call: "", form: "" };
+  var GOOGLE_TAG_ID = "G-4QHQFQ3CCR";      // Google tag for the Epic Developers Google Ads account. Empty switches it off.
+  // What Google Ads calls each conversion action, written in full like "AW-16665223976/AbCdEf".
+  // An enquiry type left empty is still counted as an event, but not reported as an Ads conversion.
+  var GOOGLE_CONVERSIONS = { whatsapp: "", call: "", form: "" };
   var KEY = "epic_src";
 
   function fromUrl() {
@@ -56,7 +56,7 @@ var EpicLead = (function () {
         { content_name: kind + (where ? ":" + where : ""), content_category: proj });
       if (window.gtag) {
         window.gtag("event", kind + "_click", { place: where || "", project: proj });
-        if (GOOGLE_TAG_ID && GOOGLE_LABELS[kind]) window.gtag("event", "conversion", { send_to: GOOGLE_TAG_ID + "/" + GOOGLE_LABELS[kind] });
+        if (GOOGLE_CONVERSIONS[kind]) window.gtag("event", "conversion", { send_to: GOOGLE_CONVERSIONS[kind] });
       }
     } catch (e) {}
   }
