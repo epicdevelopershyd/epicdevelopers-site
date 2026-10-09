@@ -580,7 +580,14 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!forms.length) return;
   var NUMBER = "919177681133";
 
-  // The visitor's own time zone, read from their device, so the team knows when it is day for them.
+  // The visitor's own time zone, read from their device, and the hours when our calling day (9 AM to 7 PM
+  // India time) falls inside their waking day (7:30 AM to 10 PM their time). That tells the team when to ring.
+  var INDIA_FROM = 9 * 60, INDIA_TO = 19 * 60, THEIR_FROM = 7 * 60 + 30, THEIR_TO = 22 * 60;
+  function clock(min) {
+    min = ((min % 1440) + 1440) % 1440;
+    var h = Math.floor(min / 60), m = min % 60;
+    return ((h + 11) % 12 + 1) + ":" + ("0" + m).slice(-2) + (h < 12 ? " AM" : " PM");
+  }
   function theirTime() {
     var tz = "";
     try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
@@ -592,12 +599,28 @@ document.addEventListener("DOMContentLoaded", function () {
       "Asia/Dubai": "UAE time (Dubai)", "Asia/Kolkata": "India time", "Asia/Calcutta": "India time"
     };
     var label = known[tz] || (tz ? tz.split("/").pop().replace(/_/g, " ") + " time" : "time zone not known");
-    var now = new Date(), gap = -now.getTimezoneOffset() - 330, m = Math.abs(gap);   // minutes from India time
+    var gap = -new Date().getTimezoneOffset() - 330, m = Math.abs(gap);   // their clock minus India's, in minutes
     var apart = gap === 0 ? "the same time as India"
       : Math.floor(m / 60) + " h" + (m % 60 ? " " + (m % 60) + " min" : "") + (gap < 0 ? " behind India" : " ahead of India");
-    var h = now.getHours(), clock = ((h + 11) % 12 + 1) + ":" + ("0" + now.getMinutes()).slice(-2) + (h < 12 ? " AM" : " PM");
-    return { label: label, note: "Visitor is on " + label + ", " + apart + ". It was " + clock +
-      " there when this was sent. Message on WhatsApp first to fix a time for the call." };
+
+    // longest stretch of our calling day that is also daytime for them, in half-hour steps
+    var best = null, run = null;
+    for (var t = INDIA_FROM; t + 30 <= INDIA_TO; t += 30) {
+      var theirs = (((t + gap) % 1440) + 1440) % 1440;
+      if (theirs >= THEIR_FROM && theirs + 30 <= THEIR_TO) {
+        if (run && run.to === t) run.to = t + 30; else run = { from: t, to: t + 30 };
+        if (!best || run.to - run.from > best.to - best.from) best = { from: run.from, to: run.to };
+      } else run = null;
+    }
+    var out = { label: label, india: "", theirs: "" };
+    if (best) {
+      out.india = clock(best.from) + " to " + clock(best.to);
+      out.theirs = clock(best.from + gap) + " to " + clock(best.to + gap);
+      out.note = "Call between " + out.india.replace(" to ", " and ") + " India time. That is " + out.theirs + " for them (" + label + ", " + apart + ").";
+    } else {
+      out.note = "Our calling hours fall in their night (" + label + ", " + apart + "). Message on WhatsApp to fix a time.";
+    }
+    return out;
   }
 
   forms.forEach(function (form) {
@@ -606,19 +629,19 @@ document.addEventListener("DOMContentLoaded", function () {
     var btn = form.querySelector("button[type=submit]"), label = btn.textContent;
     var project = form.getAttribute("data-project") || "", place = form.getAttribute("data-place") || "";
 
-    function finish(name, mobile, viaWhatsApp, abroad) {
+    function finish(name, mobile, viaWhatsApp, abroad, when) {
       form.hidden = true; err.hidden = true; note.hidden = true;
       var head = box.querySelector(".cb-head"); if (head) head.hidden = true;
       done.querySelector(".cb-done-title").textContent = "Thank you, " + name + ".";
       var text = done.querySelector(".cb-done-text");
       if (viaWhatsApp) {
-        text.textContent = abroad
-          ? "WhatsApp has opened with your details. Press send there and we will reply to fix a time that suits you."
-          : "WhatsApp has opened with your details. Press send there and we will call you on " + mobile + ".";
+        text.textContent = !abroad ? "WhatsApp has opened with your details. Press send there and we will call you on " + mobile + "."
+          : when ? "WhatsApp has opened with your details. Press send there and we will call you on " + mobile + " between " + when.replace(" to ", " and ") + " your time."
+          : "WhatsApp has opened with your details. Press send there and we will reply to fix a time that suits you.";
       } else {
-        text.textContent = abroad
-          ? "We will message you on WhatsApp at " + mobile + " to fix a time that suits you. "
-          : "We will call you on " + mobile + " shortly. ";
+        text.textContent = !abroad ? "We will call you on " + mobile + " shortly. "
+          : when ? "We will call you on " + mobile + " between " + when.replace(" to ", " and ") + " your time. "
+          : "We will message you on WhatsApp at " + mobile + " to fix a time that suits you. ";
         var a = document.createElement("a");
         a.href = "https://wa.me/" + NUMBER + "?text=" + encodeURIComponent("Hello Epic Developers, I have just asked for a call back about " + project + ".");
         a.target = "_blank"; a.rel = "noopener"; a.setAttribute("data-lead", "after-form");
@@ -657,18 +680,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function handOver() {
         var msg = "Hello Epic Developers, please call me back about " + project + (place ? ", " + place : "") + ".\n" +
-                  "Name: " + name + "\nMobile: " + digits + (zone ? "\nMy time zone: " + zone.label : "");
+                  "Name: " + name + "\nMobile: " + digits +
+                  (zone ? "\nMy time zone: " + zone.label + (zone.theirs ? "\nBest time to call me: " + zone.theirs + " my time" : "") : "");
         window.open("https://wa.me/" + NUMBER + "?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
-        finish(name, mobile, true, abroad);
+        finish(name, mobile, true, abroad, zone && zone.theirs);
       }
       if (!EpicLead.saves) { handOver(); return; }
 
       btn.disabled = true; btn.textContent = "Sending";
       // for a visitor abroad the time zone sits beside the number, where the person about to dial will see it
       var lead = { project: project, name: name, mobile: digits, form: "callback" };
-      if (zone) { lead.mobile = digits + " (" + zone.label.replace(/ \(.*\)$/, "") + ")"; lead.message = zone.note; lead.timezone = zone.label; }
+      if (zone) {
+        lead.mobile = digits + (zone.india ? " (call " + zone.india + " India time)" : " (" + zone.label.replace(/ \(.*\)$/, "") + ")");
+        lead.message = zone.note; lead.timezone = zone.label;
+      }
       EpicLead.save(lead)
-        .then(function () { finish(name, mobile, false, abroad); })
+        .then(function () { finish(name, mobile, false, abroad, zone && zone.theirs); })
         .catch(function () { btn.disabled = false; btn.textContent = label; handOver(); });
     });
   });
