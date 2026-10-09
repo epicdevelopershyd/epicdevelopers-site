@@ -575,52 +575,97 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // ---------- call-back form (project pages) ----------
+// A visitor in India gives a name and a number and is called back. A visitor abroad is also asked for
+// their time zone (already chosen from their device) and a time that suits them, in their own time.
+// The form turns that into the India time for the call, so the team is simply told when to ring.
 document.addEventListener("DOMContentLoaded", function () {
   var forms = document.querySelectorAll("form.cb-form");
   if (!forms.length) return;
   var NUMBER = "919177681133";
 
-  // The visitor's own time zone, read from their device, and the hours when our calling day (9 AM to 7 PM
-  // India time) falls inside their waking day (7:30 AM to 10 PM their time). That tells the team when to ring.
-  var INDIA_FROM = 9 * 60, INDIA_TO = 19 * 60, THEIR_FROM = 7 * 60 + 30, THEIR_TO = 22 * 60;
-  function clock(min) {
-    min = ((min % 1440) + 1440) % 1440;
-    var h = Math.floor(min / 60), m = min % 60;
-    return ((h + 11) % 12 + 1) + ":" + ("0" + m).slice(-2) + (h < 12 ? " AM" : " PM");
-  }
-  function theirTime() {
-    var tz = "";
-    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
-    var known = {
-      "America/Los_Angeles": "US Pacific time (California)", "America/Chicago": "US Central time (Dallas, Chicago)",
-      "America/New_York": "US Eastern time (New York)", "America/Denver": "US Mountain time (Denver)",
-      "America/Phoenix": "Arizona time", "America/Toronto": "Canada Eastern time (Toronto)",
-      "America/Vancouver": "Canada Pacific time (Vancouver)", "Europe/London": "UK time",
-      "Asia/Dubai": "UAE time (Dubai)", "Asia/Kolkata": "India time", "Asia/Calcutta": "India time"
-    };
-    var label = known[tz] || (tz ? tz.split("/").pop().replace(/_/g, " ") + " time" : "time zone not known");
-    var gap = -new Date().getTimezoneOffset() - 330, m = Math.abs(gap);   // their clock minus India's, in minutes
-    var apart = gap === 0 ? "the same time as India"
-      : Math.floor(m / 60) + " h" + (m % 60 ? " " + (m % 60) + " min" : "") + (gap < 0 ? " behind India" : " ahead of India");
+  // A visitor abroad chooses any one-hour window that suits them, from 7 AM to 10 PM their own time,
+  // today or on the next two days. Our India calling hours do not apply to them: they pick, we call.
+  var THEIR_FROM = 7, THEIR_TO = 22, DAYS_AHEAD = 2;
+  var INDIA = "Asia/Kolkata";
+  var ZONES = [
+    { id: "America/Los_Angeles", name: "Pacific Time", places: "California", na: true },
+    { id: "America/Denver", name: "Mountain Time", places: "Denver", na: true },
+    { id: "America/Chicago", name: "Central Time", places: "Dallas, Chicago", na: true },
+    { id: "America/New_York", name: "Eastern Time", places: "New York, Atlanta", na: true },
+    { id: "Europe/London", name: "UK time", places: "London" },
+    { id: "Asia/Dubai", name: "Gulf time", places: "Dubai" },
+    { id: "Asia/Singapore", name: "Singapore time", places: "Singapore" },
+    { id: "Australia/Sydney", name: "Sydney time", places: "Australia" }
+  ];
+  var DAYS = { Sun: "Sunday", Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday" };
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    // longest stretch of our calling day that is also daytime for them, in half-hour steps
-    var best = null, run = null;
-    for (var t = INDIA_FROM; t + 30 <= INDIA_TO; t += 30) {
-      var theirs = (((t + gap) % 1440) + 1440) % 1440;
-      if (theirs >= THEIR_FROM && theirs + 30 <= THEIR_TO) {
-        if (run && run.to === t) run.to = t + 30; else run = { from: t, to: t + 30 };
-        if (!best || run.to - run.from > best.to - best.from) best = { from: run.from, to: run.to };
-      } else run = null;
+  // the date and clock time of one moment, as read in a given time zone
+  var readers = {};
+  function at(when, zone) {
+    if (!readers[zone]) {
+      readers[zone] = new Intl.DateTimeFormat("en-US", { timeZone: zone, hourCycle: "h23", weekday: "short",
+        year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" });
     }
-    var out = { label: label, india: "", theirs: "" };
-    if (best) {
-      out.india = clock(best.from) + " to " + clock(best.to);
-      out.theirs = clock(best.from + gap) + " to " + clock(best.to + gap);
-      out.note = "Call between " + out.india.replace(" to ", " and ") + " India time. That is " + out.theirs + " for them (" + label + ", " + apart + ").";
-    } else {
-      out.note = "Our calling hours fall in their night (" + label + ", " + apart + "). Message on WhatsApp to fix a time.";
+    var o = {};
+    readers[zone].formatToParts(new Date(when)).forEach(function (part) { o[part.type] = part.value; });
+    return { y: +o.year, m: +o.month, d: +o.day, h: +o.hour % 24, min: +o.minute, wd: o.weekday };
+  }
+  function clock(h, min) { return ((h + 11) % 12 + 1) + ":" + ("0" + min).slice(-2) + (h < 12 ? " AM" : " PM"); }
+  function dayNumber(q) { return Date.UTC(q.y, q.m - 1, q.d) / 864e5; }
+
+  // where the visitor's device says they are
+  var device = "", works = true;
+  try { device = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; at(Date.now(), INDIA); } catch (e) { works = false; }
+  var deviceInIndia = device ? /^Asia\/(Kolkata|Calcutta)$/.test(device) : new Date().getTimezoneOffset() === -330;
+
+  // the list offered, with the visitor's own zone first chosen
+  function zoneList() {
+    var list = ZONES.slice(), chosen = "";
+    if (!deviceInIndia && device) {
+      var here = at(Date.now(), device);
+      list.forEach(function (z) {
+        if (chosen) return;
+        var there = at(Date.now(), z.id);
+        if (z.id === device || (there.h === here.h && there.min === here.min && there.d === here.d)) chosen = z.id;
+      });
+      if (!chosen) {
+        list.unshift({ id: device, name: device.split("/").pop().replace(/_/g, " ") + " time", places: "" });
+        chosen = device;
+      }
+    }
+    return { list: list, chosen: chosen };
+  }
+
+  function hour(h) { return ((h + 11) % 12 + 1) + (h < 12 || h === 24 ? " AM" : " PM"); }
+  // the one-hour windows on offer, each with the same hour read in India
+  function slots(zone) {
+    var out = [], step = 15 * 60000, start = Math.ceil((Date.now() + 60 * 60000) / step) * step, today = at(Date.now(), zone);
+    for (var t = start; t < start + (DAYS_AHEAD + 2) * 86400000; t += step) {
+      var theirs = at(t, zone);
+      if (theirs.min !== 0 || theirs.h < THEIR_FROM || theirs.h >= THEIR_TO) continue;
+      var ahead = dayNumber(theirs) - dayNumber(today);
+      if (ahead > DAYS_AHEAD) break;
+      var ours = at(t, INDIA), oursEnd = at(t + 3600000, INDIA);
+      var range = hour(theirs.h) + " to " + hour(theirs.h + 1), between = hour(theirs.h) + " and " + hour(theirs.h + 1);
+      var date = ours.wd + " " + ours.d + " " + MONTHS[ours.m - 1];
+      out.push({
+        t: t, ahead: ahead, option: range,
+        group: ahead === 0 ? "Today" : ahead === 1 ? "Tomorrow" : DAYS[theirs.wd] + " " + theirs.d + " " + MONTHS[theirs.m - 1],
+        theirs: "between " + between + (ahead === 0 ? " today" : ahead === 1 ? " tomorrow" : " on " + DAYS[theirs.wd]),
+        theirDay: range + " on " + DAYS[theirs.wd],
+        india: clock(ours.h, ours.min) + " to " + clock(oursEnd.h, oursEnd.min) + " India time, " + date,
+        indiaBetween: "between " + clock(ours.h, ours.min) + " and " + clock(oursEnd.h, oursEnd.min) + " India time on " + date
+      });
     }
     return out;
+  }
+
+  function looksForeign(typed) {
+    var d = typed.replace(/\D/g, "");
+    if (/^00/.test(typed)) d = d.slice(2);
+    return (/^\s*(\+|00)/.test(typed) && d.length >= 1 && d.indexOf("91") !== 0 && "91".indexOf(d) !== 0) ||
+           (d.length === 11 && d.charAt(0) === "1");
   }
 
   forms.forEach(function (form) {
@@ -628,20 +673,60 @@ document.addEventListener("DOMContentLoaded", function () {
     var err = box.querySelector(".cb-err"), note = box.querySelector(".cb-note"), done = box.querySelector(".cb-done");
     var btn = form.querySelector("button[type=submit]"), label = btn.textContent;
     var project = form.getAttribute("data-project") || "", place = form.getAttribute("data-place") || "";
+    var errHome = err.textContent;
 
-    function finish(name, mobile, viaWhatsApp, abroad, when) {
+    // the two extra questions for a visitor abroad; built once, shown when needed
+    var extra = null, zoneBox = null, slotBox = null, zones = null, offered = [];
+    function fillSlots() {
+      var z = zoneBox.value;
+      slotBox.innerHTML = "";
+      offered = z && z !== "other" ? slots(z) : [];
+      slotBox.hidden = !offered.length;
+      if (!offered.length) return;
+      var first = document.createElement("option");
+      first.value = ""; first.textContent = "Best hour to call you (your time)";
+      slotBox.appendChild(first);
+      var group = null;
+      offered.forEach(function (s, n) {
+        if (!group || group.label !== s.group) { group = document.createElement("optgroup"); group.label = s.group; slotBox.appendChild(group); }
+        var o = document.createElement("option"); o.value = String(n); o.textContent = s.option; group.appendChild(o);
+      });
+    }
+    function showExtra(on) {
+      if (!works) return;
+      if (on && !extra) {
+        zones = zoneList();
+        extra = document.createElement("div"); extra.className = "cb-abroad";
+        zoneBox = document.createElement("select"); zoneBox.name = "zone"; zoneBox.setAttribute("aria-label", "Your time zone");
+        var ask = document.createElement("option"); ask.value = ""; ask.textContent = "Your time zone"; zoneBox.appendChild(ask);
+        zones.list.forEach(function (z) {
+          var o = document.createElement("option"); o.value = z.id;
+          o.textContent = z.name + (z.places ? " (" + z.places + ")" : ""); zoneBox.appendChild(o);
+        });
+        var other = document.createElement("option"); other.value = "other"; other.textContent = "Somewhere else"; zoneBox.appendChild(other);
+        zoneBox.value = zones.chosen;
+        slotBox = document.createElement("select"); slotBox.name = "slot"; slotBox.setAttribute("aria-label", "Best hour to call you, in your time");
+        extra.appendChild(zoneBox); extra.appendChild(slotBox);
+        form.insertBefore(extra, form.elements.company);
+        zoneBox.addEventListener("change", function () { fillSlots(); err.hidden = true; });
+        slotBox.addEventListener("change", function () { err.hidden = true; });
+        fillSlots();
+      }
+      if (extra) { extra.hidden = !on; form.classList.toggle("is-abroad", on); }
+    }
+    function abroadNow() { return !deviceInIndia || looksForeign(form.elements.mobile.value || ""); }
+    form.elements.mobile.addEventListener("input", function () { showExtra(abroadNow()); });
+    showExtra(abroadNow());
+
+    function finish(name, mobile, viaWhatsApp, promise) {
       form.hidden = true; err.hidden = true; note.hidden = true;
       var head = box.querySelector(".cb-head"); if (head) head.hidden = true;
       done.querySelector(".cb-done-title").textContent = "Thank you, " + name + ".";
       var text = done.querySelector(".cb-done-text");
       if (viaWhatsApp) {
-        text.textContent = !abroad ? "WhatsApp has opened with your details. Press send there and we will call you on " + mobile + "."
-          : when ? "WhatsApp has opened with your details. Press send there and we will call you on " + mobile + " between " + when.replace(" to ", " and ") + " your time."
-          : "WhatsApp has opened with your details. Press send there and we will reply to fix a time that suits you.";
+        text.textContent = "WhatsApp has opened with your details. Press send there and " + promise + ".";
       } else {
-        text.textContent = !abroad ? "We will call you on " + mobile + " shortly. "
-          : when ? "We will call you on " + mobile + " between " + when.replace(" to ", " and ") + " your time. "
-          : "We will message you on WhatsApp at " + mobile + " to fix a time that suits you. ";
+        text.textContent = promise.charAt(0).toUpperCase() + promise.slice(1) + ". ";
         var a = document.createElement("a");
         a.href = "https://wa.me/" + NUMBER + "?text=" + encodeURIComponent("Hello Epic Developers, I have just asked for a call back about " + project + ".");
         a.target = "_blank"; a.rel = "noopener"; a.setAttribute("data-lead", "after-form");
@@ -650,6 +735,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       done.hidden = false;
     }
+    function complain(text) { err.textContent = text; err.hidden = false; }
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -657,45 +743,67 @@ document.addEventListener("DOMContentLoaded", function () {
       var name = (form.elements.name.value || "").replace(/\s+/g, " ").trim();
       var typed = (form.elements.mobile.value || "").trim();
       var digits = typed.replace(/\D/g, "");
+      var asked = !!(extra && !extra.hidden);                       // the visitor was shown the two extra questions
+      var zone = null;
+      if (asked) zones.list.forEach(function (z) { if (z.id === zoneBox.value) zone = z; });
+
       // A number written with a country code other than India's (+1 469 ..., 0044 ...) is taken as it is.
-      // So is an 11-digit number starting with 1, which is how a US or Canadian number is usually typed.
-      var abroad = false;
+      // So is an 11-digit number starting with 1, and a 10-digit number from someone on US or Canadian time.
+      var foreign = false;
       if (/^00/.test(typed)) digits = digits.slice(2);
       if ((/^(\+|00)/.test(typed) && digits.indexOf("91") !== 0) || (digits.length === 11 && digits.charAt(0) === "1")) {
-        abroad = digits.length >= 8 && digits.length <= 15;
+        foreign = digits.length >= 8 && digits.length <= 15;
+      } else if (zone && zone.na && digits.length === 10) {
+        digits = "1" + digits; foreign = true;
       }
-      if (!abroad) {
+      if (!foreign) {
         if (digits.length === 12 && digits.indexOf("91") === 0) digits = digits.slice(2);
-        if (digits.length === 11 && digits.charAt(0) === "0") digits = digits.slice(1);
+        if (!asked && digits.length === 11 && digits.charAt(0) === "0") digits = digits.slice(1);
       }
-      if (name.length < 2 || !(abroad || /^[6-9]\d{9}$/.test(digits))) { err.hidden = false; return; }
+      if (name.length < 2 || !(foreign || /^[6-9]\d{9}$/.test(digits))) {
+        complain(asked ? "Please enter your name and your mobile number with its country code, like this: +1 469 555 0123." : errHome);
+        return;
+      }
+      if (asked && !zoneBox.value) { complain("Please choose your time zone."); return; }
+      var slot = asked && offered.length ? offered[+slotBox.value] : null;
+      if (asked && offered.length && (slotBox.value === "" || !slot)) { complain("Please choose the hour that suits you for our call."); return; }
       err.hidden = true;
-      // written with a space after the country code, so a spreadsheet keeps it as text and keeps the +
-      if (abroad) { var cut = digits.length > 10 ? digits.length - 10 : 2; digits = "+" + digits.slice(0, cut) + " " + digits.slice(cut); }
-      if (form.elements.company.value) { finish(name, digits, false, abroad); return; }   // filled only by robots
 
-      var mobile = abroad ? digits : digits.slice(0, 5) + " " + digits.slice(5);
-      var zone = abroad ? theirTime() : null;
+      // written with a space after the country code, so a spreadsheet keeps it as text and keeps the +
+      if (foreign) { var cut = digits.length > 10 ? digits.length - 10 : 2; digits = "+" + digits.slice(0, cut) + " " + digits.slice(cut); }
+      var mobile = foreign ? digits : digits.slice(0, 5) + " " + digits.slice(5);
+      var zoneName = zone ? zone.name + (zone.places ? " (" + zone.places + ")" : "") : "";
+      var promise = slot ? "we will call you on " + mobile + " " + slot.theirs + ", your time"
+        : (asked || foreign) ? "we will message you on WhatsApp at " + mobile + " to fix a time that suits you"
+        : "we will call you on " + mobile + (EpicLead.saves ? " shortly" : "");
+      if (form.elements.company.value) { finish(name, mobile, false, promise); return; }   // filled only by robots
       EpicLead.track("form", "callback");
 
       function handOver() {
         var msg = "Hello Epic Developers, please call me back about " + project + (place ? ", " + place : "") + ".\n" +
                   "Name: " + name + "\nMobile: " + digits +
-                  (zone ? "\nMy time zone: " + zone.label + (zone.theirs ? "\nBest time to call me: " + zone.theirs + " my time" : "") : "");
+                  (slot ? "\nPlease call me from " + slot.theirDay + ", my time (" + zone.name + ").\nThat is " + slot.india + "."
+                        : (asked || foreign) ? "\nI am outside India." + (zoneName ? " My time zone: " + zoneName + "." : "") : "");
         window.open("https://wa.me/" + NUMBER + "?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
-        finish(name, mobile, true, abroad, zone && zone.theirs);
+        finish(name, mobile, true, slot || !(asked || foreign) ? promise.replace(" shortly", "") : "we will reply to fix a time that suits you");
       }
       if (!EpicLead.saves) { handOver(); return; }
 
       btn.disabled = true; btn.textContent = "Sending";
-      // for a visitor abroad the time zone sits beside the number, where the person about to dial will see it
+      // for a visitor abroad the time to ring sits beside the number, where the person about to dial will see it
       var lead = { project: project, name: name, mobile: digits, form: "callback" };
-      if (zone) {
-        lead.mobile = digits + (zone.india ? " (call " + zone.india + " India time)" : " (" + zone.label.replace(/ \(.*\)$/, "") + ")");
-        lead.message = zone.note; lead.timezone = zone.label;
+      if (slot) {
+        lead.mobile = digits + " (call " + slot.india + ")";
+        lead.message = "Call " + slot.indiaBetween + ". The visitor asked for " + slot.theirDay + ", their time: " + zoneName + ".";
+        lead.timezone = zoneName; lead.calltime = slot.india;
+      } else if (asked || foreign) {
+        lead.mobile = digits + " (outside India, no time chosen)";
+        lead.message = "Visitor is outside India" + (zoneName ? ", on " + zoneName : device ? ", device time zone " + device : "") +
+          ". No time was chosen. Message on WhatsApp to fix a time for the call.";
+        lead.timezone = zoneName || device;
       }
       EpicLead.save(lead)
-        .then(function () { finish(name, mobile, false, abroad, zone && zone.theirs); })
+        .then(function () { finish(name, mobile, false, promise); })
         .catch(function () { btn.disabled = false; btn.textContent = label; handOver(); });
     });
   });
