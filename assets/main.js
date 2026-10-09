@@ -1,9 +1,14 @@
 // ---------- enquiry counting ----------
 // Every WhatsApp enquiry carries a short reference saying where the visitor came from
 // (Facebook, Google, or the website itself), so each lead can be counted in the chat.
-// Clicks are also reported to the Meta Pixel when a Pixel ID is set below.
+// Clicks are also reported to the Meta Pixel when a Pixel ID is set below,
+// and to Google Ads when a Google tag ID is set below.
 var EpicLead = (function () {
   var PIXEL_ID = "";                       // Meta Pixel ID. Empty keeps the pixel switched off.
+  var GOOGLE_TAG_ID = "";                  // Google Ads tag ID, like "AW-123456789". Empty keeps it switched off.
+  // The label Google Ads gives each conversion action (the part after the slash in "AW-123456789/AbCdEf").
+  // An enquiry type with an empty label is not reported as a conversion.
+  var GOOGLE_LABELS = { whatsapp: "", call: "", form: "" };
   var KEY = "epic_src";
 
   function fromUrl() {
@@ -49,7 +54,10 @@ var EpicLead = (function () {
       var proj = document.body.getAttribute("data-project") || "Epic Developers";
       if (window.fbq) window.fbq("track", kind === "download" ? "ViewContent" : (kind === "form" ? "Lead" : "Contact"),
         { content_name: kind + (where ? ":" + where : ""), content_category: proj });
-      if (window.gtag) window.gtag("event", kind + "_click", { place: where || "", project: proj });
+      if (window.gtag) {
+        window.gtag("event", kind + "_click", { place: where || "", project: proj });
+        if (GOOGLE_TAG_ID && GOOGLE_LABELS[kind]) window.gtag("event", "conversion", { send_to: GOOGLE_TAG_ID + "/" + GOOGLE_LABELS[kind] });
+      }
     } catch (e) {}
   }
 
@@ -61,6 +69,16 @@ var EpicLead = (function () {
     }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
     window.fbq("init", PIXEL_ID);
     window.fbq("track", "PageView");
+  }
+
+  if (GOOGLE_TAG_ID) {
+    var gt = document.createElement("script");
+    gt.async = true; gt.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GOOGLE_TAG_ID);
+    document.head.appendChild(gt);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window.gtag("js", new Date());
+    window.gtag("config", GOOGLE_TAG_ID);
   }
 
   // every WhatsApp link, phone link and document on the page
