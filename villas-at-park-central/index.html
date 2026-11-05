@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4QHQFQ3CCR"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-4QHQFQ3CCR');
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a[href]'); if(!a) return;
+    var h = a.getAttribute('href') || '';
+    var n = h.indexOf('wa.me')>-1 ? 'whatsapp_click' : h.indexOf('tel:')===0 ? 'call_click' : h.indexOf('maps.google')>-1 ? 'directions_click' : null;
+    if(n) gtag('event', n, {event_category:'lead', event_label: location.pathname});
+  }, true);
+</script>
+
 <meta charset="UTF-8">
 <meta http-equiv="refresh" content="0; url=/parkcentral/">
 <link rel="canonical" href="https://www.epicdevelopers.in/parkcentral/">
