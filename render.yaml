@@ -6,3 +6,7 @@ services:
     domains:
       - epicdevelopers.in
       - www.epicdevelopers.in
+    headers:
+      - path: /offer/*
+        name: Access-Control-Allow-Origin
+        value: "*"
