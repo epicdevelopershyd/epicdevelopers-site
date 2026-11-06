@@ -918,4 +918,7 @@ section.cb-band { background: var(--ink); color: var(--paper); padding: 84px 0; 
 .offer-ribbon .or-a{font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .offer-ribbon:hover{background:#f0cd78}
 html.has-offer .site-header{top:40px}
+.offer-ribbon.or-2{top:40px;background:#2f5a2e;color:#f4f0e6}
+.offer-ribbon.or-2:hover{background:#3a6d39}
+html.has-offer-2 .site-header{top:80px}
 @media (max-width:640px){.offer-ribbon{font-size:12.5px;gap:8px}.offer-ribbon .or-t{display:none}.offer-ribbon .or-k{font-size:11px}}
