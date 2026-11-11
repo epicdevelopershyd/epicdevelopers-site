@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
       EpicLead.track("form", "contact");
       EpicLead.save({ project: f.get("property") || "", name: f.get("name") || "", mobile: f.get("mobile") || "",
         email: f.get("email") || "", message: f.get("message") || "", form: "contact" }).catch(function () {});
-      window.open("https://wa.me/919177681133?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
+      window.open("https://wa.me/917893684545?text=" + encodeURIComponent(EpicLead.tag(msg)), "_blank");
     });
   }
 });
@@ -318,7 +318,7 @@ document.addEventListener("DOMContentLoaded", function () {
       var proj = document.querySelector("#dd-project .dd-btn").dataset.value;
       if (proj === "ff") {
         EpicLead.track("whatsapp", "finder");
-        window.open("https://wa.me/919177681133?text=" + encodeURIComponent(EpicLead.tag(
+        window.open("https://wa.me/917893684545?text=" + encodeURIComponent(EpicLead.tag(
           "Hello Epic Developers, I would like to register interest in Fortune Fields at Yacharam, Future City. Please share details.")), "_blank");
       } else {
         // land directly on the project's layout plan (availability view)
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var dlLinks = document.querySelectorAll("a.doc-dl");
   if (!dlLinks.length) return;
 
-  var LEAD_NUMBER = "919177681133";
+  var LEAD_NUMBER = "917893684545";
 
   // inject styles
   var css = document.createElement("style");
@@ -421,7 +421,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var trigger = document.getElementById("wa-float");
   if (!trigger) return;
 
-  var NUMBER = "919177681133";
+  var NUMBER = "917893684545";
   var proj = document.body.getAttribute("data-project");        // e.g. "Park Central" or null
   var city = document.body.getAttribute("data-project-city") || "";
   // short, human phrase for the client's outgoing message
@@ -578,7 +578,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
   var forms = document.querySelectorAll("form.cb-form");
   if (!forms.length) return;
-  var NUMBER = "919177681133";
+  var NUMBER = "917893684545";
 
   forms.forEach(function (form) {
     var box = form.parentNode;
