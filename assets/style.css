@@ -922,3 +922,7 @@ html.has-offer .site-header{top:40px}
 .offer-ribbon.or-2:hover{background:#3a6d39}
 html.has-offer-2 .site-header{top:80px}
 @media (max-width:640px){.offer-ribbon{font-size:12.5px;gap:8px}.offer-ribbon .or-t{display:none}.offer-ribbon .or-k{font-size:11px}}
+
+/* ---------- Park Central film ---------- */
+.pc-film { max-width: 1040px; margin: 0 auto; background: #0d0b07; }
+.pc-film video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #0d0b07; }
