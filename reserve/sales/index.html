@@ -93,9 +93,10 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div class="card" style="margin-top:14px">
       <div class="plotline"><label for="proj">Project</label><select id="proj"><option value="greens">The Greens</option><option value="parkcentral">Park Central</option></select></div>
       <div class="plotline" style="margin-top:12px"><label for="plot">Plot</label><select id="plot"></select></div>
-      <div class="meta" id="info" style="margin-top:12px"></div>
+      <div class="meta" id="info" style="margin-top:12px;line-height:1.55"></div>
     </div>
-    <div class="f" id="f-rate"><input id="rate" inputmode="numeric" autocomplete="off" placeholder=" "><label for="rate">Agreed rate per sq. yd. (all in)</label></div>
+    <div class="f" id="f-rate"><input id="rate" inputmode="numeric" autocomplete="off" placeholder=" "><label for="rate">Agreed rate per sq. yd., including any east / corner premium</label></div>
+    <div class="err" id="serr"></div>
     <div class="card" id="calc" style="margin-top:6px"><div class="meta">Plot cost at this rate</div><div class="price" id="cost" style="margin-top:4px">—</div><div class="meta" id="save"></div></div>
     <div class="f" id="f-who"><input id="who" autocomplete="off" placeholder=" "><label for="who">Buyer name (optional)</label></div>
     <div class="err" id="err"></div>
@@ -111,21 +112,29 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)},API=(document.querySelector('meta[name=api]').content||'').replace(/\/$/,'');
-var inr=function(n){return '\u20b9'+Number(n).toLocaleString('en-IN')},cfg=null,list=0;
-function load(){fetch(API+'/api/config/'+$('proj').value).then(function(r){return r.json()}).then(function(c){cfg=c;var k=Object.keys(c.project.plots).map(Number).sort(function(a,b){return a-b});
-  $('plot').innerHTML=k.map(function(n){return '<option>'+n+'</option>'}).join('');pick()})}
-function pick(){var p=cfg.project,pl=p.plots[$('plot').value];list=p.rate+(pl.prem?p.premium:0);
-  $('info').textContent=pl.area+' sq. yds. \u00b7 '+(pl.corner?'Corner \u00b7 ':'')+(pl.facing==='east'?'East':'West')+' facing \u00b7 '+(p.offerActive?'offer rate '+inr(list)+' (regular '+inr(p.regularRate+(pl.prem?p.premium:0))+', offer till '+p.offerUntil+')':'rate '+inr(list))+' per sq. yd. \u00b7 cost '+inr(list*pl.area);upd()}
+var inr=function(n){return '₹'+Number(n).toLocaleString('en-IN')},cfg=null,fl=null,tm=null;
+function load(){fl=null;fetch(API+'/api/config/'+$('proj').value).then(function(r){return r.json()}).then(function(c){cfg=c;var k=Object.keys(c.project.plots).map(Number).sort(function(a,b){return a-b});
+  $('plot').innerHTML=k.map(function(n){return '<option value="'+n+'">Plot '+n+'</option>'}).join('');pick()})}
+function cur(){var p=cfg.project,pl=p.plots[$('plot').value];return{p:p,pl:pl,list:p.rate+(pl.prem?p.premium:0)}}
+function pick(){fl=null;info();supd();if($('pin').value){clearTimeout(tm);tm=setTimeout(getFloor,250)}}
+function info(){var x=cur(),p=x.p,pl=x.pl,why=pl.prem?' ('+inr(p.rate)+' + '+inr(p.premium)+(pl.corner&&pl.facing!=='east'?' corner':pl.corner?' east / corner':' east')+' premium)':'';
+  $('info').innerHTML=pl.area+' sq. yds. · '+(pl.corner?'Corner · ':'')+(pl.facing==='east'?'East':'West')+' facing<br>Current rate <b>'+inr(x.list)+'</b> per sq. yd.'+why+(p.offerActive?'<br>Regular rate after '+p.offerUntil+': '+inr(p.regularRate+(pl.prem?p.premium:0)):'')+'<br>Lowest you can agree: <b>'+(fl?inr(fl):'enter your PIN to see')+'</b>'}
+function post(body){return fetch(API+'/api/link',{method:'POST',headers:{'Content-Type':'application/json','x-sales-pin':$('pin').value},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Something went wrong.');return j})})}
+function getFloor(){if(!cfg||!$('pin').value)return;$('err').textContent='';post({project:$('proj').value,plot:$('plot').value,check:true}).then(function(j){fl=j.floor;info();supd()}).catch(function(e){fl=null;$('err').textContent=e.message;info();supd()})}
 function rv(){return parseInt(($('rate').value||'').replace(/\D/g,''),10)||0}
-function upd(){var r=rv(),pl=cfg&&cfg.project.plots[$('plot').value];$('out').hidden=true;$('err').textContent='';
-  if(!r||!pl){$('cost').textContent='\u2014';$('save').textContent='';$('make').disabled=true;return}
-  $('cost').textContent=inr(r*pl.area);var d=list-r;$('save').textContent=d>0?'Discount '+inr(d)+' per sq. yd. \u00b7 '+inr(d*pl.area)+' in total'+(cfg.project.offerActive?'. Below the offer rate, so offer benefits (gold bar, registration benefit) do not apply.':''):(d===0?'Same as the current rate':'');
-  $('make').disabled=!($('pin').value&&r>0)}
+function supd(){$('out').hidden=true;$('serr').textContent='';if(!cfg)return;var r=rv(),x=cur();
+  if(!r){$('cost').textContent='—';$('save').textContent='';$('make').disabled=true;return}
+  $('cost').textContent=inr(r*x.pl.area);var d=x.list-r,bad='';
+  if(r>x.list)bad='Above the current rate of '+inr(x.list)+'.';else if(fl&&r<fl)bad='Below the lowest you can agree, '+inr(fl)+'.';
+  $('f-rate').classList.toggle('bad',!!bad);
+  if(bad){$('save').textContent='';$('serr').textContent=bad}
+  else $('save').textContent=d>0?'Discount '+inr(d)+' per sq. yd. · '+inr(d*x.pl.area)+' in total'+(x.p.offerActive?'. Below the offer rate, so offer benefits (gold bar, registration benefit) do not apply.':''):(d===0?'Same as the current rate':'');
+  $('make').disabled=!($('pin').value&&fl)||!!bad}
 $('proj').onchange=load;$('plot').onchange=pick;
-$('rate').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';upd()});$('pin').addEventListener('input',upd);
+$('pin').addEventListener('input',function(){fl=null;info();supd();clearTimeout(tm);tm=setTimeout(getFloor,700)});
+$('rate').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';supd()});
 $('make').onclick=function(){var b=this;b.disabled=true;$('err').textContent='';
-  fetch(API+'/api/link',{method:'POST',headers:{'Content-Type':'application/json','x-sales-pin':$('pin').value},body:JSON.stringify({project:$('proj').value,plot:$('plot').value,rate:rv(),name:$('who').value})})
-  .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error);return j})})
+  post({project:$('proj').value,plot:$('plot').value,rate:rv(),name:$('who').value})
   .then(function(j){$('url').textContent=j.url;$('out').hidden=false;var nm=$('who').value.trim();
     $('wa').href='https://wa.me/?text='+encodeURIComponent((nm?'Hi '+nm+', here':'Here')+' is your personal link to reserve '+cfg.project.name+' Plot '+$('plot').value+' at '+inr(j.rate)+' per sq. yd.:\n'+j.url);
     $('copy').onclick=function(){var t=j.url;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){$('copy').textContent='Copied'}).catch(function(){var r=document.createRange();r.selectNode($('url'));getSelection().removeAllRanges();getSelection().addRange(r);$('copy').textContent='Select and copy'});setTimeout(function(){$('copy').textContent='Copy link'},2500)};
