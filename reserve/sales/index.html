@@ -115,11 +115,11 @@ var inr=function(n){return '\u20b9'+Number(n).toLocaleString('en-IN')},cfg=null,
 function load(){fetch(API+'/api/config/'+$('proj').value).then(function(r){return r.json()}).then(function(c){cfg=c;var k=Object.keys(c.project.plots).map(Number).sort(function(a,b){return a-b});
   $('plot').innerHTML=k.map(function(n){return '<option>'+n+'</option>'}).join('');pick()})}
 function pick(){var p=cfg.project,pl=p.plots[$('plot').value];list=p.rate+(pl.prem?p.premium:0);
-  $('info').textContent=pl.area+' sq. yds. \u00b7 '+(pl.corner?'Corner \u00b7 ':'')+(pl.facing==='east'?'East':'West')+' facing \u00b7 list rate '+inr(list)+' per sq. yd. \u00b7 list cost '+inr(list*pl.area);upd()}
+  $('info').textContent=pl.area+' sq. yds. \u00b7 '+(pl.corner?'Corner \u00b7 ':'')+(pl.facing==='east'?'East':'West')+' facing \u00b7 '+(p.offerActive?'offer rate '+inr(list)+' (regular '+inr(p.regularRate+(pl.prem?p.premium:0))+', offer till '+p.offerUntil+')':'rate '+inr(list))+' per sq. yd. \u00b7 cost '+inr(list*pl.area);upd()}
 function rv(){return parseInt(($('rate').value||'').replace(/\D/g,''),10)||0}
 function upd(){var r=rv(),pl=cfg&&cfg.project.plots[$('plot').value];$('out').hidden=true;$('err').textContent='';
   if(!r||!pl){$('cost').textContent='\u2014';$('save').textContent='';$('make').disabled=true;return}
-  $('cost').textContent=inr(r*pl.area);var d=list-r;$('save').textContent=d>0?'Discount '+inr(d)+' per sq. yd. \u00b7 '+inr(d*pl.area)+' in total':(d===0?'Same as the list rate':'');
+  $('cost').textContent=inr(r*pl.area);var d=list-r;$('save').textContent=d>0?'Discount '+inr(d)+' per sq. yd. \u00b7 '+inr(d*pl.area)+' in total'+(cfg.project.offerActive?'. Below the offer rate, so offer benefits (gold bar, registration benefit) do not apply.':''):(d===0?'Same as the current rate':'');
   $('make').disabled=!($('pin').value&&r>0)}
 $('proj').onchange=load;$('plot').onchange=pick;
 $('rate').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';upd()});$('pin').addEventListener('input',upd);
