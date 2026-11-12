@@ -1,348 +1,284 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#151515">
 <meta name="api" content="">
 <title>Reserve your plot · Epic Developers</title>
 <link rel="icon" href="/assets/img/fav-icon-epic-b.png">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
-  :root{--panel:#151515;--panel2:#1c1b19;--line:#2e2c27;--cream:#f3efe6;--mute:#b9b4a8;--gold:#e3bd62;--red:#ff8d7a;--serif:"Marcellus",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;color-scheme:dark}
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{background:var(--panel)}
-  body{background:var(--panel);color:var(--cream);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
-  .wrap{max-width:520px;margin:0 auto;padding:24px max(18px,env(safe-area-inset-left)) 90px}
-  header{text-align:center;padding:6px 0 18px}
-  header .eyebrow{font-size:10.5px;letter-spacing:.34em;text-indent:.34em;text-transform:uppercase;color:var(--gold);font-weight:600}
-  header h1{font:400 clamp(24px,7vw,32px)/1.15 var(--serif);letter-spacing:.04em;margin-top:8px}
-  header p{color:var(--mute);font-size:14px;margin-top:6px}
-  .steps{display:flex;gap:6px;margin:6px 0 22px}
-  .steps i{flex:1;height:3px;border-radius:3px;background:var(--line)}
-  .steps i.on{background:var(--gold)}
-  h2{font:400 21px/1.2 var(--serif);margin-bottom:4px}
-  .sub{color:var(--mute);font-size:14px;margin-bottom:18px}
-  .card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
-  label{display:block;font-size:12.5px;color:var(--mute);margin:14px 0 6px;letter-spacing:.02em}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  input,select,textarea{width:100%;background:#0f0f0e;color:var(--cream);border:1px solid #3a372f;border-radius:10px;padding:13px 14px;font:inherit;font-size:16px;outline:none}
-  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
-  textarea{resize:vertical;min-height:84px}
-  .err{color:var(--red);font-size:13px;margin-top:6px;min-height:0}
-  .bad{border-color:var(--red)!important}
-  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .seg button{background:#0f0f0e;color:var(--cream);border:1px solid #3a372f;border-radius:10px;padding:12px 6px;font:inherit;font-size:14px;cursor:pointer}
-  .seg button:disabled{opacity:.7;cursor:default}
-  input[readonly]{opacity:.8}
-  .seg button.on{border-color:var(--gold);background:rgba(227,189,98,.12);color:var(--gold)}
-  .total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed #3a372f;margin-top:16px;padding-top:12px;font-size:14px;color:var(--mute)}
-  .total b{font:400 22px var(--serif);color:var(--cream)}
-  .btn{display:block;width:100%;background:var(--gold);color:#1a1405;border:0;border-radius:12px;padding:16px;font:600 17px var(--sans);cursor:pointer;margin-top:8px;text-align:center;text-decoration:none}
-  .btn:disabled{opacity:.55;cursor:default}
-  .btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
-  .link{background:none;border:0;color:var(--gold);font:inherit;font-size:14px;cursor:pointer;text-decoration:underline;padding:6px 0}
-  .toggle{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:14px;color:var(--mute);cursor:pointer}
-  .toggle input{width:20px;height:20px;accent-color:var(--gold)}
-  .hidden{display:none!important}
-  .code{letter-spacing:.5em;text-align:center;font-size:26px;padding:16px}
-  .sum dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
-  .sum dt{color:var(--mute)} .sum dd{text-align:right}
-  .note{background:rgba(227,189,98,.08);border:1px solid rgba(227,189,98,.35);border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:16px}
-  details{margin:14px 0 4px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}
-  details summary{cursor:pointer;padding:13px 14px;font-size:14.5px;color:var(--gold)}
-  details .terms{padding:0 14px 12px;font-size:13.5px;color:var(--mute)}
-  details .terms p{margin:10px 0}
-  details .terms b{color:var(--cream)}
-  .sig{position:relative;background:#fff;border-radius:12px;height:170px;touch-action:none;overflow:hidden}
-  .sig canvas{width:100%;height:100%;display:block}
-  .sig .hint{position:absolute;inset:auto 0 12px 0;text-align:center;color:#aaa;font-size:13px;pointer-events:none}
-  .sig .base{position:absolute;left:16px;right:16px;bottom:38px;border-bottom:1px solid #ccc;pointer-events:none}
-  .sigbar{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
-  .check{display:flex;gap:12px;align-items:flex-start;margin:18px 0 10px;font-size:15px}
-  .check input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--gold)}
-  .qr{display:flex;justify-content:center;margin:14px 0}
-  .qr div{background:#fff;padding:12px;border-radius:12px}
-  .center{text-align:center}
-  .big{font:400 40px var(--serif);margin:6px 0 2px}
-  .tick{width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;margin:8px auto 14px;color:var(--gold);font-size:30px}
-  footer{text-align:center;color:var(--mute);font-size:12.5px;margin-top:28px}
-  footer a{color:var(--gold);text-decoration:none}
+/* Layout: one question per screen, a single column, big type, one pill button. Apple / Nike checkout feel. */
+:root{--bg:#fbfbfd;--surface:#ffffff;--fill:#f0f0f4;--fg:#1d1d1f;--mute:#6e6e73;--line:#dcdce1;--btn:#111113;--btnfg:#ffffff;--accent:#a0792a;--err:#c4311f;--ok:#1a8a4a;--ribbon:#1d1d1f;--ribbonfg:#f5f5f7;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000000;--surface:#141416;--fill:#1c1c1f;--fg:#f5f5f7;--mute:#9a9aa1;--line:#2c2c30;--btn:#f5f5f7;--btnfg:#0b0b0c;--accent:#e3bd62;--err:#ff7a68;--ok:#3ccf7a;--ribbon:#e3bd62;--ribbonfg:#16130a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000000;--surface:#141416;--fill:#1c1c1f;--fg:#f5f5f7;--mute:#9a9aa1;--line:#2c2c30;--btn:#f5f5f7;--btnfg:#0b0b0c;--accent:#e3bd62;--err:#ff7a68;--ok:#3ccf7a;--ribbon:#e3bd62;--ribbonfg:#16130a;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;margin:0;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+.demo{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--ribbon);color:var(--ribbonfg);font-size:12px;font-weight:600;letter-spacing:.01em;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px))}
+.demo b{font-variant-numeric:tabular-nums;font-weight:700}
+.wrap{max-width:460px;margin:0 auto;padding-block:20px 0;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));min-height:calc(100vh - 36px);display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.brand{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+.back{border:0;background:none;color:var(--mute);font-size:14px;font-weight:500;cursor:pointer;padding:6px 0}
+.bar{display:flex;gap:6px;margin-bottom:34px}.bar i{flex:1;height:3px;border-radius:3px;background:var(--line);transition:background .3s}.bar i.on{background:var(--fg)}
+section{display:none;flex:1;flex-direction:column;animation:in .35s cubic-bezier(.2,.7,.2,1)}
+section.on{display:flex}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+h1{font-size:clamp(34px,10.5vw,46px);line-height:1.04;letter-spacing:-.035em;font-weight:800;margin:0 0 14px;text-wrap:balance}
+.lead{color:var(--mute);font-size:17px;line-height:1.45;margin:0 0 26px;text-wrap:pretty}
+.tiles{display:grid;gap:12px}
+.tile{display:block;width:100%;text-align:left;border:0;cursor:pointer;background:var(--fill);border-radius:22px;padding:22px 22px 20px;transition:transform .15s}
+.tile:active{transform:scale(.985)}.tile strong{display:block;font-size:26px;letter-spacing:-.025em;font-weight:800}.tile span{color:var(--mute);font-size:15px}.tile em{display:block;margin-top:14px;font-style:normal;font-size:14px;font-weight:600}
+.card{background:var(--fill);border-radius:22px;padding:18px 20px;margin-bottom:22px}
+.plotline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.plotline label{font-size:13px;color:var(--mute);font-weight:500}
+select{appearance:none;-webkit-appearance:none;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%239a9aa1' stroke-width='2'%3E%3Cpath d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center;border:0;border-radius:12px;padding:10px 38px 10px 14px;font-weight:700;font-size:16px;cursor:pointer}
+.price{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:12px 0 2px;font-variant-numeric:tabular-nums}
+.meta{color:var(--mute);font-size:14px}
+.today{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.f{position:relative;margin-bottom:12px}
+.f input{width:100%;height:58px;border:2px solid transparent;border-radius:16px;background:var(--fill);padding:22px 16px 6px;font-size:17px;font-weight:500;outline:none;transition:border-color .15s,background .15s}
+.f input:focus{border-color:var(--fg);background:var(--surface)}
+.f label{position:absolute;left:16px;top:18px;font-size:17px;color:var(--mute);pointer-events:none;transition:all .15s;transform-origin:left}
+.f input:focus+label,.f input:not(:placeholder-shown)+label{top:8px;font-size:12px;font-weight:600}
+.f.bad input{border-color:var(--err)}
+.fine{color:var(--mute);font-size:13px;margin:6px 2px 0;text-wrap:pretty}
+.err{color:var(--err);font-size:14px;min-height:20px;margin:6px 2px 0}
+.cta{position:sticky;bottom:0;margin-top:auto;padding:18px 0 max(18px,env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.btn{display:block;width:100%;height:58px;border:0;border-radius:999px;background:var(--btn);color:var(--btnfg);font-size:17px;font-weight:700;letter-spacing:-.01em;cursor:pointer;transition:opacity .2s,transform .1s}
+.btn:active{transform:scale(.985)}.btn:disabled{opacity:.28;cursor:default}
+.btn:focus-visible,.tile:focus-visible,select:focus-visible,.link:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.link{background:none;border:0;padding:0;color:var(--fg);font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:inherit}
+.code{width:100%;height:76px;border:2px solid transparent;border-radius:18px;background:var(--fill);text-align:center;font-size:38px;font-weight:700;letter-spacing:.38em;padding-left:.38em;outline:none;font-variant-numeric:tabular-nums}
+.code:focus{border-color:var(--fg);background:var(--surface)}
+.list{margin:0 0 22px;padding:0}.list div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.list dt{color:var(--mute)}.list dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}.list .hi dd{font-size:17px;font-weight:800}
+.pad{position:relative;background:#ffffff;border:2px solid var(--line);border-radius:20px;height:170px;touch-action:none;overflow:hidden}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%}
+.pad .hint{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:#8a8a93;font-size:15px;pointer-events:none;transition:opacity .2s}
+.pad .base{position:absolute;left:18px;right:18px;bottom:36px;border-top:1.5px solid #d4d4da}
+.pad.has .hint{opacity:0}
+.padrow{display:flex;justify-content:space-between;align-items:center;margin:8px 2px 16px;font-size:13px;color:var(--mute)}
+.consent{font-size:14px;color:var(--mute);line-height:1.5;margin:0;text-wrap:pretty}
+.done{align-items:center;text-align:center;justify-content:center;padding-bottom:40px}
+.tick{width:92px;height:92px;margin:10px auto 26px}
+.tick circle{fill:none;stroke:var(--ok);stroke-width:3;stroke-dasharray:252;stroke-dashoffset:252;animation:dr .7s .1s forwards ease-out}
+.tick path{fill:none;stroke:var(--ok);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:dr .4s .7s forwards ease-out}
+@keyframes dr{to{stroke-dashoffset:0}}
+.took{display:inline-block;background:var(--fill);border-radius:999px;padding:8px 16px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:8px}
+.next{text-align:left;width:100%;margin-top:26px}.next h3{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 6px}.next p{margin:0;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center}.sheet.on{display:flex}
+.sheet .box{background:var(--surface);width:100%;max-width:560px;max-height:84vh;border-radius:26px 26px 0 0;display:flex;flex-direction:column;animation:in .3s}
+.sheet header{display:flex;justify-content:space-between;align-items:center;padding:18px 22px 10px}.sheet h2{margin:0;font-size:20px;letter-spacing:-.02em}
+.sheet .body{overflow:auto;padding:0 22px max(22px,env(safe-area-inset-bottom,0px));font-size:14.5px}.sheet .body p{margin:0 0 14px}.sheet .body b{display:block;margin-bottom:2px}
+.toasts{position:fixed;left:0;right:0;top:max(48px,calc(env(safe-area-inset-top,0px) + 48px));z-index:60;display:grid;gap:8px;justify-items:center;padding:0 12px;pointer-events:none}
+.toast{pointer-events:auto;width:min(100%,400px);background:var(--surface);color:var(--fg);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.28);padding:12px 14px;font-size:13.5px;line-height:1.35;animation:in .4s}
+.toast small{display:block;color:var(--mute);font-size:11.5px;font-weight:600;margin-bottom:2px}.toast i{font-style:normal;font-weight:800;letter-spacing:.2em}
+.gwx{position:fixed;inset:0;z-index:70;background:#f2f4f8;color:#18202c;overflow:auto;font-family:var(--sans)}
+.gw .in{max-width:440px;margin:0 auto;padding-bottom:30px}.gw .hd{background:#0d2240;color:#fff;padding:20px 20px 18px}.gw .hd small{opacity:.7;font-size:12px}.gw .hd h3{margin:3px 0 0;font-size:19px}.gw .amt{font-size:30px;font-weight:800;margin-top:10px;letter-spacing:-.02em}
+.gw .bx{background:#fff;margin:12px;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.07)}.gw .row{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#566;padding:4px 0}.gw .row span:last-child{color:#18202c;font-weight:600;text-align:right;overflow-wrap:anywhere}
+.gw .opt{padding:13px 2px;border-bottom:1px solid #eef0f3;font-weight:600;font-size:15px}.gw .opt:last-child{border:0}.gw .opt span{display:block;font-weight:400;color:#778;font-size:12px}
+.gw button{display:block;width:calc(100% - 24px);margin:6px 12px;border:0;border-radius:12px;padding:16px;font:700 16px var(--sans);background:#2b6cf0;color:#fff;cursor:pointer}.gw .note{text-align:center;font-size:11.5px;color:#889;margin:10px 16px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="eyebrow">Epic Developers</div>
-    <h1 id="title">Reserve your plot</h1>
-    <p id="place"></p>
-  </header>
-  <div class="steps" id="steps"><i></i><i></i><i></i><i></i></div>
+  <div class="top"><span class="brand">Epic Developers</span><button class="back" id="back" hidden>Back</button></div>
+  <div class="bar" id="bar" hidden><i></i><i></i><i></i></div>
 
-  <!-- project picker (only if the link has no project) -->
-  <section id="s0" class="hidden">
-    <h2>Which project?</h2><p class="sub">Choose where your plot is.</p>
-    <button class="btn" data-p="parkcentral">Park Central · Dundigal</button>
-    <button class="btn ghost" data-p="greens">The Greens · Kadthal</button>
+  <section id="s-pick" class="on">
+    <p class="eyebrow">Reserve online</p>
+    <h1>Choose your project.</h1>
+    <p class="lead">Hold your plot in about a minute. No paperwork.</p>
+    <div class="err" id="pickErr"></div>
+    <div class="tiles">
+      <button class="tile" data-p="greens"><strong>The Greens</strong><span>Kadthal · RERA and DTCP approved</span><em>From ₹18,500 per sq. yd. →</em></button>
+      <button class="tile" data-p="parkcentral"><strong>Park Central</strong><span>Dundigal · HMDA and RERA approved</span><em>From ₹38,000 per sq. yd. →</em></button>
+    </div>
   </section>
 
-  <!-- step 1 -->
-  <section id="s1" class="hidden">
-    <h2>Your plot and details</h2><p class="sub">Takes about two minutes.</p>
+  <section id="s-details">
+    <p class="eyebrow" id="d-eyebrow"></p>
+    <h1>Hold your plot.</h1>
+    <p class="lead">To hold it, pay a minimum of <span id="minAmt">₹50,000</span> today. You can pay more if you like.</p>
+    <p class="eyebrow" id="agreed" hidden style="color:var(--ok)">Your agreed price</p>
     <div class="card">
-      <div class="row2">
-        <div><label for="plot">Plot number</label><input id="plot" inputmode="text" autocomplete="off" maxlength="12"></div>
-        <div><label for="area">Area (sq. yds.)</label><input id="area" inputmode="decimal" autocomplete="off"></div>
-      </div>
-      <div class="err" id="plotNote"></div>
-      <label>Facing</label>
-      <div class="seg" id="facing"><button type="button" data-f="west">West</button><button type="button" data-f="east">East</button><button type="button" data-f="corner">Corner</button></div>
-      <div class="total"><span id="rateTxt">Plot cost</span><b id="cost">–</b></div>
+      <div class="plotline"><label for="plot">Your plot</label><select id="plot"></select></div>
+      <div class="price" id="cost">—</div>
+      <div class="meta" id="pmeta"></div>
     </div>
-    <div class="card">
-      <div class="row2">
-        <div><label for="title_">Title</label><select id="title_"><option>Mr</option><option>Ms</option><option>Mrs</option><option>Dr</option></select></div>
-        <div><label for="age">Age</label><input id="age" inputmode="numeric" maxlength="2" autocomplete="off"></div>
-      </div>
-      <label for="name">Full name</label><input id="name" autocomplete="name">
-      <label for="relation">Son / daughter / wife of</label><input id="relation" autocomplete="off">
-      <div class="row2">
-        <div><label for="nationality">Nationality</label><input id="nationality" value="Indian" autocomplete="off"></div>
-        <div><label for="profession">Profession</label><input id="profession" autocomplete="organization-title"></div>
-      </div>
-      <label for="status">Residential status</label>
-      <select id="status"><option>Resident</option><option>Non-Resident</option><option>Foreign National of Indian Origin</option></select>
-      <label for="pan">PAN</label><input id="pan" autocapitalize="characters" maxlength="10" autocomplete="off">
-      <label for="address">Residential address</label><textarea id="address" autocomplete="street-address"></textarea>
-      <label for="mobile">Mobile (WhatsApp)</label><input id="mobile" type="tel" inputmode="tel" autocomplete="tel">
-      <label for="email">Email (we'll send you a code)</label><input id="email" type="email" inputmode="email" autocomplete="email">
-      <label class="toggle"><input type="checkbox" id="hasJoint"> Add a joint purchaser</label>
-      <div id="jointBox" class="hidden">
-        <label for="jname">Joint purchaser's full name</label><input id="jname">
-        <div class="row2">
-          <div><label for="jrel">Relationship to you</label><input id="jrel"></div>
-          <div><label for="jmob">Their mobile</label><input id="jmob" type="tel" inputmode="tel"></div>
-        </div>
-      </div>
-    </div>
-    <div class="err" id="e1"></div>
-    <button class="btn" id="go1">Continue</button>
+    <div class="f" id="f-name"><input id="name" autocomplete="name" placeholder=" "><label for="name">Full name</label></div>
+    <div class="f" id="f-mobile"><input id="mobile" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="mobile">Mobile number</label></div>
+    <div class="f" id="f-email"><input id="email" type="email" autocomplete="email" autocapitalize="none" placeholder=" "><label for="email">Email</label></div>
+    <p class="fine">We will email you a code to confirm it is you.</p>
+    <div class="err" id="e-details"></div>
+    <div class="cta"><button class="btn" id="go1" disabled>Continue</button></div>
   </section>
 
-  <!-- step 2 -->
-  <section id="s2" class="hidden">
-    <h2>Check your email</h2>
-    <p class="sub">We sent a 6-digit code to <b id="sentTo"></b>. This confirms the form is really yours.</p>
-    <div class="card">
-      <label for="code" style="margin-top:0">Enter the code</label>
-      <input id="code" class="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······">
-      <div class="err" id="e2"></div>
-    </div>
-    <button class="btn" id="go2">Verify</button>
-    <div class="center"><button class="link" id="resend" type="button">Send the code again</button> · <button class="link" id="back2" type="button">Change email</button></div>
+  <section id="s-code">
+    <p class="eyebrow">Almost there</p>
+    <h1>Enter the code.</h1>
+    <p class="lead" id="codeLead"></p>
+    <input class="code" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······" aria-label="6-digit code">
+    <div class="err" id="e-code"></div>
+    <p class="fine"><button class="link" id="resend">Send the code again</button></p>
   </section>
 
-  <!-- step 3 -->
-  <section id="s3" class="hidden">
-    <h2>Review and sign</h2>
-    <p class="sub">Check the details, then sign with your finger or mouse.</p>
-    <div class="card sum"><dl id="sum"></dl></div>
-    <div class="note" id="advNote"></div>
-    <details><summary>Read the terms (optional)</summary><div class="terms" id="terms"></div></details>
-    <label class="check"><input type="checkbox" id="decl"><span id="declTxt"></span></label>
-    <label style="margin-top:6px">Your signature</label>
-    <div class="sig"><canvas id="sig1"></canvas><div class="base"></div><div class="hint" id="hint1">Sign here</div></div>
-    <div class="sigbar"><span class="sub" style="margin:0;font-size:12.5px" id="signer"></span><button class="link" data-clear="sig1" type="button">Clear</button></div>
-    <div id="jointSig" class="hidden">
-      <label>Joint purchaser's signature</label>
-      <div class="sig"><canvas id="sig2"></canvas><div class="base"></div><div class="hint" id="hint2">Joint purchaser signs here</div></div>
-      <div class="sigbar"><span></span><button class="link" data-clear="sig2" type="button">Clear</button></div>
-    </div>
-    <div class="err" id="e3"></div>
-    <button class="btn" id="go3">Sign and continue</button>
+  <section id="s-sign">
+    <p class="eyebrow" id="s-eyebrow"></p>
+    <h1>Sign to hold it.</h1>
+    <dl class="list" id="sum"></dl>
+    <div class="f" id="f-amt"><input id="amt" inputmode="numeric" autocomplete="off" placeholder=" "><label for="amt">Pay today · minimum ₹50,000</label></div>
+    <p class="fine" style="margin:-2px 2px 20px">Every rupee you pay today is adjusted in your plot cost. The first ₹50,000 is not refundable if you cancel.</p>
+    <div class="pad" id="pad"><div class="hint">Sign here with your finger</div><div class="base"></div><canvas id="cv"></canvas></div>
+    <div class="padrow"><span id="signer"></span><button class="link" id="clear" style="font-weight:600;color:var(--mute)">Clear</button></div>
+    <p class="consent">By signing, I confirm that I have read and understood the <button class="link" id="openTerms">terms and conditions</button> and I agree to them.</p>
+    <div class="err" id="e-sign"></div>
+    <div class="cta"><button class="btn" id="go3" disabled>Sign and pay ₹50,000</button></div>
   </section>
 
-  <!-- step 4 -->
-  <section id="s4" class="hidden">
-    <h2>Secure your plot</h2>
-    <p class="sub">Your signed form is on its way to your email. One last step: the booking advance.</p>
-    <div class="card center">
-      <div class="sub" style="margin:0">Booking advance</div>
-      <div class="big" id="amt"></div>
-      <div class="sub" style="margin:0;font-size:13px">Once we receive it, the plot is held only for you. It is non-refundable if you cancel.</div>
-    </div>
-    <div id="payRz" class="hidden"><a class="btn" id="rzBtn" href="#">Pay now</a><p class="center sub" style="margin-top:10px">UPI, net banking or card.</p></div>
-    <div id="payUpi" class="hidden">
-      <a class="btn" id="upiBtn" href="#">Pay with UPI app</a>
-      <div class="qr"><div id="qr"></div></div>
-      <p class="center sub" id="upiTxt"></p>
-      <div class="card">
-        <label for="utr" style="margin-top:0">After paying, enter the transaction ID</label>
-        <input id="utr" autocapitalize="characters" autocomplete="off" placeholder="e.g. 4256…">
-        <div class="err" id="e4"></div>
-      </div>
-      <button class="btn ghost" id="go4">I have paid</button>
-    </div>
+  <section id="s-upi">
+    <p class="eyebrow">Last step</p>
+    <h1>Pay <span id="upiAmt"></span>.</h1>
+    <p class="lead">Your signed form is in your email. Pay now to block the plot for you.</p>
+    <a class="btn" id="upiBtn" href="#" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Pay with UPI app</a>
+    <div style="display:flex;justify-content:center;margin:20px 0 6px"><div id="qr" style="background:#fff;padding:12px;border-radius:16px"></div></div>
+    <p class="fine" id="upiTxt" style="text-align:center"></p>
+    <div class="f" style="margin-top:18px"><input id="utr" autocapitalize="characters" autocomplete="off" placeholder=" "><label for="utr">After paying, enter the transaction ID</label></div>
+    <div class="err" id="e-utr"></div>
+    <div class="cta"><button class="btn" id="go4">I have paid</button></div>
   </section>
 
-  <section id="s5" class="hidden center">
-    <div class="tick">✓</div>
-    <h2>Thank you</h2>
-    <p class="sub" id="doneTxt"></p>
+  <section id="s-done" class="done">
+    <svg class="tick" viewBox="0 0 92 92" aria-hidden="true"><circle cx="46" cy="46" r="40"/><path d="M29 47l12 12 23-26"/></svg>
+    <h1 id="doneH"></h1>
+    <p class="lead" id="doneP" style="margin-bottom:6px"></p>
+    <p class="meta" id="bid" style="margin:10px 0 0"></p>
   </section>
 
-  <footer>Questions? Call or WhatsApp <a href="tel:+917893684545">789 368 4545</a><br>M/s Epic Developers · Jubilee Hills, Hyderabad</footer>
+  <footer>Questions? Call or WhatsApp 789 368 4545<br>M/s Epic Developers · Jubilee Hills, Hyderabad</footer>
 </div>
+
+<div class="sheet" id="sheet"><div class="box" role="dialog" aria-modal="true" aria-labelledby="sh-t"><header><h2 id="sh-t">Terms and conditions</h2><button class="link" id="closeTerms">Close</button></header><div class="body" id="terms"></div></div></div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function(){
-  var $=function(id){return document.getElementById(id)};
-  var API=(document.querySelector('meta[name=api]').content||'').replace(/\/$/,'');
-  var qs=new URLSearchParams(location.search);
-  var S={cfg:null,facing:null,otpToken:null,verified:null,email:null,booking:null};
-  var inr=function(n){return '₹'+Number(n).toLocaleString('en-IN')};
-  function show(n){['s0','s1','s2','s3','s4','s5'].forEach(function(x){$(x).classList.add('hidden')});$('s'+n).classList.remove('hidden');
-    var k=Math.min(Math.max(n,1),4);[].forEach.call($('steps').children,function(i,ix){i.classList.toggle('on',ix<k)});$('steps').classList.toggle('hidden',n===0||n===5);window.scrollTo(0,0)}
-  function api(path,body){return fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Something went wrong');return j})})}
-  function bad(id,on){$(id).classList.toggle('bad',!!on)}
+var $=function(i){return document.getElementById(i)};
+var API=(document.querySelector('meta[name=api]').content||'').replace(/\/$/,'');
+var qs=new URLSearchParams(location.search);
+var WHATSAPP_CODE=false; /* set true once WhatsApp codes are live */
+var inr=function(n){return '₹'+Number(n).toLocaleString('en-IN')};
+var S={cfg:null,p:null,plot:null,deal:null,name:'',mobile:'',email:'',otpToken:null,verified:null,hasInk:false,booking:null,amount:0};
+function call(path,body){return fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Something went wrong. Please try again.');return j})})}
 
-  // ---- project ----
-  function loadProject(key){
-    fetch(API+'/api/config/'+key).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(c){
-      S.cfg=c;document.title='Reserve your plot · '+c.project.name;$('title').textContent=c.project.name;$('place').textContent=c.project.place;
-      $('terms').innerHTML=c.terms.map(function(t,i){return '<p><b>'+(i+1)+'. '+t.title+'</b><br>'+t.text+'</p>'}).join('');
-      $('declTxt').textContent=c.declaration;
-      $('advNote').innerHTML='<b>Booking advance '+inr(c.advance)+'</b>. We hold the plot only for you, so this advance is non-refundable if you decide to cancel. The balance is due within '+c.balanceDays+' days of booking.';
-      if(qs.get('plot'))$('plot').value=qs.get('plot');
-      if(qs.get('area'))$('area').value=qs.get('area');
-      if(qs.get('facing'))setFacing(qs.get('facing'));
-      lookup();calc();show(1);
-    }).catch(function(){$('s0').classList.remove('hidden');$('title').textContent='Reserve your plot';show(0)});
-  }
-  [].forEach.call(document.querySelectorAll('#s0 [data-p]'),function(b){b.onclick=function(){loadProject(b.dataset.p)}});
-  var pk=qs.get('project');if(pk==='parkcentral'||pk==='greens')loadProject(pk);else show(0);
+var order=['s-pick','s-details','s-code','s-sign','s-upi','s-done'],cur='s-pick';
+function show(id){cur=id;order.forEach(function(x){$(x).classList.toggle('on',x===id)});var i=order.indexOf(id);
+  $('bar').hidden=i<1||i>3;[].forEach.call($('bar').children,function(b,k){b.classList.toggle('on',k<i)});$('back').hidden=!(i===1||i===2||i===3);window.scrollTo(0,0)}
+$('back').onclick=function(){var i=order.indexOf(cur);if(i===1&&!qs.get('project'))show('s-pick');else if(i>1)show(order[i-1])};
 
-  // ---- plot & cost ----
-  function setFacing(f){if(['west','east','corner'].indexOf(f)<0)return;S.facing=f;[].forEach.call($('facing').children,function(b){b.classList.toggle('on',b.dataset.f===f)});calc()}
-  [].forEach.call($('facing').children,function(b){b.onclick=function(){setFacing(b.dataset.f)}});
-  function calc(){
-    if(!S.cfg)return;var a=parseFloat($('area').value),p=S.cfg.project;
-    var rate=p.rate+((S.facing&&S.facing!=='west')?p.premium:0);
-    $('rateTxt').textContent=S.facing?('Plot cost · '+inr(rate)+' per sq. yd.'):'Plot cost';
-    $('cost').textContent=(a>0&&S.facing)?inr(Math.round(rate*a)):'–';
-  }
-  $('area').oninput=calc;
-  function lookup(){
-    var m=S.cfg&&S.cfg.project.plots;if(!m)return;
-    var v=$('plot').value.trim(),e=m[v];
-    $('plotNote').textContent='';$('area').readOnly=true;
-    [].forEach.call($('facing').children,function(b){b.disabled=false});
-    if(!v){$('area').value='';calc();return}
-    if(!e){$('area').value='';$('plotNote').textContent='This plot is not open for online booking. Please call us on 789 368 4545.';calc();return}
-    $('area').value=e.area;
-    if(e.facing){setFacing(e.facing);[].forEach.call($('facing').children,function(b){b.disabled=true})}
-    calc();
-  }
-  $('plot').oninput=lookup;
-  $('hasJoint').onchange=function(){$('jointBox').classList.toggle('hidden',!this.checked)};
-  $('pan').oninput=function(){this.value=this.value.toUpperCase()};
+/* ---- project and plot ---- */
+[].forEach.call(document.querySelectorAll('.tile'),function(t){t.onclick=function(){load(t.dataset.p)}});
+function load(key){
+  var u='/api/config/'+key+(qs.get('d')?'?d='+encodeURIComponent(qs.get('d')):'');
+  fetch(API+u).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(c){
+    S.cfg=c;S.p=c;S.deal=c.deal;var pr=c.project;document.title='Reserve your plot · '+pr.name;
+    $('d-eyebrow').textContent=pr.name+' · '+pr.place.split(',')[0];
+    var keys=Object.keys(pr.plots).map(Number).sort(function(a,b){return a-b});
+    if(S.deal)keys=[Number(S.deal.plot)];
+    $('plot').innerHTML=keys.map(function(n){return '<option value="'+n+'">Plot '+n+'</option>'}).join('');
+    var want=S.deal?S.deal.plot:qs.get('plot');if(want&&pr.plots[want])$('plot').value=String(want);
+    $('plot').disabled=!!S.deal;$('agreed').hidden=!S.deal;if(S.deal&&S.deal.name&&!$('name').value)$('name').value=S.deal.name;
+    $('terms').innerHTML=c.terms.map(function(t,i){return '<p><b>'+(i+1)+'. '+t.title+'</b>'+t.text+'</p>'}).join('');
+    $('minAmt').textContent=inr(c.advance);setPlot();show('s-details');
+  }).catch(function(){$('pickErr').textContent='This page could not load. Please call or WhatsApp 789 368 4545.';show('s-pick')});
+}
+$('plot').onchange=setPlot;
+function setPlot(){S.plot=$('plot').value;price()}
+function flabel(pl){return (pl.corner?'Corner · ':'')+(pl.facing==='east'?'East':'West')+' facing'}
+function calc(){var pr=S.p.project,pl=pr.plots[S.plot],list=pr.rate+(pl.prem?pr.premium:0),rate=S.deal&&String(S.deal.plot)===String(S.plot)?S.deal.rate:list;
+  return{a:pl.area,rate:rate,list:list,cost:Math.round(rate*pl.area),maint:Math.round(pr.maintenance*pl.area),pl:pl}}
+function price(){
+  var pr=S.p.project,c=calc();$('cost').textContent=inr(c.cost);
+  var why=c.rate!==c.list?' · agreed rate (list '+inr(c.list)+')':(c.pl.prem?(pr.key==='greens'?' · includes ₹1,000 for east / corner':' · includes ₹1,000 for east facing'):'');
+  $('pmeta').textContent=c.a+' sq. yds. · '+flabel(c.pl)+' · '+inr(c.rate)+' per sq. yd.'+why;valid();
+}
 
-  // ---- step 1 ----
-  function val(){
-    var errs=[],f=function(id,ok){bad(id,!ok);if(!ok)errs.push(id)};
-    f('plot',/^[\w\s\/-]{1,12}$/.test($('plot').value.trim())&&(!S.cfg.project.plots||!!S.cfg.project.plots[$('plot').value.trim()]));
-    f('area',/^\d{2,4}(\.\d{1,2})?$/.test($('area').value.trim()));
-    if(!S.facing)errs.push('facing');
-    f('age',/^\d{2}$/.test($('age').value.trim()));
-    f('name',$('name').value.trim().length>=2);
-    f('relation',$('relation').value.trim().length>=2);
-    f('nationality',$('nationality').value.trim().length>=2);
-    f('profession',$('profession').value.trim().length>=2);
-    f('pan',/^[A-Z]{5}\d{4}[A-Z]$/.test($('pan').value.trim()));
-    f('address',$('address').value.trim().length>=8);
-    f('mobile',/^\+?[\d\s-]{8,18}$/.test($('mobile').value.trim()));
-    f('email',/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test($('email').value.trim()));
-    if($('hasJoint').checked){f('jname',$('jname').value.trim().length>=2);f('jrel',$('jrel').value.trim().length>=2);f('jmob',/^\+?[\d\s-]{8,18}$/.test($('jmob').value.trim()))}
-    return errs;
-  }
-  $('go1').onclick=function(){
-    var errs=val();
-    if(errs.length){$('e1').textContent=errs[0]==='facing'?'Please choose the facing.':'Please check the highlighted fields.';var el=$(errs[0])||$('facing');el.scrollIntoView({block:'center',behavior:'smooth'});return}
-    $('e1').textContent='';var btn=this;btn.disabled=true;btn.textContent='Sending code…';
-    S.email=$('email').value.trim().toLowerCase();
-    api('/api/otp/send',{email:S.email}).then(function(j){S.otpToken=j.token;$('sentTo').textContent=S.email;show(2);$('code').value='';$('code').focus()})
-      .catch(function(e){$('e1').textContent=e.message}).then(function(){btn.disabled=false;btn.textContent='Continue'});
-  };
+/* ---- details ---- */
+function norm(m){m=m.replace(/[\s\-()]/g,'');return m.replace(/^(\+?91)(?=\d{10}$)/,'')}
+var okName=function(v){return v.trim().length>=3},okMob=function(v){return /^[6-9]\d{9}$/.test(norm(v))},okMail=function(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())};
+function valid(){var ok=!!S.p&&okName($('name').value)&&okMob($('mobile').value)&&okMail($('email').value);$('go1').disabled=!ok;return ok}
+['name','mobile','email'].forEach(function(id){$(id).addEventListener('input',function(){$('f-'+id).classList.remove('bad');valid()});
+  $(id).addEventListener('blur',function(){var v=$(id).value,g={name:okName,mobile:okMob,email:okMail}[id];$('f-'+id).classList.toggle('bad',!!v&&!g(v))})});
+function sendCode(){return call('/api/otp/send',{email:S.email}).then(function(j){S.otpToken=j.token})}
+$('go1').onclick=function(){
+  S.name=$('name').value.trim();S.mobile=norm($('mobile').value);S.email=$('email').value.trim().toLowerCase();
+  var b=this;b.disabled=true;b.textContent='Sending code…';$('e-details').textContent='';
+  sendCode().then(function(){$('codeLead').textContent=(WHATSAPP_CODE?'We sent a 6-digit code to WhatsApp and to ':'We sent a 6-digit code to ')+S.email+'.';$('code').value='';$('e-code').textContent='';show('s-code');setTimeout(function(){$('code').focus()},300)})
+    .catch(function(e){$('e-details').textContent=e.message}).then(function(){b.disabled=!valid();b.textContent='Continue'});
+};
 
-  // ---- step 2 ----
-  function verify(){
-    var code=$('code').value.replace(/\D/g,'');if(code.length!==6){$('e2').textContent='Please enter the 6-digit code.';return}
-    var b=$('go2');b.disabled=true;b.textContent='Checking…';
-    api('/api/otp/verify',{email:S.email,code:code,token:S.otpToken}).then(function(j){S.verified=j.verified;prepSign();show(3)})
-      .catch(function(e){$('e2').textContent=e.message}).then(function(){b.disabled=false;b.textContent='Verify'});
-  }
-  $('go2').onclick=verify;
-  $('code').oninput=function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e2').textContent='';if(this.value.length===6)verify()};
-  $('resend').onclick=function(){var b=this;b.disabled=true;api('/api/otp/send',{email:S.email}).then(function(j){S.otpToken=j.token;$('e2').textContent='A new code is on its way.'}).catch(function(e){$('e2').textContent=e.message}).then(function(){setTimeout(function(){b.disabled=false},20000)})};
-  $('back2').onclick=function(){show(1)};
+/* ---- code ---- */
+$('code').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-code').textContent='';
+  if(this.value.length===6){var el=this;call('/api/otp/verify',{email:S.email,code:el.value,token:S.otpToken}).then(function(j){S.verified=j.verified;prepSign();show('s-sign')}).catch(function(e){$('e-code').textContent=e.message;el.select()})}});
+$('resend').onclick=function(){var b=this;b.disabled=true;sendCode().then(function(){$('e-code').textContent='';b.textContent='Code sent again'}).catch(function(e){$('e-code').textContent=e.message}).then(function(){setTimeout(function(){b.textContent='Send the code again';b.disabled=false},8000)})};
 
-  // ---- step 3 ----
-  var pads={};
-  function pad(id,hint){
-    var c=$(id),ctx=c.getContext('2d'),drawing=false,pts=0,last=null;
-    function size(){var r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;ctx.setTransform(d,0,0,d,0,0);ctx.lineWidth=2.4;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#111';pts=0;$(hint).style.display=''}
-    function xy(e){var r=c.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
-    c.addEventListener('pointerdown',function(e){drawing=true;last=xy(e);c.setPointerCapture(e.pointerId);$(hint).style.display='none';ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(last.x+.1,last.y+.1);ctx.stroke();e.preventDefault()});
-    c.addEventListener('pointermove',function(e){if(!drawing)return;var p=xy(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();pts+=Math.abs(p.x-last.x)+Math.abs(p.y-last.y);last=p;e.preventDefault()});
-    ['pointerup','pointercancel'].forEach(function(t){c.addEventListener(t,function(){drawing=false})});
-    pads[id]={size:size,filled:function(){return pts>60},png:function(){var o=document.createElement('canvas');o.width=c.width;o.height=c.height;var x=o.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,o.width,o.height);x.drawImage(c,0,0);var s=Math.min(1,700/o.width),t=document.createElement('canvas');t.width=Math.round(o.width*s);t.height=Math.round(o.height*s);t.getContext('2d').drawImage(o,0,0,t.width,t.height);return t.toDataURL('image/png')}};
-    size();
-  }
-  [].forEach.call(document.querySelectorAll('[data-clear]'),function(b){b.onclick=function(){pads[b.dataset.clear].size()}});
-  function gather(){
-    return{title:$('title_').value,name:$('name').value.trim(),relation:$('relation').value.trim(),age:$('age').value.trim(),nationality:$('nationality').value.trim(),
-      profession:$('profession').value.trim(),status:$('status').value,pan:$('pan').value.trim(),address:$('address').value.trim(),mobile:$('mobile').value.trim()};
-  }
-  function prepSign(){
-    var b=gather(),p=S.cfg.project,a=parseFloat($('area').value),rate=p.rate+(S.facing!=='west'?p.premium:0),cost=Math.round(rate*a);
-    var rows=[['Project',p.name],['Plot',$('plot').value.trim()+' · '+a+' sq. yds. · '+S.facing+' facing'],['Plot cost',inr(cost)],['Booking advance',inr(S.cfg.advance)],['Balance',inr(cost-S.cfg.advance)+' within '+S.cfg.balanceDays+' days'],['Name',b.title+' '+b.name],['Email',S.email],['Mobile',b.mobile]];
-    if(p.maintenance)rows.splice(5,0,['Maintenance (2 yrs, at registration)',inr(Math.round(p.maintenance*a))]);
-    if($('hasJoint').checked)rows.push(['Joint purchaser',$('jname').value.trim()]);
-    $('sum').innerHTML=rows.map(function(r){return '<dt>'+r[0]+'</dt><dd>'+String(r[1]).replace(/[&<>]/g,'')+'</dd>'}).join('');
-    $('signer').textContent=b.title+' '+b.name;
-    $('jointSig').classList.toggle('hidden',!$('hasJoint').checked);
-    setTimeout(function(){pad('sig1','hint1');if($('hasJoint').checked)pad('sig2','hint2')},50);
-  }
-  $('go3').onclick=function(){
-    var e=$('e3');e.textContent='';
-    if(!$('decl').checked){e.textContent='Please tick the confirmation above your signature.';return}
-    if(!pads.sig1.filled()){e.textContent='Please sign in the box.';return}
-    if($('hasJoint').checked&&!pads.sig2.filled()){e.textContent='The joint purchaser needs to sign as well.';return}
-    var btn=this;btn.disabled=true;btn.textContent='Please wait…';
-    var body={verified:S.verified,project:S.cfg.project.key,plot:$('plot').value.trim(),area:$('area').value.trim(),facing:S.facing,buyer:gather(),declaration:true,signature:pads.sig1.png()};
-    if($('hasJoint').checked){body.joint={name:$('jname').value.trim(),relation:$('jrel').value.trim(),mobile:$('jmob').value.trim()};body.jointSignature=pads.sig2.png()}
-    api('/api/book',body).then(function(j){S.booking=j;payStep(j)}).catch(function(er){e.textContent=er.message}).then(function(){btn.disabled=false;btn.textContent='Sign and continue'});
-  };
+/* ---- sign ---- */
+function prepSign(){
+  var c=calc(),pr=S.p.project;$('s-eyebrow').textContent=pr.name+' · Plot '+S.plot;
+  var rows=[['Plot','Plot '+S.plot+' · '+c.a+' sq. yds.'],['Plot cost',inr(c.cost)],['Balance (within '+S.p.balanceDays+' days)','<span id="balVal"></span>'],['Maintenance, 2 years',inr(c.maint)+' at registration'],['Buyer',S.name]];
+  $('sum').innerHTML=rows.map(function(r){return '<div><dt>'+r[0]+'</dt><dd>'+(String(r[1]).indexOf('<span')===0?r[1]:String(r[1]).replace(/[&<>]/g,''))+'</dd></div>'}).join('');
+  $('signer').textContent=S.name;$('amt').value=Number(S.p.advance).toLocaleString('en-IN');clearPad();checkAmt();setTimeout(sizePad,60);
+}
+var cv=$('cv'),ctx=null,drawing=false,last=null,len=0;
+function sizePad(){var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;ctx=cv.getContext('2d');ctx.scale(d,d);ctx.lineWidth=2.6;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#14141a'}
+function clearPad(){len=0;S.hasInk=false;$('pad').classList.remove('has');if(ctx)ctx.clearRect(0,0,cv.width,cv.height);checkAmt()}
+function pos(e){var r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+cv.addEventListener('pointerdown',function(e){if(!ctx)sizePad();drawing=true;last=pos(e);cv.setPointerCapture(e.pointerId);ctx.beginPath();ctx.arc(last.x,last.y,1.2,0,6.3);ctx.stroke();$('pad').classList.add('has');e.preventDefault()});
+cv.addEventListener('pointermove',function(e){if(!drawing)return;var p=pos(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();len+=Math.hypot(p.x-last.x,p.y-last.y);last=p;if(len>90&&!S.hasInk){S.hasInk=true;checkAmt()}});
+['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){drawing=false})});
+$('clear').onclick=clearPad;
+function amtVal(){return parseInt(($('amt').value||'').replace(/\D/g,''),10)||0}
+function checkAmt(){if(!S.p||cur==='s-details')return;var c=calc(),a=amtVal(),min=S.p.advance,msg='';
+  if(a<min)msg='To hold the plot, please pay at least '+inr(min)+'.';else if(a>c.cost)msg='The amount cannot be more than the plot cost of '+inr(c.cost)+'.';
+  $('f-amt').classList.toggle('bad',!!msg);$('e-sign').textContent=msg;if($('balVal'))$('balVal').textContent=inr(Math.max(c.cost-a,0));
+  $('go3').textContent='Sign and pay '+inr(a);$('go3').disabled=!(!msg&&S.hasInk)}
+$('amt').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';checkAmt()});
+window.addEventListener('resize',function(){if(cur==='s-sign'&&!S.hasInk)sizePad()});
+$('openTerms').onclick=function(){$('sheet').classList.add('on')};$('closeTerms').onclick=function(){$('sheet').classList.remove('on')};
+$('sheet').onclick=function(e){if(e.target===this)this.classList.remove('on')};
 
-  // ---- step 4 ----
-  function payStep(j){
-    $('amt').textContent=inr(j.advance);show(4);
-    if(j.pay.mode==='razorpay'){$('payRz').classList.remove('hidden');$('rzBtn').href=j.pay.url;$('rzBtn').textContent='Pay '+inr(j.advance)}
-    else{
-      $('payUpi').classList.remove('hidden');
-      if(j.pay.upi){$('upiBtn').href=j.pay.upi;$('qr').innerHTML='';new QRCode($('qr'),{text:j.pay.upi,width:176,height:176,correctLevel:QRCode.CorrectLevel.M});$('upiTxt').textContent='On a phone, tap the button. On a computer, scan the code with any UPI app.'}
-      else{$('upiBtn').classList.add('hidden');$('upiTxt').textContent='Payment details will be shared by our team.'}
-    }
-  }
-  $('go4').onclick=function(){
-    var u=$('utr').value.trim();if(!/^[A-Za-z0-9]{8,24}$/.test(u)){$('e4').textContent='Please enter the transaction ID from your payment app.';return}
-    var b=this;b.disabled=true;
-    api('/api/utr',{bookingToken:S.booking.bookingToken,utr:u}).then(function(){$('doneTxt').textContent='We have your signed form and payment details. We are confirming the payment and will email you shortly. Booking ID: '+S.booking.bookingId;show(5)})
-      .catch(function(e){$('e4').textContent=e.message;b.disabled=false});
-  };
+/* ---- pay ---- */
+$('go3').onclick=function(){
+  var b=this;b.disabled=true;b.textContent='One moment…';S.amount=amtVal();
+  call('/api/book',{verified:S.verified,project:S.p.project.key,plot:S.plot,deal:qs.get('d')||undefined,buyer:{name:S.name,mobile:S.mobile},amount:S.amount,signature:cv.toDataURL('image/png')})
+   .then(function(j){S.booking=j;if(j.pay.mode==='razorpay'){location.href=j.pay.url;return}upiStep(j)})
+   .catch(function(e){$('e-sign').textContent=e.message;b.disabled=false;checkAmt()});
+};
+function upiStep(j){
+  $('upiAmt').textContent=inr(j.amount);show('s-upi');
+  if(j.pay.upi){$('upiBtn').href=j.pay.upi;$('qr').innerHTML='';new QRCode($('qr'),{text:j.pay.upi,width:176,height:176,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});$('upiTxt').textContent='On a phone, tap the button. On a computer, scan the code with any UPI app.'}
+  else{$('upiBtn').hidden=true;$('upiTxt').textContent='Payment details will be shared by our team.'}
+}
+$('go4').onclick=function(){
+  var u=$('utr').value.trim();if(!/^[A-Za-z0-9]{8,24}$/.test(u)){$('e-utr').textContent='Please enter the transaction ID from your payment app.';return}
+  var b=this;b.disabled=true;call('/api/utr',{bookingToken:S.booking.bookingToken,utr:u}).then(function(){done()}).catch(function(e){$('e-utr').textContent=e.message;b.disabled=false})
+};
+function done(){$('doneH').textContent='Plot '+S.plot+' is almost yours.';$('doneP').textContent='We have your payment details and are confirming them with the bank. Your signed form is in your email.';$('bid').textContent='Booking ID '+S.booking.bookingId;show('s-done')}
+
+/* ---- start ---- */
+var k=qs.get('project');if(k&&/^(parkcentral|greens)$/.test(k))load(k);
 })();
+
 </script>
 </body>
 </html>
