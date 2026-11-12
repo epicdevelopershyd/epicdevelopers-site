@@ -173,6 +173,8 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function(){
+/* Sales team shortcut: epicdevelopers.in/reserve#sales opens the (unlinked) booking-link maker */
+if(location.hash==='#sales'){location.replace('sales/');return}
 var $=function(i){return document.getElementById(i)};
 var API=(document.querySelector('meta[name=api]').content||'').replace(/\/$/,'');
 var qs=new URLSearchParams(location.search);
