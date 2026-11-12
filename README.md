@@ -7,4 +7,4 @@ Static rebuild of the Epic Developers brochure site. No WordPress, no agency, no
 - Contact form opens a pre-filled WhatsApp message to +91 789 368 4545 — no server needed.
 - Deployed on Render as a static site (`render.yaml`).
 
-Corrections applied Aug 2026: Park Central price ₹40,000/sq.yd (current); removed stale 2021 "First Applied" price notice; "Blooming Gardens" renamed to "The Greens" everywhere; Eden Gardens & Dream Acres moved to Completed Projects; contact dropdown fixed; © 2026.
+Corrections applied Aug 2026: Park Central price ₹40,000/sq.yd (superseded 12 Nov 2026: ₹38,000/sq.yd is the regular price); removed stale 2021 "First Applied" price notice; "Blooming Gardens" renamed to "The Greens" everywhere; Eden Gardens & Dream Acres moved to Completed Projects; contact dropdown fixed; © 2026.
