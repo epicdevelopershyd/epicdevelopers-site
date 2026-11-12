@@ -923,6 +923,18 @@ html.has-offer .site-header{top:40px}
 html.has-offer-2 .site-header{top:80px}
 @media (max-width:640px){.offer-ribbon{font-size:12.5px;gap:8px}.offer-ribbon .or-t{display:none}.offer-ribbon .or-k{font-size:11px}}
 
+/* Combined Mega Festive Offer bar (homepage: one heading, two offers) */
+.offer-duo{position:fixed;top:0;left:0;right:0;z-index:95;display:flex;height:80px}
+.offer-duo .od-k{display:flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0 22px;background:#1a1405;color:#e3bd62;font-weight:700;text-transform:uppercase;letter-spacing:.16em;font-size:12.5px;line-height:1.35;text-align:center;max-width:170px}
+.offer-duo .od-rows{flex:1;display:flex;flex-direction:column;min-width:0}
+.offer-duo .od-r{flex:1;display:flex;align-items:center;justify-content:center;gap:12px;padding:0 14px;text-decoration:none;font-size:13.5px;letter-spacing:.01em;white-space:nowrap;overflow:hidden}
+.offer-duo .od-pc{background:#e3bd62;color:#1a1405}.offer-duo .od-pc:hover{background:#f0cd78}
+.offer-duo .od-gr{background:#2f5a2e;color:#f4f0e6}.offer-duo .od-gr:hover{background:#3a6d39}
+.offer-duo .od-p{font-weight:700}
+.offer-duo .or-t{font-weight:500}
+.offer-duo .or-a{font-weight:700;text-decoration:underline;text-underline-offset:3px}
+@media (max-width:640px){.offer-duo .od-k{font-size:10.5px;padding:0 10px;max-width:96px;letter-spacing:.12em}.offer-duo .od-r{font-size:12.5px;gap:8px}.offer-duo .or-t{display:none}}
+
 /* ---------- Park Central film ---------- */
 .pc-film { max-width: 1040px; margin: 0 auto; background: #0d0b07; }
 .pc-film video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #0d0b07; }
