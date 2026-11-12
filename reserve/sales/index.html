@@ -128,7 +128,7 @@ function supd(){$('out').hidden=true;$('serr').textContent='';if(!cfg)return;var
   if(r>x.list)bad='Above the current rate of '+inr(x.list)+'.';else if(fl&&r<fl)bad='Below the lowest you can agree, '+inr(fl)+'.';
   $('f-rate').classList.toggle('bad',!!bad);
   if(bad){$('save').textContent='';$('serr').textContent=bad}
-  else $('save').textContent=d>0?'Discount '+inr(d)+' per sq. yd. · '+inr(d*x.pl.area)+' in total'+(x.p.offerActive?'. Below the offer rate, so offer benefits (gold bar, registration benefit) do not apply.':''):(d===0?'Same as the current rate':'');
+  else $('save').textContent=d>0?'Discount '+inr(d)+' per sq. yd. · '+inr(d*x.pl.area)+' in total'+(x.p.offerActive?'. Below the offer rate, so the offer benefits ('+x.p.offerBenefits+') do not apply.':''):(d===0?'Same as the current rate':'');
   $('make').disabled=!($('pin').value&&fl)||!!bad}
 $('proj').onchange=load;$('plot').onchange=pick;
 $('pin').addEventListener('input',function(){fl=null;info();supd();clearTimeout(tm);tm=setTimeout(getFloor,700)});
