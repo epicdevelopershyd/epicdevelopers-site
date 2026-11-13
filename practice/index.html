@@ -138,9 +138,11 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
 
     <div class="sec">Sold by</div>
     <div id="sellerBox">
-      <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your full name</label></div>
       <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="off" placeholder=" "><label for="smob">Your mobile number</label></div>
-      <div class="f" id="f-sc" hidden><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">6-digit code we sent you</label></div>
+      <div class="f" id="f-sc" hidden><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code</label></div>
+      <div class="f" id="f-ad" hidden><input id="aad" inputmode="numeric" maxlength="14" autocomplete="off" placeholder=" "><label for="aad">Aadhaar number</label></div>
+      <div class="f" id="f-ao" hidden><input id="aotp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="aotp">OTP</label></div>
+      <p class="fine" id="aoHint" hidden style="margin:-4px 2px 0">Sent to the mobile linked with your Aadhaar.</p>
       <div class="err" id="e-s" style="min-height:0"></div>
     </div>
     <div class="who" id="sellerOk" hidden></div>
@@ -331,13 +333,19 @@ function finish(r,card){
 }
 
 /* ---- start screen (sales team or buyer on the salesperson's phone) + hash routing ---- */
-S.seller=null;
-$('smob').addEventListener('input',function(){var m=norm(this.value);$('e-s').textContent='';if(!okMob(this.value))return;if(!okName($('sname').value)){$('e-s').textContent='Please enter your full name first.';return}
-  $('f-sc').hidden=false;$('scode').value='';setTimeout(function(){toast('WhatsApp · Epic Developers','<i>'+CODE+'</i> is your Epic Developers sales login code.');toast('SMS · EPICDV','<i>'+CODE+'</i> is your Epic Developers sales login code.');$('scode').focus()},700)});
+S.seller=null;S.seen={};var lastSM='';
+function sellerDone(m,name){S.seller={mobile:m,name:name};S.seen[m]=name;clearToasts();$('sellerBox').hidden=true;$('sellerOk').hidden=false;$('sellerOk').textContent=name+' · +91 '+m.slice(0,5)+' '+m.slice(5);supd()}
+$('smob').addEventListener('input',function(){var m=norm(this.value);$('e-s').textContent='';if(!okMob(this.value)){lastSM='';return}if(m===lastSM)return;lastSM=m;
+  $('f-sc').hidden=false;$('scode').value='';$('f-ad').hidden=true;$('f-ao').hidden=true;$('aoHint').hidden=true;setTimeout(function(){toast('WhatsApp · Epic Developers','<i>'+CODE+'</i> is your Epic Developers sales login code.');toast('SMS · EPICDV','<i>'+CODE+'</i> is your Epic Developers sales login code.');$('scode').focus()},700)});
 $('scode').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-s').textContent='';
   if(this.value.length===6){if(this.value!==CODE){$('e-s').textContent='That code is not right.';this.select();return}
-    var m=norm($('smob').value);S.seller={mobile:m,name:$('sname').value.trim()};clearToasts();$('sellerBox').hidden=true;$('sellerOk').hidden=false;
-    $('sellerOk').textContent=S.seller.name+' · +91 '+m.slice(0,5)+' '+m.slice(5);supd()}});
+    var m=norm($('smob').value);clearToasts();if(S.seen[m]){sellerDone(m,S.seen[m]);return}
+    $('f-ad').hidden=false;$('aad').value='';setTimeout(function(){$('aad').focus()},200)}});
+$('aad').addEventListener('input',function(){var d=this.value.replace(/\D/g,'').slice(0,12);this.value=d.replace(/(\d{4})(?=\d)/g,'$1 ');$('e-s').textContent='';
+  if(d.length===12){$('f-ao').hidden=false;$('aoHint').hidden=false;$('aotp').value='';setTimeout(function(){toast('SMS · Aadhaar','<i>'+CODE+'</i> is your Aadhaar verification OTP.');$('aotp').focus()},700)}else{$('f-ao').hidden=true;$('aoHint').hidden=true}});
+$('aotp').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-s').textContent='';
+  if(this.value.length===6){if(this.value!==CODE){$('e-s').textContent='That OTP is not right.';this.select();return}
+    sellerDone(norm($('smob').value),'Ramesh Kumar')}});
 function sfill(){var k=Object.keys(CFG[$('sproj').value].project.plots).map(Number).sort(function(a,b){return a-b});$('splot').innerHTML=k.map(function(n){return '<option value="'+n+'">Plot '+n+'</option>'}).join('');if($('sproj').value==='greens')$('splot').value='15';spick()}
 function slist(){var p=CFG[$('sproj').value].project,pl=p.plots[$('splot').value];return{p:p,pl:pl,list:p.rate+(pl.prem?p.premium:0),floor:p.floor+(pl.prem?p.premium:0)}}
 function rv(){return parseInt(($('rate').value||'').replace(/\D/g,''),10)||0}
