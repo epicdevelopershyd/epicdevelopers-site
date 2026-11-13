@@ -31,7 +31,7 @@ section.on{display:flex}
 @keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
 h1{font-size:clamp(34px,10.5vw,46px);line-height:1.04;letter-spacing:-.035em;font-weight:800;margin:0 0 14px;text-wrap:balance}
-.lockup{display:flex;align-items:center;gap:14px;margin:0 0 30px;padding-bottom:20px;border-bottom:1px solid var(--line)}.lockup .mark{width:44px;height:44px;flex:none}.lockup small{display:block;font-size:11px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}.lockup b{display:block;font-size:21px;font-weight:700;letter-spacing:-.025em;line-height:1.15}.lead{color:var(--mute);font-size:17px;line-height:1.45;margin:0 0 26px;text-wrap:pretty}
+.lockup{display:flex;align-items:center;gap:14px;margin:0 0 4px;padding-bottom:20px;border-bottom:1px solid var(--line)}.lockup .mark{width:44px;height:44px;flex:none}.lockup small{display:block;font-size:11px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}.lockup b{display:block;font-size:21px;font-weight:700;letter-spacing:-.025em;line-height:1.15}.lead{color:var(--mute);font-size:17px;line-height:1.45;margin:0 0 26px;text-wrap:pretty}
 .tiles{display:grid;gap:12px}
 .tile{display:block;width:100%;text-align:left;border:0;cursor:pointer;background:var(--fill);border-radius:22px;padding:22px 22px 20px;transition:transform .15s}
 .tile:active{transform:scale(.985)}.tile strong{display:block;font-size:26px;letter-spacing:-.025em;font-weight:800}.tile span{color:var(--mute);font-size:15px}.tile em{display:block;margin-top:14px;font-style:normal;font-size:14px;font-weight:600}
@@ -116,8 +116,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
 
   <section id="s-pick" class="on">
     <div class="lockup"><svg class="mark" viewBox="0 0 44 44" aria-hidden="true"><rect width="44" height="44" rx="12" fill="var(--fg)"/><path d="M15 13.5h15M15 22h11M15 30.5h15M15 13.5v17" fill="none" stroke="var(--bg)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
-    <h1 style="margin-bottom:26px">Reserve a plot.</h1>
-
+    
     <div class="sec">Buyer</div>
     <div class="f" id="f-who"><input id="who" autocomplete="off" placeholder=" "><label for="who">Buyer's full name</label></div>
     <div class="f" id="f-bmob"><input id="bmob" type="tel" inputmode="numeric" autocomplete="off" placeholder=" "><label for="bmob">Buyer's mobile number</label></div>
