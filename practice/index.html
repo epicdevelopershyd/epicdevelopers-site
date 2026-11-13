@@ -31,7 +31,7 @@ section.on{display:flex}
 @keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
 h1{font-size:clamp(34px,10.5vw,46px);line-height:1.04;letter-spacing:-.035em;font-weight:800;margin:0 0 14px;text-wrap:balance}
-.lead{color:var(--mute);font-size:17px;line-height:1.45;margin:0 0 26px;text-wrap:pretty}
+.console{display:inline-block;align-self:flex-start;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:800;letter-spacing:.12em;margin:0 0 18px}.lead{color:var(--mute);font-size:17px;line-height:1.45;margin:0 0 26px;text-wrap:pretty}
 .tiles{display:grid;gap:12px}
 .tile{display:block;width:100%;text-align:left;border:0;cursor:pointer;background:var(--fill);border-radius:22px;padding:22px 22px 20px;transition:transform .15s}
 .tile:active{transform:scale(.985)}.tile strong{display:block;font-size:26px;letter-spacing:-.025em;font-weight:800}.tile span{color:var(--mute);font-size:15px}.tile em{display:block;margin-top:14px;font-style:normal;font-size:14px;font-weight:600}
@@ -115,7 +115,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <div class="bar" id="bar" hidden><i></i><i></i><i></i></div>
 
   <section id="s-pick" class="on">
-    <p class="eyebrow">Plot Booking Console</p>
+    <p class="eyebrow console">Plot Booking Console</p>
     <h1 style="margin-bottom:26px">Reserve a plot.</h1>
 
     <div class="sec">Buyer</div>
