@@ -310,23 +310,23 @@ $('go3').onclick=function(){
 function bankv(k){var va=S.p.project.va;if(!va||!va.accounts[S.plot])return k==='name'?'M/s Epic Developers':k==='no'?'0000 0000 0000':'BANK0000000';return k==='name'?va.name:k==='no'?va.accounts[S.plot]:va.ifsc}
 function gateway(r){
   var g=document.createElement('div');g.className='gw';
-  g.innerHTML='<div class="in"><div class="hd"><small>Epic Developers · Plot '+S.plot+', '+S.p.project.name+' · Booking '+r.id+'</small><div class="amt">'+inr(S.amount)+'</div><div class="sub">Your signature is saved. Add us as a payee and transfer to hold the plot.</div></div>'+
+  g.innerHTML='<div class="in"><div class="hd"><small>Epic Developers · Plot '+S.plot+', '+S.p.project.name+' · Booking '+r.id+'</small><div class="amt">'+inr(S.amount)+'</div><div class="sub">Your signature is saved. Add us as a payee, then transfer to hold the plot.</div></div>'+
   '<div class="tabs"><button class="on" data-t="u">UPI</button><button data-t="b">Bank transfer</button></div>'+
-  '<div class="dl" id="tu"><div><span>Pay to UPI ID</span><b>epicdevelopers@bank</b></div><div><span>Amount</span><b>'+inr(S.amount)+'</b></div><div><span>Note</span><b>'+r.id+'</b></div></div>'+
-  '<div class="dl" id="tb" hidden><div><span>Account name</span><b>'+bankv('name')+'</b></div><div><span>Account number</span><b>'+bankv('no')+'</b></div><div><span>IFSC</span><b>'+bankv('ifsc')+'</b></div><div><span>Amount</span><b>'+inr(S.amount)+'</b></div><div><span>Reference</span><b>'+r.id+'</b></div><p class="note" style="text-align:left;margin:10px 0 0">New payee? Your bank may need some time before you can send. We have also sent these details to your WhatsApp and email. Come back to this link when the transfer is done and enter the UTR.</p></div>'+
-    '<input id="utr" inputmode="numeric" maxlength="12" placeholder="After paying, enter the 12-digit UTR / reference number" aria-label="UTR number">'+
-  '<button id="gwpay" disabled>I have paid '+inr(S.amount)+'</button><div class="note">Demo only: nothing is charged. Use any 12 digits.</div></div>';
+  '<div class="dl" id="tu"><div><span>Pay to UPI ID</span><b>epicdevelopers@bank</b></div><div><span>Amount</span><b>'+inr(S.amount)+'</b></div></div>'+
+  '<div class="dl" id="tb" hidden><div><span>Account name</span><b>'+bankv('name')+'</b></div><div><span>Account number</span><b>'+bankv('no')+'</b></div><div><span>IFSC</span><b>'+bankv('ifsc')+'</b></div><div><span>Amount</span><b>'+inr(S.amount)+'</b></div></div>'+
+    '<p class="note" style="text-align:left;margin:12px 0 4px">A new payee can take about 30 minutes to activate, and some banks allow only \u20b950,000 for the first 24 hours. These details are also on your WhatsApp and email. We confirm your transfer automatically.</p>'+
+  '<button id="gwpay">Got it</button><div class="note">Demo only: nothing is charged.</div></div>';
   document.body.appendChild(g);
-  g.querySelectorAll('.tabs button').forEach(function(t){t.onclick=function(){g.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===t)});g.querySelector('#tu').hidden=t.dataset.t!=='u';g.querySelector('#tb').hidden=t.dataset.t!=='b';CARD=t.dataset.t==='c';u.value='';u.maxLength=CARD?6:12;u.placeholder=CARD?'Cheque number (6 digits)':'After paying, enter the 12-digit UTR / reference number';pay.textContent=CARD?'Submit cheque details':'I have paid '+inr(S.amount);pay.disabled=true}});
-  var CARD=false;var u=g.querySelector('#utr'),pay=g.querySelector('#gwpay');u.oninput=function(){u.value=u.value.replace(/\D/g,'').slice(0,12);pay.disabled=u.value.length!==(CARD?6:12)};
-  pay.onclick=function(){pay.textContent='Submitting…';setTimeout(function(){g.remove();finish(r,CARD)},900)};
+  g.querySelectorAll('.tabs button').forEach(function(t){t.onclick=function(){g.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===t)});g.querySelector('#tu').hidden=t.dataset.t!=='u';g.querySelector('#tb').hidden=t.dataset.t!=='b'}});
+  var pay=g.querySelector('#gwpay');
+  pay.onclick=function(){g.remove();finish(r,false)};
 }
 function finish(r,card){
   clearInterval(S.timer);var ms=Date.now()-S.t0;
-  $('doneH').textContent=card?'Cheque details received.':'Payment submitted.';
-  $('doneP').textContent=card?'Please send or hand the cheque to our office with booking ID '+r.id+' written on the back. Plot '+S.plot+' is held for you once it clears, and your signed form and receipt follow on email and WhatsApp.':'We will confirm your payment shortly. Plot '+S.plot+' is held for you once it is confirmed, and your signed form and receipt follow on email and WhatsApp.';
+  $('doneH').textContent='Booking recorded.';
+  $('doneP').textContent='Transfer to the account details we sent. Plot '+S.plot+' is held for you for 24 hours from your signature, and is confirmed automatically when your transfer reaches us. Your signed form and receipt follow on email and WhatsApp.';
   var c=calc(),sm=S.deal&&S.deal.seller||'';
-  $('office').innerHTML='Booking '+r.id+'<br>'+S.p.project.name+' · Plot '+S.plot+' · '+c.a+' sq. yds.<br>Rate '+inr(c.rate)+' per sq. yd. · Plot cost '+inr(c.cost)+'<br>Paid today '+inr(S.amount)+' · Balance '+inr(Math.max(c.cost-S.amount,0))+'<br>Buyer '+S.name+' · +91 '+S.mobile+'<br><b>Sold by '+(S.sname||'')+' · +91 '+sm.slice(0,5)+' '+sm.slice(5)+' (verified by code)</b>';
+  $('office').innerHTML='Booking '+r.id+'<br>'+S.p.project.name+' · Plot '+S.plot+' · '+c.a+' sq. yds.<br>Rate '+inr(c.rate)+' per sq. yd. · Plot cost '+inr(c.cost)+'<br>To transfer '+inr(S.amount)+' · Balance '+inr(Math.max(c.cost-S.amount,0))+'<br>Buyer '+S.name+' · +91 '+S.mobile+'<br><b>Sold by '+(S.sname||'')+' · +91 '+sm.slice(0,5)+' '+sm.slice(5)+' (verified by code)</b>';
   $('took').textContent='⏱ You finished in '+fmt(ms);$('clock').textContent=fmt(ms);show('s-done');
 }
 
