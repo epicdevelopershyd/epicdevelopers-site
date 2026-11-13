@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+</head>
+<body style="margin:0">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Epic Booking Practice</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one question per screen, a single column, big type, one pill button. Apple / Nike checkout feel. */
+:root{--bg:#fbfbfd;--surface:#ffffff;--fill:#f0f0f4;--fg:#1d1d1f;--mute:#6e6e73;--line:#dcdce1;--btn:#111113;--btnfg:#ffffff;--accent:#a0792a;--err:#c4311f;--ok:#1a8a4a;--ribbon:#1d1d1f;--ribbonfg:#f5f5f7;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000000;--surface:#141416;--fill:#1c1c1f;--fg:#f5f5f7;--mute:#9a9aa1;--line:#2c2c30;--btn:#f5f5f7;--btnfg:#0b0b0c;--accent:#e3bd62;--err:#ff7a68;--ok:#3ccf7a;--ribbon:#e3bd62;--ribbonfg:#16130a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000000;--surface:#141416;--fill:#1c1c1f;--fg:#f5f5f7;--mute:#9a9aa1;--line:#2c2c30;--btn:#f5f5f7;--btnfg:#0b0b0c;--accent:#e3bd62;--err:#ff7a68;--ok:#3ccf7a;--ribbon:#e3bd62;--ribbonfg:#16130a;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;margin:0;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+.demo{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--ribbon);color:var(--ribbonfg);font-size:12px;font-weight:600;letter-spacing:.01em;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px))}
+.demo b{font-variant-numeric:tabular-nums;font-weight:700}
+.wrap{max-width:460px;margin:0 auto;padding-block:20px 0;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));min-height:calc(100vh - 36px);display:flex;flex-direction:column}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.brand{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+.back{border:0;background:none;color:var(--mute);font-size:14px;font-weight:500;cursor:pointer;padding:6px 0}
+.bar{display:flex;gap:6px;margin-bottom:34px}.bar i{flex:1;height:3px;border-radius:3px;background:var(--line);transition:background .3s}.bar i.on{background:var(--fg)}
+section{display:none;flex:1;flex-direction:column;animation:in .35s cubic-bezier(.2,.7,.2,1)}
+section.on{display:flex}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+h1{font-size:clamp(34px,10.5vw,46px);line-height:1.04;letter-spacing:-.035em;font-weight:800;margin:0 0 14px;text-wrap:balance}
+.lead{color:var(--mute);font-size:17px;line-height:1.45;margin:0 0 26px;text-wrap:pretty}
+.tiles{display:grid;gap:12px}
+.tile{display:block;width:100%;text-align:left;border:0;cursor:pointer;background:var(--fill);border-radius:22px;padding:22px 22px 20px;transition:transform .15s}
+.tile:active{transform:scale(.985)}.tile strong{display:block;font-size:26px;letter-spacing:-.025em;font-weight:800}.tile span{color:var(--mute);font-size:15px}.tile em{display:block;margin-top:14px;font-style:normal;font-size:14px;font-weight:600}
+.card{background:var(--fill);border-radius:22px;padding:18px 20px;margin-bottom:22px}
+.plotline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.plotline label{font-size:13px;color:var(--mute);font-weight:500}
+select{appearance:none;-webkit-appearance:none;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%239a9aa1' stroke-width='2'%3E%3Cpath d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center;border:0;border-radius:12px;padding:10px 38px 10px 14px;font-weight:700;font-size:16px;cursor:pointer}
+.price{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:12px 0 2px;font-variant-numeric:tabular-nums}
+.meta{color:var(--mute);font-size:14px}
+.today{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.f{position:relative;margin-bottom:12px}
+.f input{width:100%;height:58px;border:2px solid transparent;border-radius:16px;background:var(--fill);padding:22px 16px 6px;font-size:17px;font-weight:500;outline:none;transition:border-color .15s,background .15s}
+.f input:focus{border-color:var(--fg);background:var(--surface)}
+.f label{position:absolute;left:16px;top:18px;font-size:17px;color:var(--mute);pointer-events:none;transition:all .15s;transform-origin:left}
+.f input:focus+label,.f input:not(:placeholder-shown)+label{top:8px;font-size:12px;font-weight:600}
+.f.bad input{border-color:var(--err)}
+.fine{color:var(--mute);font-size:13px;margin:6px 2px 0;text-wrap:pretty}
+.sec{display:flex;align-items:center;font-size:15px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);margin:30px 2px 12px}
+.sec i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--fill);color:var(--fg);display:inline-grid;place-items:center;font-size:11.5px;letter-spacing:0}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--fill);border-radius:14px;padding:4px}
+.seg button{border:0;background:transparent;border-radius:11px;padding:12px 8px;font:600 15px var(--sans);color:var(--mute);cursor:pointer;transition:background .15s,color .15s}
+.seg button.on{background:var(--surface);color:var(--fg);box-shadow:0 1px 4px rgba(0,0,0,.14)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.chips span{background:var(--surface);border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:600}
+.ratebox{background:var(--fill);border:2px solid transparent;border-radius:22px;padding:16px 20px 14px;transition:border-color .15s,background .15s}.ratebox:focus-within{border-color:var(--fg);background:var(--surface)}.ratebox.bad{border-color:color-mix(in srgb,var(--err) 35%,transparent)}
+.ratebox .lab{font-size:13px;font-weight:600;color:var(--mute)}
+.ratebox .inp{display:flex;align-items:baseline;gap:6px;margin-top:4px}.ratebox .inp b{font-size:30px;font-weight:700}
+.ratebox input{border:0;background:transparent;font:800 40px var(--sans);letter-spacing:-.02em;width:100%;min-width:0;outline:0;color:var(--fg);padding:0}.ratebox input::placeholder{color:var(--line)}.ratebox .inp small{white-space:nowrap;color:var(--mute);font-weight:600;font-size:13px}
+.ratebox .tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);margin-top:14px;padding-top:12px;color:var(--mute);font-weight:600;font-size:14px}.ratebox .tot b{font-size:27px;letter-spacing:-.02em;color:var(--fg);font-weight:800}
+.who{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--ok) 11%,var(--surface));color:var(--ok);border-radius:16px;padding:14px 16px;font-weight:700;font-size:15px}.who:before{content:"✓";font-weight:800}
+.alert{display:flex;gap:8px;align-items:flex-start;margin:10px 4px 0;font-size:13.5px;line-height:1.45;color:var(--mute)}
+.alert svg{width:15px;height:15px;flex:none;fill:none;stroke:var(--err);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:2px;opacity:.85}.alert b{font-weight:600;color:var(--fg)}.alert b:after{content:'.';margin-right:4px}
+.err{color:var(--err);font-size:14px;min-height:20px;margin:6px 2px 0}
+.cta{position:sticky;bottom:0;margin-top:auto;padding:18px 0 max(18px,env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.btn{display:block;width:100%;height:58px;border:0;border-radius:999px;background:var(--btn);color:var(--btnfg);font-size:17px;font-weight:700;letter-spacing:-.01em;cursor:pointer;transition:opacity .2s,transform .1s}
+.btn:active{transform:scale(.985)}.btn:disabled{opacity:.28;cursor:default}
+.btn:focus-visible,.tile:focus-visible,select:focus-visible,.link:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.link{background:none;border:0;padding:0;color:var(--fg);font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:inherit}
+.code{width:100%;height:76px;border:2px solid transparent;border-radius:18px;background:var(--fill);text-align:center;font-size:38px;font-weight:700;letter-spacing:.38em;padding-left:.38em;outline:none;font-variant-numeric:tabular-nums}
+.code:focus{border-color:var(--fg);background:var(--surface)}
+.list{margin:0 0 22px;padding:0}.list div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.list dt{color:var(--mute)}.list dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}.list .hi dd{font-size:17px;font-weight:800}
+.pad{position:relative;background:#ffffff;border:2px solid var(--line);border-radius:20px;height:170px;touch-action:none;overflow:hidden}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%}
+.pad .hint{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:#8a8a93;font-size:15px;pointer-events:none;transition:opacity .2s}
+.pad .base{position:absolute;left:18px;right:18px;bottom:36px;border-top:1.5px solid #d4d4da}
+.pad.has .hint{opacity:0}
+.padrow{display:flex;justify-content:space-between;align-items:center;margin:8px 2px 16px;font-size:13px;color:var(--mute)}
+.consent{font-size:14px;color:var(--mute);line-height:1.5;margin:0;text-wrap:pretty}
+.done{align-items:center;text-align:center;justify-content:center;padding-bottom:40px}
+.tick{width:92px;height:92px;margin:10px auto 26px}
+.tick circle{fill:none;stroke:var(--ok);stroke-width:3;stroke-dasharray:252;stroke-dashoffset:252;animation:dr .7s .1s forwards ease-out}
+.tick path{fill:none;stroke:var(--ok);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:dr .4s .7s forwards ease-out}
+@keyframes dr{to{stroke-dashoffset:0}}
+.took{display:inline-block;background:var(--fill);border-radius:999px;padding:8px 16px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:8px}
+.next{text-align:left;width:100%;margin-top:26px}.next h3{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 6px}.next p{margin:0;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
+.gw{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;font-family:var(--sans)}
+.gw .in{background:#fff;color:#18202c;width:100%;max-width:520px;border-radius:26px 26px 0 0;padding:20px 20px max(20px,env(safe-area-inset-bottom,0px));animation:in .3s}
+.gw .hd small{color:#667;font-size:12.5px}.gw .hd .amt{font-size:32px;font-weight:800;letter-spacing:-.02em;margin:2px 0 4px}.gw .hd .sub{font-size:13px;color:#556}
+.gw .tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#eef0f3;border-radius:12px;padding:4px;margin-top:14px}.gw .tabs button{margin:0;padding:11px 4px;font:600 14.5px var(--sans);background:transparent;color:#667;border-radius:9px}.gw .tabs button.on{background:#fff;color:#18202c;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.gw .dl{margin-top:12px;font-size:14px}.gw .dl div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #eef0f3}.gw .dl span{color:#778}.gw .dl b{text-align:right;overflow-wrap:anywhere}
+.gw input{width:100%;margin-top:14px;border:2px solid #e3e6ec;border-radius:12px;padding:14px;font:600 16px var(--sans);outline:0;color:#18202c;background:#fff}.gw input:focus{border-color:#18202c}
+.gw .opt{display:flex;align-items:center;gap:12px;padding:14px 2px;border-bottom:1px solid #eef0f3;font-weight:600;font-size:15.5px;cursor:pointer}.gw .opt:last-of-type{border:0}.gw .opt span{display:block;font-weight:400;color:#778;font-size:12.5px}
+.gw .opt i{width:20px;height:20px;border-radius:50%;border:2px solid #c3c9d4;flex:none}.gw .opt.sel i{border:6px solid #2b6cf0}
+.gw button{display:block;width:100%;margin-top:12px;border:0;border-radius:14px;padding:17px;font:700 16.5px var(--sans);background:#2b6cf0;color:#fff;cursor:pointer}.gw .note{text-align:center;font-size:11.5px;color:#889;margin:12px 0 0}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center}.sheet.on{display:flex}
+.sheet .box{background:var(--surface);width:100%;max-width:560px;max-height:84vh;border-radius:26px 26px 0 0;display:flex;flex-direction:column;animation:in .3s}
+.sheet header{display:flex;justify-content:space-between;align-items:center;padding:18px 22px 10px}.sheet h2{margin:0;font-size:20px;letter-spacing:-.02em}
+.sheet .body{overflow:auto;padding:0 22px max(22px,env(safe-area-inset-bottom,0px));font-size:14.5px}.sheet .body p{margin:0 0 14px}.sheet .body b{display:block;margin-bottom:2px}
+.toasts{position:fixed;left:0;right:0;top:max(48px,calc(env(safe-area-inset-top,0px) + 48px));z-index:60;display:grid;gap:8px;justify-items:center;padding:0 12px;pointer-events:none}
+.toast{pointer-events:auto;width:min(100%,400px);background:var(--surface);color:var(--fg);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.28);padding:12px 14px;font-size:13.5px;line-height:1.35;animation:in .4s}
+.toast small{display:block;color:var(--mute);font-size:11.5px;font-weight:600;margin-bottom:2px}.toast i{font-style:normal;font-weight:800;letter-spacing:.2em}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="demo"><span>Demo · nothing is sent · payment details are dummy</span><span>⏱ <b id="clock">0:00</b></span></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div style="background:#fff3cd;color:#5c4400;font:12px/1.4 system-ui;padding:6px 12px;text-align:center">Practice version. Nothing is sent or saved, and the cut-off prices here are samples.</div>
+<div class="wrap">
+  <div class="top"><span class="brand">Epic Developers</span><button class="back" id="back" hidden>Back</button></div>
+  <div class="bar" id="bar" hidden><i></i><i></i><i></i></div>
+
+  <section id="s-pick" class="on">
+    <p class="eyebrow">Reserve online</p>
+    <h1 style="margin-bottom:26px">Send a payment link.</h1>
+
+    <div class="sec">Buyer</div>
+    <div class="f" id="f-who"><input id="who" autocomplete="off" placeholder=" "><label for="who">Buyer's full name</label></div>
+    <div class="f" id="f-bmob"><input id="bmob" type="tel" inputmode="numeric" autocomplete="off" placeholder=" "><label for="bmob">Buyer's mobile number</label></div>
+    <p class="fine" style="margin:2px 2px 0">The payment link goes to this number by WhatsApp and SMS.</p>
+    <div class="sec">Plot</div>
+    <div class="card" style="margin-top:0">
+      <div class="seg" id="seg"><button type="button" data-p="greens" class="on">The Greens</button><button type="button" data-p="parkcentral">Park Central</button></div>
+      <select id="sproj" hidden><option value="greens">The Greens · Kadthal</option><option value="parkcentral">Park Central · Dundigal</option></select>
+      <div class="plotline" style="margin-top:16px"><label for="splot">Plot number</label><select id="splot"></select></div>
+      <div class="chips" id="sinfo"></div>
+    </div>
+
+    <div class="sec">Rate</div>
+    <div class="ratebox" id="f-rate">
+      <div class="lab">Rate per sq. yd.</div>
+      <div class="inp"><b>₹</b><input id="rate" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Rate per sq. yd."></div>
+      <div class="tot"><span>Plot cost</span><b id="scost">—</b></div>
+    </div>
+    <div class="alert" id="salert" role="alert" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/></svg><div><b id="atitle"></b><span id="abody"></span></div></div>
+
+    <div class="sec">Sold by</div>
+    <div id="sellerBox">
+      <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your full name</label></div>
+      <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="off" placeholder=" "><label for="smob">Your mobile number</label></div>
+      <div class="f" id="f-sc" hidden><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">6-digit code we sent you</label></div>
+      <div class="err" id="e-s" style="min-height:0"></div>
+      <p class="fine" style="margin:4px 2px 0">We send a code to this number by WhatsApp and SMS. Demo: any number works.</p>
+    </div>
+    <div class="who" id="sellerOk" hidden></div>
+
+    <div class="err" id="serr"></div>
+    <div class="cta"><button class="btn" id="make" disabled>Send payment link</button></div>
+  </section>
+
+  <section id="s-sent">
+    <svg class="tick" viewBox="0 0 92 92" aria-hidden="true"><circle cx="46" cy="46" r="40"/><path d="M29 47l12 12 23-26"/></svg>
+    <h1 id="sentH"></h1>
+    <p class="lead" id="sentP"></p>
+    <button class="btn" id="openAs" style="height:50px;font-size:16px;margin-top:10px;background:var(--fill);color:var(--fg)">Demo: open the link on the buyer's phone</button>
+    <p class="fine" style="text-align:center;margin-top:14px"><button class="link" id="again" style="color:var(--mute);font-weight:500">Start another booking</button></p>
+  </section>
+
+  <section id="s-details">
+    <p class="eyebrow" id="d-eyebrow"></p>
+    <p class="eyebrow" id="agreed" hidden style="color:var(--ok);margin-top:-4px">Your agreed price</p>
+    <h1>Hold your plot.</h1>
+    <p class="lead">To hold it, pay a minimum of ₹50,000 today. You can pay more if you like.</p>
+    <div class="card">
+      <div class="plotline"><label for="plot">Your plot</label><select id="plot"></select></div>
+      <div class="price" id="cost">—</div>
+      <div class="meta" id="pmeta"></div>
+    </div>
+    <div class="f" id="f-name"><input id="name" autocomplete="name" placeholder=" "><label for="name">Full name</label></div>
+    <div class="f" id="f-mobile"><input id="mobile" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="mobile">Mobile number</label></div>
+    <div class="f" id="f-email"><input id="email" type="email" autocomplete="email" autocapitalize="none" placeholder=" "><label for="email">Email</label></div>
+    <p class="fine">We will send a code by WhatsApp or SMS, and to your email. Enter it from either one.</p>
+    <div class="err" id="e-details"></div>
+    <div class="cta"><button class="btn" id="go1" disabled>Continue</button></div>
+  </section>
+
+  <section id="s-code">
+    <p class="eyebrow">Almost there</p>
+    <h1>Enter the code.</h1>
+    <p class="lead" id="codeLead"></p>
+    <input class="code" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······" aria-label="6-digit code">
+    <div class="err" id="e-code"></div>
+    <p class="fine"><button class="link" id="resend">Send the code again</button></p>
+  </section>
+
+  <section id="s-sign">
+    <p class="eyebrow" id="s-eyebrow"></p>
+    <h1>Pay to hold it.</h1>
+    <dl class="list" id="sum"></dl>
+    <div class="f" id="f-amt"><input id="amt" inputmode="numeric" autocomplete="off" placeholder=" "><label for="amt">Pay today · minimum ₹50,000</label></div>
+    <p class="fine" style="margin:-2px 2px 20px">Every rupee you pay today is adjusted in your plot cost. The first ₹50,000 is not refundable if you cancel.</p>
+    <div class="pad" id="pad"><div class="hint">Sign here with your finger</div><div class="base"></div><canvas id="cv"></canvas></div>
+    <div class="padrow"><span id="signer"></span><button class="link" id="clear" style="font-weight:600;color:var(--mute)">Clear</button></div>
+    <p class="consent">By signing, I confirm that I have read and understood the <button class="link" id="openTerms">terms and conditions</button> and I agree to them.</p>
+    <div class="err" id="e-sign"></div>
+    <div class="cta"><button class="btn" id="go3" disabled>Sign and pay ₹50,000</button></div>
+  </section>
+
+  <section id="s-done" class="done">
+    <svg class="tick" viewBox="0 0 92 92" aria-hidden="true"><circle cx="46" cy="46" r="40"/><path d="M29 47l12 12 23-26"/></svg>
+    <h1 id="doneH"></h1>
+    <p class="lead" id="doneP" style="margin-bottom:6px"></p>
+    <p class="meta" id="bid" style="margin:10px 0 0"></p>
+    <span class="took" id="took"></span>
+    <div class="card" style="margin-top:26px;text-align:left"><div class="meta">Demo only · office and CRM record, never sent to the buyer</div><p id="office" class="meta" style="color:var(--fg);margin:6px 0 0;line-height:1.7"></p></div>
+    </section>
+
+  <footer>Questions? Call or WhatsApp 789 368 4545<br>M/s Epic Developers · Jubilee Hills, Hyderabad</footer>
+</div>
+
+<div class="sheet" id="sheet"><div class="box" role="dialog" aria-modal="true" aria-labelledby="sh-t"><header><h2 id="sh-t">Terms and conditions</h2><button class="link" id="closeTerms">Close</button></header><div class="body" id="terms"></div></div></div>
+
+<script>
+(function(){
+var CFG={"parkcentral":{"project":{"key":"parkcentral","name":"Park Central","place":"Dundigal, Hyderabad","rate":38000,"regularRate":38000,"offerActive":false,"offerUntil":"24 November 2026, 6:30 pm","offerBenefits":"gold bar, registration benefit","floor":36800,"premium":1000,"maintenance":192,"plots":{"1":{"area":123,"facing":"west","corner":false,"prem":false,"layoutArea":163},"35":{"area":335,"facing":"east","corner":false,"prem":true,"layoutArea":385},"36":{"area":278,"facing":"west","corner":false,"prem":false,"layoutArea":327},"37":{"area":240,"facing":"west","corner":false,"prem":false},"38":{"area":240,"facing":"west","corner":false,"prem":false},"39":{"area":240,"facing":"west","corner":false,"prem":false},"45":{"area":240,"facing":"west","corner":false,"prem":false},"69":{"area":242,"facing":"east","corner":false,"prem":true,"layoutArea":290},"70":{"area":158,"facing":"west","corner":false,"prem":false,"layoutArea":198},"72":{"area":197,"facing":"west","corner":false,"prem":false}}},"advance":50000,"balanceDays":40,"terms":[{"title":"Your plot is blocked for you","text":"Once we receive your booking advance of Rs. 50,000/-, we block the plot for you and do not offer it to anyone else."},{"title":"About the booking advance","text":"Because we hold the plot back from other buyers for you, the booking advance of Rs. 50,000/- is non-refundable if you decide to cancel."},{"title":"Balance payment","text":"Please pay the balance of the plot cost within 40 days of booking. If you decide to cancel, or it is not paid in time, we may release the plot to another buyer. Anything you have paid beyond the booking advance will be returned to you, without interest, once the plot is re-sold."},{"title":"Registration and charges","text":"The sale deed is registered once we receive 100% of the plot cost. Stamp duty, registration charges and related expenses are borne by the purchaser."},{"title":"Maintenance","text":"Maintenance for 2 years is charged in advance on the plot area at Rs. 8/- per sq. yd. per month for 2 years (Rs. 192/- per sq. yd.). It is payable at registration, separately from the plot cost."},{"title":"Use of the plot","text":"Please use the plot for residential purposes, in line with the norms and approvals of the authorities, including limits on floors and built-up area."},{"title":"Looking after the layout","text":"The purchaser is responsible for repairing any damage he or she causes to the roads, drains, pipes, cables and other facilities of the layout."},{"title":"Site and project details","text":"You have visited the site and have read the project details we shared with you."},{"title":"Your details and documents","text":"The details you have given are correct. After booking, we will ask you to send identity proof (Aadhaar, passport or driving licence), PAN and address proof on WhatsApp."},{"title":"Final agreement","text":"The sale agreement and sale deed record the final terms and will prevail over this form."},{"title":"Electronic signature","text":"You agree that your electronic signature and verified email are valid for this form, and that we may contact you by email and WhatsApp."},{"title":"Jurisdiction","text":"Any dispute will be subject to the courts at Hyderabad."}]},"greens":{"project":{"key":"greens","name":"The Greens","place":"Kadthal, Hyderabad","rate":19500,"regularRate":19500,"offerActive":false,"offerUntil":"24 November 2026, 6:30 pm","offerBenefits":"gold bar","floor":18300,"premium":1000,"maintenance":192,"plots":{"1":{"area":277,"facing":"east","corner":true,"prem":true},"2":{"area":269,"facing":"east","corner":false,"prem":true},"3":{"area":268,"facing":"east","corner":false,"prem":true},"4":{"area":267,"facing":"east","corner":false,"prem":true},"5":{"area":268,"facing":"east","corner":false,"prem":true},"6":{"area":269,"facing":"east","corner":false,"prem":true},"7":{"area":269,"facing":"east","corner":false,"prem":true},"8":{"area":269,"facing":"east","corner":false,"prem":true},"9":{"area":270,"facing":"east","corner":false,"prem":true},"10":{"area":271,"facing":"east","corner":false,"prem":true},"11":{"area":271,"facing":"east","corner":false,"prem":true},"12":{"area":272,"facing":"east","corner":false,"prem":true},"13":{"area":273,"facing":"east","corner":false,"prem":true},"14":{"area":264,"facing":"east","corner":false,"prem":true},"15":{"area":396,"facing":"west","corner":false,"prem":false},"20":{"area":310,"facing":"west","corner":false,"prem":false},"21":{"area":304,"facing":"west","corner":false,"prem":false},"22":{"area":299,"facing":"west","corner":false,"prem":false},"23":{"area":294,"facing":"west","corner":false,"prem":false},"24":{"area":291,"facing":"west","corner":false,"prem":false},"25":{"area":288,"facing":"west","corner":false,"prem":false},"26":{"area":284,"facing":"west","corner":false,"prem":false},"27":{"area":281,"facing":"west","corner":false,"prem":false},"28":{"area":286,"facing":"west","corner":true,"prem":true}},"va":{"name":"EPIC DEVELOPERS THE GREENS COLLECTION RERA A/C","ifsc":"YESB0CMSNOC","accounts":{"1":"EPICG901","2":"EPICG902","3":"EPICG903","4":"EPICG904","5":"EPICG905","6":"EPICG906","7":"EPICG907","8":"EPICG908","9":"EPICG909","10":"EPICG910","11":"EPICG911","12":"EPICG912","13":"EPICG913","14":"EPICG914","15":"EPICG915","16":"EPICG916","17":"EPICG917","18":"EPICG918","19":"EPICG919","20":"EPICG920","21":"EPICG921","22":"EPICG922","23":"EPICG923","24":"EPICG924","25":"EPICG925","26":"EPICG926","27":"EPICG927","28":"EPICG928"}}},"advance":50000,"balanceDays":40,"terms":[{"title":"Your plot is blocked for you","text":"Once we receive your booking advance of Rs. 50,000/-, we block the plot for you and do not offer it to anyone else."},{"title":"About the booking advance","text":"Because we hold the plot back from other buyers for you, the booking advance of Rs. 50,000/- is non-refundable if you decide to cancel."},{"title":"Balance payment","text":"Please pay the balance of the plot cost within 40 days of booking. If you decide to cancel, or it is not paid in time, we may release the plot to another buyer. Anything you have paid beyond the booking advance will be returned to you, without interest, once the plot is re-sold."},{"title":"Development status","text":"Development work at The Greens is in progress as per the approved layout, and is planned to be completed within 4 months of your booking."},{"title":"Registration and charges","text":"The sale deed is registered once we receive 100% of the plot cost. Stamp duty, registration charges and related expenses are borne by the purchaser."},{"title":"Maintenance","text":"Maintenance for 2 years is charged in advance on the plot area at Rs. 8/- per sq. yd. per month for 2 years (Rs. 192/- per sq. yd.). It is payable at registration, separately from the plot cost."},{"title":"Use of the plot","text":"Please use the plot for residential purposes, in line with the norms and approvals of the authorities, including limits on floors and built-up area."},{"title":"Looking after the layout","text":"The purchaser is responsible for repairing any damage he or she causes to the roads, drains, pipes, cables and other facilities of the layout."},{"title":"Site and project details","text":"You have visited the site and have read the project details we shared with you."},{"title":"Your details and documents","text":"The details you have given are correct. After booking, we will ask you to send identity proof (Aadhaar, passport or driving licence), PAN and address proof on WhatsApp."},{"title":"Final agreement","text":"The sale agreement and sale deed record the final terms and will prevail over this form."},{"title":"Electronic signature","text":"You agree that your electronic signature and verified email are valid for this form, and that we may contact you by email and WhatsApp."},{"title":"Jurisdiction","text":"Any dispute will be subject to the courts at Hyderabad."}]}}, CODE='482913';
+var $=function(i){return document.getElementById(i)};
+var inr=function(n){return '₹'+Number(n).toLocaleString('en-IN')};
+var S={p:null,deal:null,plot:null,name:'',mobile:'',email:'',t0:0,timer:null,hasInk:false,booking:null};
+
+/* ---- API (demo). The live version swaps these three for fetch() calls to the server. ---- */
+var wait=function(ms,v){return new Promise(function(r){setTimeout(function(){r(v)},ms)})};
+var API={
+  send:function(){setTimeout(function(){toast('WhatsApp · Epic Developers','<i>'+CODE+'</i> is your Epic Developers verification code.');toast('Email · sales@epicdevelopers.in','Your verification code is <i>'+CODE+'</i>.')},900);return wait(700,{ok:1})},
+  verify:function(c){return wait(450,c===CODE?{ok:1}:{err:'That code is not right. Please check and try again.'})},
+  book:function(){return wait(1000,{id:'EPC-261113-D3MO'})}
+};
+
+/* ---- helpers ---- */
+function toast(h,t){var d=document.createElement('div');d.className='toast';d.innerHTML='<small>'+h+' · now</small>'+t;$('toasts').appendChild(d);setTimeout(function(){d.remove()},11000);d.onclick=function(){d.remove()}}
+function clearToasts(){$('toasts').innerHTML=''}
+function startClock(){if(S.t0)return;S.t0=Date.now();S.timer=setInterval(function(){$('clock').textContent=fmt(Date.now()-S.t0)},500)}
+function fmt(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+var order=['s-pick','s-sent','s-details','s-code','s-sign','s-done'],cur='s-pick';
+function show(id){cur=id;order.forEach(function(x){$(x).classList.toggle('on',x===id)});var i=order.indexOf(id);
+  $('bar').hidden=i<2||i>4;[].forEach.call($('bar').children,function(b,k){b.classList.toggle('on',k<i-1)});$('back').hidden=!(i===3||i===4);window.scrollTo(0,0)}
+$('back').onclick=function(){var i=order.indexOf(cur);show(order[i-1])};
+function stopAll(){}
+
+/* ---- project and plot ---- */
+function pick(k){
+  S.p=CFG[k];var pr=S.p.project;$('d-eyebrow').textContent=pr.name+' · '+pr.place.split(',')[0];
+  var keys=Object.keys(pr.plots).map(Number).sort(function(a,b){return a-b});
+  if(S.deal)keys=[Number(S.deal.plot)];
+  $('plot').innerHTML=keys.map(function(n){return '<option value="'+n+'">Plot '+n+'</option>'}).join('');
+  $('plot').value=String(S.deal?S.deal.plot:(k==='greens'?15:keys[0]));$('plot').disabled=!!S.deal;$('name').value=(S.pre&&S.pre.name)||'';$('mobile').value=S.deal&&S.deal.mobile||'';$('mobile').readOnly=!!(S.deal&&S.deal.mobile);setPlot();var cc=calc();$('agreed').hidden=!(S.deal&&cc.rate!==cc.list);
+  $('terms').innerHTML=S.p.terms.map(function(t,i){return '<p><b>'+(i+1)+'. '+t.title+'</b>'+t.text+'</p>'}).join('');
+  show('s-details');
+}
+$('plot').onchange=setPlot;
+function setPlot(){S.plot=$('plot').value;price()}
+function flabel(pl){return (pl.corner?'Corner · ':'')+(pl.facing==='east'?'East':'West')+' facing'}
+function calc(){var pr=S.p.project,pl=pr.plots[S.plot],list=pr.rate+(pl.prem?pr.premium:0),rate=S.deal&&String(S.deal.plot)===String(S.plot)?S.deal.rate:list;return{a:pl.area,rate:rate,list:list,cost:Math.round(rate*pl.area),maint:Math.round(pr.maintenance*pl.area),pl:pl}}
+function price(){
+  var pr=S.p.project,c=calc();$('cost').textContent=inr(c.cost);
+  var why=c.rate!==c.list?'':c.pl.prem?(pr.key==='greens'?' · includes ₹1,000 for east / corner':' · includes ₹1,000 for east facing'):'';
+  $('pmeta').textContent=c.a+' sq. yds. · '+flabel(c.pl)+' · '+inr(c.rate)+' per sq. yd.'+why;valid();
+}
+
+/* ---- details ---- */
+function norm(m){m=m.replace(/[\s\-()]/g,'');m=m.replace(/^(\+?91)(?=\d{10}$)/,'');return m}
+var okName=function(v){return v.trim().length>=3&&/\s|\./.test(v.trim())||v.trim().length>=5};
+var okMob=function(v){return /^[6-9]\d{9}$/.test(norm(v))},okMail=function(v){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())};
+function valid(){var ok=!!S.p&&okName($('name').value)&&okMob($('mobile').value)&&okMail($('email').value);$('go1').disabled=!ok;return ok}
+['name','mobile','email'].forEach(function(id){$(id).addEventListener('input',function(){startClock();$('f-'+id).classList.remove('bad');valid()});
+  $(id).addEventListener('blur',function(){var v=$(id).value,g={name:okName,mobile:okMob,email:okMail}[id];$('f-'+id).classList.toggle('bad',!!v&&!g(v))})});
+$('go1').onclick=function(){
+  S.name=$('name').value.trim();S.mobile=norm($('mobile').value);S.email=$('email').value.trim().toLowerCase();
+  var b=this;b.disabled=true;b.textContent='Sending code…';
+  API.send().then(function(){$('codeLead').textContent='We sent a 6-digit code by WhatsApp or SMS (+91 '+S.mobile.slice(0,2)+'•••••'+S.mobile.slice(-3)+') and to '+S.email+'.';$('code').value='';$('e-code').textContent='';show('s-code');setTimeout(function(){$('code').focus()},300);b.disabled=false;b.textContent='Continue'});
+};
+
+/* ---- code ---- */
+$('code').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-code').textContent='';
+  if(this.value.length===6){var el=this;API.verify(el.value).then(function(r){if(r.err){$('e-code').textContent=r.err;el.select();return}clearToasts();prepSign();show('s-sign')})}});
+$('resend').onclick=function(){API.send();$('e-code').textContent='';var b=this;b.textContent='Code sent again';setTimeout(function(){b.textContent='Send the code again'},4000)};
+
+/* ---- sign ---- */
+function prepSign(){
+  var c=calc(),pr=S.p.project;$('s-eyebrow').textContent=pr.name+' · Plot '+S.plot;
+  var rows=[['Plot','Plot '+S.plot],(function(){var d=(S.p.project.plots[S.plot]||{}).layoutArea;return d?['Area','<span>'+c.a+' sq. yds. (actual extent on the ground)</span><small style="display:block;font-weight:400;color:var(--mute);font-size:13px;margin-top:3px">As per layout '+d+' sq. yds. The plot cost and registration are always as per the actual extent on the ground.</small>']:['Area',c.a+' sq. yds.']})(),['Plot cost',inr(c.cost)],['Balance (within '+S.p.balanceDays+' days)','<span id="balVal"></span>'],['Maintenance, 2 years',inr(c.maint)+' at registration'],['Buyer',S.name]];
+  $('sum').innerHTML=rows.map(function(r){return '<div'+(r[2]?' class="hi"':'')+'><dt>'+r[0]+'</dt><dd>'+(String(r[1]).indexOf('<span')===0?r[1]:String(r[1]).replace(/[&<>]/g,''))+'</dd></div>'}).join('');
+  $('signer').textContent=S.name;$('amt').value=Number(S.p.advance).toLocaleString('en-IN');
+  clearPad();checkAmt();setTimeout(sizePad,60);
+}
+var cv=$('cv'),ctx=null,drawing=false,last=null,len=0;
+function sizePad(){var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;ctx=cv.getContext('2d');ctx.scale(d,d);ctx.lineWidth=2.6;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#14141a'}
+function clearPad(){len=0;S.hasInk=false;$('pad').classList.remove('has');if(ctx)ctx.clearRect(0,0,cv.width,cv.height);if($('amt'))checkAmt()}
+function pos(e){var r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+cv.addEventListener('pointerdown',function(e){if(!ctx)sizePad();drawing=true;last=pos(e);cv.setPointerCapture(e.pointerId);ctx.beginPath();ctx.arc(last.x,last.y,1.2,0,6.3);ctx.stroke();$('pad').classList.add('has');e.preventDefault()});
+cv.addEventListener('pointermove',function(e){if(!drawing)return;var p=pos(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();len+=Math.hypot(p.x-last.x,p.y-last.y);last=p;if(len>90&&!S.hasInk){S.hasInk=true;checkAmt()}});
+['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){drawing=false})});
+$('clear').onclick=clearPad;
+function amtVal(){return parseInt(($('amt').value||'').replace(/\D/g,''),10)||0}
+function checkAmt(){if(!S.p)return;var c=calc(),a=amtVal(),min=S.p.advance,msg='';
+  if(a<min)msg='To hold the plot, please pay at least '+inr(min)+'.';else if(a>c.cost)msg='The amount cannot be more than the plot cost of '+inr(c.cost)+'.';
+  $('f-amt').classList.toggle('bad',!!msg);$('e-sign').textContent=msg;
+  if($('balVal'))$('balVal').textContent=inr(Math.max(c.cost-a,0));
+  $('go3').textContent='Sign and pay '+inr(a);$('go3').disabled=!(!msg&&S.hasInk)}
+$('amt').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';checkAmt()});
+window.addEventListener('resize',function(){if(cur==='s-sign'&&!S.hasInk)sizePad()});
+$('openTerms').onclick=function(){$('sheet').classList.add('on')};$('closeTerms').onclick=function(){$('sheet').classList.remove('on')};
+$('sheet').onclick=function(e){if(e.target===this)this.classList.remove('on')};
+
+/* ---- pay ---- */
+$('go3').onclick=function(){
+  var b=this;b.disabled=true;b.textContent='One moment…';S.amount=amtVal();
+  API.book().then(function(r){S.booking=r;gateway(r)})
+};
+function bankv(k){var va=S.p.project.va;if(!va||!va.accounts[S.plot])return k==='name'?'M/s Epic Developers':k==='no'?'0000 0000 0000':'BANK0000000';return k==='name'?va.name:k==='no'?va.accounts[S.plot]:va.ifsc}
+function gateway(r){
+  var g=document.createElement('div');g.className='gw';
+  g.innerHTML='<div class="in"><div class="hd"><small>Epic Developers · Plot '+S.plot+', '+S.p.project.name+' · Booking '+r.id+'</small><div class="amt">'+inr(S.amount)+'</div><div class="sub">Your signature is saved. Pay to hold the plot.</div></div>'+
+  '<div class="tabs"><button class="on" data-t="u">UPI</button><button data-t="b">Bank transfer</button></div>'+
+  '<div class="dl" id="tu"><div><span>Pay to UPI ID</span><b>epicdevelopers@bank</b></div><div><span>Amount</span><b>'+inr(S.amount)+'</b></div><div><span>Note</span><b>'+r.id+'</b></div></div>'+
+  '<div class="dl" id="tb" hidden><div><span>Account name</span><b>'+bankv('name')+'</b></div><div><span>Account number</span><b>'+bankv('no')+'</b></div><div><span>IFSC</span><b>'+bankv('ifsc')+'</b></div><div><span>Amount</span><b>'+inr(S.amount)+'</b></div><div><span>Reference</span><b>'+r.id+'</b></div><p class="note" style="text-align:left;margin:10px 0 0">New payee? Your bank may need some time before you can send. We have also sent these details to your WhatsApp and email. Come back to this link when the transfer is done and enter the UTR.</p></div>'+
+    '<input id="utr" inputmode="numeric" maxlength="12" placeholder="After paying, enter the 12-digit UTR / reference number" aria-label="UTR number">'+
+  '<button id="gwpay" disabled>I have paid '+inr(S.amount)+'</button><div class="note">Demo only: nothing is charged. Use any 12 digits.</div></div>';
+  document.body.appendChild(g);
+  g.querySelectorAll('.tabs button').forEach(function(t){t.onclick=function(){g.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===t)});g.querySelector('#tu').hidden=t.dataset.t!=='u';g.querySelector('#tb').hidden=t.dataset.t!=='b';CARD=t.dataset.t==='c';u.value='';u.maxLength=CARD?6:12;u.placeholder=CARD?'Cheque number (6 digits)':'After paying, enter the 12-digit UTR / reference number';pay.textContent=CARD?'Submit cheque details':'I have paid '+inr(S.amount);pay.disabled=true}});
+  var CARD=false;var u=g.querySelector('#utr'),pay=g.querySelector('#gwpay');u.oninput=function(){u.value=u.value.replace(/\D/g,'').slice(0,12);pay.disabled=u.value.length!==(CARD?6:12)};
+  pay.onclick=function(){pay.textContent='Submitting…';setTimeout(function(){g.remove();finish(r,CARD)},900)};
+}
+function finish(r,card){
+  clearInterval(S.timer);var ms=Date.now()-S.t0;
+  $('doneH').textContent=card?'Cheque details received.':'Payment submitted.';
+  $('doneP').textContent=card?'Please send or hand the cheque to our office with booking ID '+r.id+' written on the back. Plot '+S.plot+' is held for you once it clears, and your signed form and receipt follow on email and WhatsApp.':'We will confirm your payment shortly. Plot '+S.plot+' is held for you once it is confirmed, and your signed form and receipt follow on email and WhatsApp.';
+  var c=calc(),sm=S.deal&&S.deal.seller||'';
+  $('office').innerHTML='Booking '+r.id+'<br>'+S.p.project.name+' · Plot '+S.plot+' · '+c.a+' sq. yds.<br>Rate '+inr(c.rate)+' per sq. yd. · Plot cost '+inr(c.cost)+'<br>Paid today '+inr(S.amount)+' · Balance '+inr(Math.max(c.cost-S.amount,0))+'<br>Buyer '+S.name+' · +91 '+S.mobile+'<br><b>Sold by '+(S.sname||'')+' · +91 '+sm.slice(0,5)+' '+sm.slice(5)+' (verified by code)</b>';
+  $('took').textContent='⏱ You finished in '+fmt(ms);$('clock').textContent=fmt(ms);show('s-done');
+}
+
+/* ---- start screen (sales team or buyer on the salesperson's phone) + hash routing ---- */
+S.seller=null;
+$('smob').addEventListener('input',function(){var m=norm(this.value);$('e-s').textContent='';if(!okMob(this.value))return;if(!okName($('sname').value)){$('e-s').textContent='Please enter your full name first.';return}
+  $('f-sc').hidden=false;$('scode').value='';setTimeout(function(){toast('WhatsApp · Epic Developers','<i>'+CODE+'</i> is your Epic Developers sales login code.');toast('SMS · EPICDV','<i>'+CODE+'</i> is your Epic Developers sales login code.');$('scode').focus()},700)});
+$('scode').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-s').textContent='';
+  if(this.value.length===6){if(this.value!==CODE){$('e-s').textContent='That code is not right.';this.select();return}
+    var m=norm($('smob').value);S.seller={mobile:m,name:$('sname').value.trim()};clearToasts();$('sellerBox').hidden=true;$('sellerOk').hidden=false;
+    $('sellerOk').textContent=S.seller.name+' · +91 '+m.slice(0,5)+' '+m.slice(5);supd()}});
+function sfill(){var k=Object.keys(CFG[$('sproj').value].project.plots).map(Number).sort(function(a,b){return a-b});$('splot').innerHTML=k.map(function(n){return '<option value="'+n+'">Plot '+n+'</option>'}).join('');if($('sproj').value==='greens')$('splot').value='15';spick()}
+function slist(){var p=CFG[$('sproj').value].project,pl=p.plots[$('splot').value];return{p:p,pl:pl,list:p.rate+(pl.prem?p.premium:0),floor:p.floor+(pl.prem?p.premium:0)}}
+function rv(){return parseInt(($('rate').value||'').replace(/\D/g,''),10)||0}
+function spick(){var x=slist(),p=x.p,pl=x.pl,w=pl.facing==='east'?'East':'West';
+  $('rate').value='';supd()}
+function supd(){var x=slist(),pl=x.pl,r=rv(),bad='',t='',bd='';$('serr').textContent='';
+  if(!r){bad=1}else if(r<x.floor){bad=1;t='Below the cut off price';bd='We cannot proceed at '+inr(r)+' per sq. yd. Please enter a higher rate.'}
+  else if(r>x.list){bad=1;t='Above the listed price';bd='The listed price for this plot is '+inr(x.list)+(pl.prem?', including the '+(pl.facing==='east'?(pl.corner?'east and corner':'east'):'corner')+' premium.':', and there\'s no premium.')+' Please enter a lower rate.'}
+  if(String(r).length<5){t='';bd=''}
+  $('f-rate').classList.toggle('bad',!!t);$('salert').hidden=!t;$('atitle').textContent=t;$('abody').textContent=bd;
+  $('scost').textContent=r&&!bad?inr(Math.round(r*pl.area)):'—';
+  $('sinfo').innerHTML='<span>'+pl.area+' sq. yds.</span><span>'+(pl.facing==='east'?'East':'West')+' facing</span>'+(pl.corner?'<span>Corner</span>':'');
+  $('make').disabled=!(okName($('who').value)&&okMob($('bmob').value))||!!bad||!S.seller}
+$('sproj').onchange=sfill;[].forEach.call(document.querySelectorAll('#seg button'),function(b){b.onclick=function(){$('sproj').value=b.dataset.p;[].forEach.call(document.querySelectorAll('#seg button'),function(x){x.classList.toggle('on',x===b)});sfill()}});$('splot').onchange=spick;
+['who','bmob'].forEach(function(id){$(id).addEventListener('input',supd)});
+$('rate').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';supd()});
+$('make').onclick=function(){var x=slist(),r=rv(),e=$('serr');e.textContent='';if(r<x.floor||r>x.list)return;
+  if(!S.seller){e.textContent='Please verify your mobile number first.';return}
+  var key=$('sproj').value,plot=$('splot').value,m=norm($('bmob').value),nm=$('who').value.trim(),first=nm.split(/\s+/)[0];
+  var link=location.href.split('#')[0]+'#book-'+key+'-'+plot+'-'+r+'-'+m+'-'+S.seller.mobile;S.pre={name:nm};S.sname=S.seller.name;
+  $('sentH').textContent='Sent to '+first+'.';$('sentP').textContent='The payment link is on its way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by WhatsApp and SMS. He opens it on his own phone, adds his email, enters the code, signs and pays. Recorded against '+S.seller.name+'.';
+  var msg='Hello '+first+', here is your personal link to hold Plot '+plot+' at '+x.p.name+'. Pay a minimum of ₹50,000 to hold it: '+link;
+  clearToasts();setTimeout(function(){toast('WhatsApp · Epic Developers',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/reserve/…</i>'));toast('SMS · EPICDV',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/r/…</i>'))},700);
+  $('openAs').onclick=function(){location.hash='book-'+key+'-'+plot+'-'+r+'-'+m+'-'+S.seller.mobile};
+  show('s-sent')};
+$('again').onclick=function(){location.hash='';$('who').value='';$('bmob').value='';spick();show('s-pick')};
+function route(){
+  var h=location.hash.slice(1),m=h.match(/^book-(greens|parkcentral)-(\d+)-(\d+)-(\d{10})-(\d{10})$/);
+  if(m&&CFG[m[1]].project.plots[m[2]]){S.deal={plot:m[2],rate:Number(m[3]),mobile:m[4],seller:m[5]};startClock();pick(m[1]);return}
+  if(S.deal){S.deal=null}show('s-pick')
+}
+if(!sc){var sc=1;sfill()}
+window.addEventListener('hashchange',route);route();
+})();
+</script>
+
+</body>
+</html>
