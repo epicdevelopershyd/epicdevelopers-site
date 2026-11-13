@@ -339,7 +339,8 @@ $('smob').addEventListener('input',function(){var m=norm(this.value);$('e-s').te
 $('scode').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-s').textContent='';
   if(this.value.length===6){if(this.value!==CODE){$('e-s').textContent='That code is not right.';this.select();return}
     var m=norm($('smob').value);clearToasts();if(S.seen[m]){sellerDone(m,S.seen[m]);return}
-    $('f-ad').hidden=false;$('aad').value='';setTimeout(function(){$('aad').focus()},200)}});
+    /* demo: the SIM-name lookup finds a name when the last digit is even; otherwise the Aadhaar step follows */
+    setTimeout(function(){if(Number(m.slice(-1))%2===0){sellerDone(m,'Ramesh Kumar');return}$('f-ad').hidden=false;$('aad').value='';setTimeout(function(){$('aad').focus()},200)},600)}});
 $('aad').addEventListener('input',function(){var d=this.value.replace(/\D/g,'').slice(0,12);this.value=d.replace(/(\d{4})(?=\d)/g,'$1 ');$('e-s').textContent='';
   if(d.length===12){$('f-ao').hidden=false;$('aotp').value='';setTimeout(function(){toast('SMS · Aadhaar','<i>'+CODE+'</i> is your Aadhaar verification OTP.');$('aotp').focus()},700)}else{$('f-ao').hidden=true}});
 $('aotp').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-s').textContent='';
