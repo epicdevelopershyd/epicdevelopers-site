@@ -116,12 +116,12 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
 
   <section id="s-pick" class="on">
     <p class="eyebrow">Reserve online</p>
-    <h1 style="margin-bottom:26px">Send a payment link.</h1>
+    <h1 style="margin-bottom:26px">Send bank &amp; UPI details.</h1>
 
     <div class="sec">Buyer</div>
     <div class="f" id="f-who"><input id="who" autocomplete="off" placeholder=" "><label for="who">Buyer's full name</label></div>
     <div class="f" id="f-bmob"><input id="bmob" type="tel" inputmode="numeric" autocomplete="off" placeholder=" "><label for="bmob">Buyer's mobile number</label></div>
-    <p class="fine" style="margin:2px 2px 0">The payment link goes to this number by WhatsApp and SMS.</p>
+    <p class="fine" style="margin:2px 2px 0">The booking link goes to this number by WhatsApp and SMS.</p>
     <div class="sec">Plot</div>
     <div class="card" style="margin-top:0">
       <div class="seg" id="seg" data-side="l"><button type="button" data-p="greens" class="on">The Greens</button><button type="button" data-p="parkcentral">Park Central</button></div>
@@ -149,7 +149,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div class="who" id="sellerOk" hidden></div>
 
     <div class="err" id="serr"></div>
-    <div class="cta"><button class="btn" id="make" disabled>Send payment link</button></div>
+    <div class="cta"><button class="btn" id="make" disabled>Send bank &amp; UPI details</button></div>
   </section>
 
   <section id="s-sent">
@@ -164,7 +164,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <p class="eyebrow" id="d-eyebrow"></p>
     <p class="eyebrow" id="agreed" hidden style="color:var(--ok);margin-top:-4px">Your agreed price</p>
     <h1>Hold your plot.</h1>
-    <p class="lead">To hold it, pay a minimum of ₹50,000 today. You can pay more if you like.</p>
+    <p class="lead">To hold it, transfer a minimum of ₹50,000 after signing. You can pay more if you like.</p>
     <div class="card">
       <div class="plotline"><label for="plot">Your plot</label><select id="plot"></select></div>
       <div class="price" id="cost">—</div>
@@ -189,15 +189,15 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
 
   <section id="s-sign">
     <p class="eyebrow" id="s-eyebrow"></p>
-    <h1>Pay to hold it.</h1>
+    <h1>Sign to hold it.</h1>
     <dl class="list" id="sum"></dl>
-    <div class="f" id="f-amt"><input id="amt" inputmode="numeric" autocomplete="off" placeholder=" "><label for="amt">Pay today · minimum ₹50,000</label></div>
-    <p class="fine" style="margin:-2px 2px 20px">Every rupee you pay today is adjusted in your plot cost. The first ₹50,000 is not refundable if you cancel.</p>
+    <div class="f" id="f-amt"><input id="amt" inputmode="numeric" autocomplete="off" placeholder=" "><label for="amt">Booking amount · minimum ₹50,000</label></div>
+    <p class="fine" style="margin:-2px 2px 20px">Every rupee you pay is adjusted in your plot cost. Some banks limit a new payee to ₹50,000 for the first 24 hours; you can pay the rest later. The first ₹50,000 is not refundable if you cancel.</p>
     <div class="pad" id="pad"><div class="hint">Sign here with your finger</div><div class="base"></div><canvas id="cv"></canvas></div>
     <div class="padrow"><span id="signer"></span><button class="link" id="clear" style="font-weight:600;color:var(--mute)">Clear</button></div>
     <p class="consent">By signing, I confirm that I have read and understood the <button class="link" id="openTerms">terms and conditions</button> and I agree to them.</p>
     <div class="err" id="e-sign"></div>
-    <div class="cta"><button class="btn" id="go3" disabled>Sign and pay ₹50,000</button></div>
+    <div class="cta"><button class="btn" id="go3" disabled>Sign and get bank details</button></div>
   </section>
 
   <section id="s-done" class="done">
@@ -299,7 +299,7 @@ function checkAmt(){if(!S.p)return;var c=calc(),a=amtVal(),min=S.p.advance,msg='
   if(a<min)msg='To hold the plot, please pay at least '+inr(min)+'.';else if(a>c.cost)msg='The amount cannot be more than the plot cost of '+inr(c.cost)+'.';
   $('f-amt').classList.toggle('bad',!!msg);$('e-sign').textContent=msg;
   if($('balVal'))$('balVal').textContent=inr(Math.max(c.cost-a,0));
-  $('go3').textContent='Sign and pay '+inr(a);$('go3').disabled=!(!msg&&S.hasInk)}
+  $('go3').textContent='Sign and get bank details';$('go3').disabled=!(!msg&&S.hasInk)}
 $('amt').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';checkAmt()});
 window.addEventListener('resize',function(){if(cur==='s-sign'&&!S.hasInk)sizePad()});
 $('openTerms').onclick=function(){$('sheet').classList.add('on')};$('closeTerms').onclick=function(){$('sheet').classList.remove('on')};
@@ -313,7 +313,7 @@ $('go3').onclick=function(){
 function bankv(k){var va=S.p.project.va;if(!va||!va.accounts[S.plot])return k==='name'?'M/s Epic Developers':k==='no'?'0000 0000 0000':'BANK0000000';return k==='name'?va.name:k==='no'?va.accounts[S.plot]:va.ifsc}
 function gateway(r){
   var g=document.createElement('div');g.className='gw';
-  g.innerHTML='<div class="in"><div class="hd"><small>Epic Developers · Plot '+S.plot+', '+S.p.project.name+' · Booking '+r.id+'</small><div class="amt">'+inr(S.amount)+'</div><div class="sub">Your signature is saved. Pay to hold the plot.</div></div>'+
+  g.innerHTML='<div class="in"><div class="hd"><small>Epic Developers · Plot '+S.plot+', '+S.p.project.name+' · Booking '+r.id+'</small><div class="amt">'+inr(S.amount)+'</div><div class="sub">Your signature is saved. Add us as a payee and transfer to hold the plot.</div></div>'+
   '<div class="tabs"><button class="on" data-t="u">UPI</button><button data-t="b">Bank transfer</button></div>'+
   '<div class="dl" id="tu"><div><span>Pay to UPI ID</span><b>epicdevelopers@bank</b></div><div><span>Amount</span><b>'+inr(S.amount)+'</b></div><div><span>Note</span><b>'+r.id+'</b></div></div>'+
   '<div class="dl" id="tb" hidden><div><span>Account name</span><b>'+bankv('name')+'</b></div><div><span>Account number</span><b>'+bankv('no')+'</b></div><div><span>IFSC</span><b>'+bankv('ifsc')+'</b></div><div><span>Amount</span><b>'+inr(S.amount)+'</b></div><div><span>Reference</span><b>'+r.id+'</b></div><p class="note" style="text-align:left;margin:10px 0 0">New payee? Your bank may need some time before you can send. We have also sent these details to your WhatsApp and email. Come back to this link when the transfer is done and enter the UTR.</p></div>'+
@@ -361,8 +361,8 @@ $('make').onclick=function(){var x=slist(),r=rv(),e=$('serr');e.textContent='';i
   if(!S.seller){e.textContent='Please verify your mobile number first.';return}
   var key=$('sproj').value,plot=$('splot').value,m=norm($('bmob').value),nm=$('who').value.trim(),first=nm.split(/\s+/)[0];
   var link=location.href.split('#')[0]+'#book-'+key+'-'+plot+'-'+r+'-'+m+'-'+S.seller.mobile;S.pre={name:nm};S.sname=S.seller.name;
-  $('sentH').textContent='Sent to '+first+'.';$('sentP').textContent='The payment link is on its way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by WhatsApp and SMS. He opens it on his own phone, adds his email, enters the code, signs and pays. Recorded against '+S.seller.name+'.';
-  var msg='Hello '+first+', here is your personal link to hold Plot '+plot+' at '+x.p.name+'. Pay a minimum of ₹50,000 to hold it: '+link;
+  $('sentH').textContent='Sent to '+first+'.';$('sentP').textContent='The bank and UPI details for Plot '+plot+' are on their way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by WhatsApp and SMS. He opens the link on his own phone, adds his email, enters the code and signs. Recorded against '+S.seller.name+'.';
+  var msg='Hello '+first+', your booking link for Plot '+plot+' at '+x.p.name+'. Sign and get the bank details to transfer the booking amount of ₹50,000 or more: '+link;
   clearToasts();setTimeout(function(){toast('WhatsApp · Epic Developers',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/reserve/…</i>'));toast('SMS · EPICDV',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/r/…</i>'))},700);
   $('openAs').onclick=function(){location.hash='book-'+key+'-'+plot+'-'+r+'-'+m+'-'+S.seller.mobile};
   show('s-sent')};
