@@ -140,8 +140,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div id="sellerBox">
       <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="off" placeholder=" "><label for="smob">Your Aadhaar linked mobile number</label></div>
       <div class="f" id="f-sc" hidden><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code</label></div>
-      <div class="f" id="f-ad" hidden><input id="aad" inputmode="numeric" maxlength="14" autocomplete="off" placeholder=" "><label for="aad">Aadhaar number</label></div>
-      <div class="f" id="f-ao" hidden><input id="aotp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="aotp">OTP</label></div>
+      <div class="f" id="f-nm" hidden><input id="snm" autocomplete="name" placeholder=" "><label for="snm">Your full name</label></div>
       <div class="err" id="e-s" style="min-height:0"></div>
     </div>
     <div class="who" id="sellerOk" hidden></div>
@@ -333,19 +332,15 @@ function finish(r,card){
 
 /* ---- start screen (sales team or buyer on the salesperson's phone) + hash routing ---- */
 S.seller=null;S.seen={};var lastSM='';
-function sellerDone(m,name){S.seller={mobile:m,name:name};S.seen[m]=name;clearToasts();$('sellerBox').hidden=true;$('sellerOk').hidden=false;$('sellerOk').textContent=name+' · +91 '+m.slice(0,5)+' '+m.slice(5);supd()}
-$('smob').addEventListener('input',function(){var m=norm(this.value);$('e-s').textContent='';if(!okMob(this.value)){lastSM='';return}if(m===lastSM)return;lastSM=m;
-  $('f-sc').hidden=false;$('scode').value='';$('f-ad').hidden=true;$('f-ao').hidden=true;setTimeout(function(){toast('WhatsApp · Epic Developers','<i>'+CODE+'</i> is your Epic Developers sales login code.');toast('SMS · EPICDV','<i>'+CODE+'</i> is your Epic Developers sales login code.');$('scode').focus()},700)});
+function sellerDone(m,name){S.seller={mobile:m,name:name};S.seen[m]=name;clearToasts();$('sellerBox').hidden=true;$('sellerOk').hidden=false;$('sellerOk').textContent=name+' \u00b7 +91 '+m.slice(0,5)+' '+m.slice(5);supd()}
+$('smob').addEventListener('input',function(){var m=norm(this.value);$('e-s').textContent='';S.seller=null;$('f-nm').hidden=true;if(!okMob(this.value)){lastSM='';supd();return}if(m===lastSM)return;lastSM=m;
+  $('f-sc').hidden=false;$('scode').value='';setTimeout(function(){toast('WhatsApp \u00b7 Epic Developers','<i>'+CODE+'</i> is your Epic Developers sales login code.');toast('SMS \u00b7 EPICDV','<i>'+CODE+'</i> is your Epic Developers sales login code.');$('scode').focus()},700)});
 $('scode').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-s').textContent='';
   if(this.value.length===6){if(this.value!==CODE){$('e-s').textContent='That code is not right.';this.select();return}
     var m=norm($('smob').value);clearToasts();if(S.seen[m]){sellerDone(m,S.seen[m]);return}
-    /* demo: the SIM-name lookup finds a name for every number except those ending in 0, which get the Aadhaar step */
-    setTimeout(function(){if(m.slice(-1)!=='0'){sellerDone(m,'Ramesh Kumar');return}$('f-ad').hidden=false;$('aad').value='';setTimeout(function(){$('aad').focus()},200)},600)}});
-$('aad').addEventListener('input',function(){var d=this.value.replace(/\D/g,'').slice(0,12);this.value=d.replace(/(\d{4})(?=\d)/g,'$1 ');$('e-s').textContent='';
-  if(d.length===12){$('f-ao').hidden=false;$('aotp').value='';setTimeout(function(){toast('SMS · Aadhaar','<i>'+CODE+'</i> is your Aadhaar verification OTP.');$('aotp').focus()},700)}else{$('f-ao').hidden=true}});
-$('aotp').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').slice(0,6);$('e-s').textContent='';
-  if(this.value.length===6){if(this.value!==CODE){$('e-s').textContent='That OTP is not right.';this.select();return}
-    sellerDone(norm($('smob').value),'Ramesh Kumar')}});
+    /* demo: the SIM-name lookup finds a name for every number except those ending in 0, which are asked for their name once */
+    setTimeout(function(){if(m.slice(-1)!=='0'){sellerDone(m,'Ramesh Kumar');return}$('f-nm').hidden=false;$('snm').value='';setTimeout(function(){$('snm').focus()},200)},600)}});
+$('snm').addEventListener('input',function(){var v=this.value.trim();S.seller=okName(v)?{mobile:norm($('smob').value),name:v}:null;supd()});
 function sfill(){var k=Object.keys(CFG[$('sproj').value].project.plots).map(Number).sort(function(a,b){return a-b});$('splot').innerHTML=k.map(function(n){return '<option value="'+n+'">Plot '+n+'</option>'}).join('');if($('sproj').value==='greens')$('splot').value='15';spick()}
 function slist(){var p=CFG[$('sproj').value].project,pl=p.plots[$('splot').value];return{p:p,pl:pl,list:p.rate+(pl.prem?p.premium:0),floor:p.floor+(pl.prem?p.premium:0)}}
 function rv(){return parseInt(($('rate').value||'').replace(/\D/g,''),10)||0}
@@ -365,7 +360,7 @@ $('rate').addEventListener('input',function(){var d=this.value.replace(/\D/g,'')
 $('make').onclick=function(){var x=slist(),r=rv(),e=$('serr');e.textContent='';if(r<x.floor||r>x.list)return;
   if(!S.seller){e.textContent='Please verify your mobile number first.';return}
   var key=$('sproj').value,plot=$('splot').value,m=norm($('bmob').value),nm=$('who').value.trim(),first=nm.split(/\s+/)[0];
-  var link=location.href.split('#')[0]+'#book-'+key+'-'+plot+'-'+r+'-'+m+'-'+S.seller.mobile;S.pre={name:nm};S.sname=S.seller.name;
+  S.seen[S.seller.mobile]=S.seller.name;var link=location.href.split('#')[0]+'#book-'+key+'-'+plot+'-'+r+'-'+m+'-'+S.seller.mobile;S.pre={name:nm};S.sname=S.seller.name;
   $('sentH').textContent='Sent to '+first+'.';$('sentP').textContent='The account details for Plot '+plot+' are on their way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by WhatsApp and SMS. He opens the link on his own phone, adds his email, enters the code and signs. Recorded against '+S.seller.name+'.';
   var msg='Hello '+first+', your booking link for Plot '+plot+' at '+x.p.name+'. Sign and get the account details to transfer the booking amount of ₹50,000 or more: '+link;
   clearToasts();setTimeout(function(){toast('WhatsApp · Epic Developers',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/reserve/…</i>'));toast('SMS · EPICDV',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/r/…</i>'))},700);
