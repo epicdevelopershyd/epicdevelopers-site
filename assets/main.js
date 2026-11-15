@@ -542,7 +542,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!target) return;
   var header = document.querySelector(".site-header");
   function landExactly() {
-    var offset = (header ? header.getBoundingClientRect().height : 86) + 24;
+    var offset = (header ? header.getBoundingClientRect().bottom : 86) + 24;   /* bottom, not height: the fixed offer bar sits above the header */
     var y = target.getBoundingClientRect().top + window.pageYOffset - offset;
     window.scrollTo({ top: Math.max(0, y), behavior: "auto" });
   }
