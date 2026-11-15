@@ -938,3 +938,10 @@ html.has-offer-2 .site-header{top:80px}
 /* ---------- Park Central film ---------- */
 .pc-film { max-width: 1040px; margin: 0 auto; background: #0d0b07; }
 .pc-film video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #0d0b07; }
+
+/* Homepage: the two-row festive offer bar (80px) sits above the header, so the hero stage must start below both, or the top of each arch picture hides behind the bar */
+html.has-offer-2 .hero-stage { padding-top: calc(var(--hdr) + 80px); }
+html.has-offer-2 .st-bg, html.has-offer-2 .st-scrim { top: calc(var(--hdr) + 80px); }
+@media (max-width: 900px) {
+  html.has-offer-2 .st-bg { top: auto; }
+}
