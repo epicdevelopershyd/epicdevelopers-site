@@ -952,3 +952,12 @@ html.has-offer-2 .page-hero { padding-top: calc(var(--hdr) + 80px + 56px); }
 html.has-offer #layout { scroll-margin-top: 160px; }
 html.has-offer-2 #upcoming, html.has-offer-2 section[id] { scroll-margin-top: calc(var(--hdr) + 80px); }
 html.has-offer section[id] { scroll-margin-top: calc(var(--hdr) + 40px); }
+
+/* Homepage tiles on phones: the tall crop was centring on empty sky/road, cutting the Park Central sign ("TRAL") and the Greens scaffold. Centre on the subject instead. */
+@media (max-width: 700px) {
+  .tile-pc .bg { background-position: 4% 8% !important; }
+  .tile[href="/the-greens/"] .bg { background-position: 10% 44% !important; }
+  .tile-acres .bg { top: 0 !important; background-position: 62% 0% !important; }
+  .tile-eden { background: #0d0b07; }
+  .tile-eden .bg { top: 58px !important; background-size: 150% auto !important; background-repeat: no-repeat; background-color: #0d0b07; background-position: 50% 0% !important; }
+}
