@@ -174,6 +174,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <svg class="tick" viewBox="0 0 92 92" aria-hidden="true"><circle cx="46" cy="46" r="40"/><path d="M29 47l12 12 23-26"/></svg>
     <h1 id="sentH"></h1>
     <p class="lead" id="sentP"></p>
+    <div class="cta" id="waBox" hidden><a class="btn" id="waBtn" href="#" target="_blank" rel="noopener">Send on WhatsApp</a></div>
     <p class="fine" style="text-align:center;margin-top:14px"><button class="link" id="again" style="color:var(--mute);font-weight:500">Start another booking</button></p>
   </section>
 
@@ -327,6 +328,8 @@ function paint(){
 $('rate').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';supd()});
 $('make').onclick=function(){var b=this,nm=$('who').value.trim(),m=norm($('bmob').value),first=nm.split(/\s+/)[0];$('serr').textContent='';busy(b,'Sending…');
   api('/api/link',{project:$('sproj').value,plot:$('splot').value,rate:rv(),buyerName:nm,buyerMobile:m},S.sess).then(function(r){
+    $('waBox').hidden=!r.manual;
+    if(r.manual){$('waBtn').href=r.wa;$('sentH').textContent='Link ready for '+first+'.';$('sentP').textContent='Tap Send on WhatsApp. The message for Plot '+$('splot').value+' opens on your phone, already written for +91 '+m.slice(0,5)+' '+m.slice(5)+'. Send it. He opens the link on his own phone, adds his email, enters the code and signs. The account number for this plot reaches him on screen and by email, and we confirm his payment automatically.';idle(b);show('s-sent');return}
     var via=r.whatsapp&&r.sms?'WhatsApp and SMS':r.whatsapp?'WhatsApp':r.sms?'SMS':'';
     $('sentH').textContent=via?'Sent to '+first+'.':'Link created for '+first+'.';
     $('sentP').textContent=via?'The booking link for Plot '+$('splot').value+' is on its way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by '+via+'. He opens it on his own phone, adds his email, enters the code and signs. The account number for this plot reaches him on WhatsApp, SMS and email, and we confirm his payment automatically.':'The link could not be delivered by WhatsApp or SMS. Please call the office on 789 368 4545 and we will send it.';
