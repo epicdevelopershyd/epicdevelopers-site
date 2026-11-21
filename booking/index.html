@@ -47,7 +47,7 @@ section.on{display:flex}
 .tick path{stroke-dasharray:22;stroke-dashoffset:22;animation:draw .35s .5s ease-out forwards}
 #lg-code:not([hidden]) #scode{animation:glow 1.6s .7s ease-out 1}
 #lg-code:not([hidden]) #verifyS,#lg-code:not([hidden]) .fine{animation:rise .6s .3s cubic-bezier(.2,.8,.2,1) backwards}
-.ghost{opacity:.55}.ghost input{cursor:default}
+.fine:empty{display:none}.ghost{opacity:.55}.ghost input{cursor:default}
 .pulse{animation:pulse 1.1s ease-in-out infinite}
 @keyframes draw{to{stroke-dashoffset:0}}
 @keyframes rise{from{opacity:0;transform:translateY(10px);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
@@ -161,8 +161,8 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
       <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your WhatsApp number</label></div>
       <input id="semail" type="hidden" value="">
-      <p class="fine" id="h-se" style="margin:-4px 2px 14px">We will send you a code on WhatsApp. Just type it here.</p>
-      <p class="fine" id="h-sm" hidden style="margin:-4px 2px 14px">We will send you a code on WhatsApp. Just type it here.</p>
+      <p class="fine" id="h-se" style="margin:-4px 2px 14px"></p>
+      
       <div class="f ghost" id="ghost" aria-hidden="true"><input disabled tabindex="-1" placeholder=" "><label>6-digit code from WhatsApp</label></div>
       <div class="err" id="e-login"></div>
       <div class="cta" id="ctaS" hidden><button class="btn" id="sendS" disabled>Send code</button></div>
@@ -317,13 +317,13 @@ function loginMode(){
 var LM='register',cnt=null;
 function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||$('sname').value.trim().length>=2);$('sendS').disabled=!ok}
 function setLM(m){LM=m;var r=m==='register';$('tReg').classList.toggle('on',r);$('tIn').classList.toggle('on',!r);
-  $('f-sn').hidden=!r;$('h-se').hidden=!r;$('h-sm').hidden=r;
+  $('f-sn').hidden=!r;$('h-se').hidden=!r;
   $('lgH').textContent=r?'Sell Epic plots.':'Welcome back';$('lgLead').hidden=!r;
   $('e-login').textContent='';chkLogin()}
 $('tReg').onclick=function(){setLM('register')};$('tIn').onclick=function(){setLM('signin')};
 var sentFor='',H0='';
 function autoSend(){var m=norm($('smob').value);if(LM!=='register'||!okMob(m)||$('sname').value.trim().length<2||sentFor===m||$('smob').readOnly)return;
-  sentFor=m;H0=H0||$('h-se').textContent;$('h-se').textContent='Sending your code…';$('h-se').classList.add('pulse');$('smob').blur();sendCode(true)}
+  sentFor=m;$('h-se').textContent='Sending your code…';$('h-se').classList.add('pulse');$('smob').blur();sendCode(true)}
 ['smob','semail','sname'].forEach(function(id){$(id).addEventListener('input',function(){$('e-login').textContent='';chkLogin();autoSend()})});
 function startCount(n){clearInterval(cnt);var b=$('resendSb');b.disabled=true;b.style.opacity='.45';
   (function tick(){if(n<=0){clearInterval(cnt);b.disabled=false;b.style.opacity='';$('rcount').textContent='';return}$('rcount').textContent='in '+n+'s';n--})();
@@ -333,11 +333,11 @@ function sendCode(again){
   return api('/api/seller/code',{mobile:m,email:$('semail').value.trim(),mode:LM}).then(function(r){
     S.sTok=r.token;$('lgCodeH').textContent=r.via==='email'?'Check your email':'Check your WhatsApp';$('codeLead').textContent='We just sent a code to your '+(r.via==='email'?'email address':'WhatsApp number')+'. Please enter it in the box below.';
     $('ctaS').hidden=true;$('h-se').hidden=true;$('h-se').classList.remove('pulse');$('sname').readOnly=true;$('smob').readOnly=true;$('ghost').hidden=true;$('lg-code').hidden=false;$('scode').value='';$('verifyS').disabled=true;startCount(30);
-    if(b)idle(b);setTimeout(function(){$('scode').focus()},150)}).catch(function(e){if(b){idle(b);fail('e-login',e)}else if($('lg-code').hidden){sentFor='';$('h-se').classList.remove('pulse');$('h-se').textContent=H0||$('h-se').textContent;$('ctaS').hidden=false;chkLogin();fail('e-login',e)}else fail('e-login2',e)});
+    if(b)idle(b);setTimeout(function(){$('scode').focus()},150)}).catch(function(e){if(b){idle(b);fail('e-login',e)}else if($('lg-code').hidden){sentFor='';$('h-se').classList.remove('pulse');$('h-se').textContent='';$('ctaS').hidden=false;chkLogin();fail('e-login',e)}else fail('e-login2',e)});
 }
 $('sendS').onclick=function(){sendCode()};
 $('resendSb').onclick=function(){if(!this.disabled)sendCode(true)};
-$('backS').onclick=function(){clearInterval(cnt);$('lg-code').hidden=true;$('ghost').hidden=false;$('ctaS').hidden=false;$('h-se').hidden=false;$('sname').readOnly=false;$('smob').readOnly=false;sentFor='';$('ctaS').hidden=true;$('h-se').textContent=H0||$('h-se').textContent;$('e-login2').textContent='';$('smob').focus();$('smob').select()};
+$('backS').onclick=function(){clearInterval(cnt);$('lg-code').hidden=true;$('ghost').hidden=false;$('ctaS').hidden=false;$('h-se').hidden=false;$('sname').readOnly=false;$('smob').readOnly=false;sentFor='';$('ctaS').hidden=true;$('h-se').textContent='';$('e-login2').textContent='';$('smob').focus();$('smob').select()};
 function verifyCode(){var el=$('scode');if(el.value.length!==6)return;var b=$('verifyS');busy(b,'Checking…');var L=$('codeLead'),L0=L.textContent;L.textContent='Checking your code…';L.classList.add('pulse');
   api('/api/seller/verify',{mobile:norm($('smob').value),code:el.value,token:S.sTok,name:$('sname').value.trim()}).then(function(r){
     idle(b);S.smob=norm($('smob').value);
