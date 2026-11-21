@@ -124,8 +124,8 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <section id="s-login">
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
     <div id="lg-form">
-      <div class="tabs" id="tabs"><button type="button" id="tReg" class="on">Register<small>New agent? Please register.</small></button><button type="button" id="tIn">Sign in<small>Returning agent? Please sign in.</small></button></div>
-      <h1 id="lgH" style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Create your agent account</h1>
+      <div class="tabs" id="tabs"><button type="button" id="tReg" class="on">Register<small>New here? Create your agent account.</small></button><button type="button" id="tIn">Sign in<small>Returning agent? Please sign in.</small></button></div>
+      <h1 id="lgH" style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Your details</h1>
       
       <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
       <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your mobile number</label></div>
@@ -286,7 +286,7 @@ var LM='register',cnt=null;
 function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||(okMail($('semail').value)&&$('sname').value.trim().length>=2));$('sendS').disabled=!ok}
 function setLM(m){LM=m;var r=m==='register';$('tReg').classList.toggle('on',r);$('tIn').classList.toggle('on',!r);
   $('f-se').hidden=!r;$('f-sn').hidden=!r;$('h-se').hidden=!r;$('h-sm').hidden=r;
-  $('lgH').textContent=r?'Create your agent account':'Welcome back';
+  $('lgH').textContent=r?'Your details':'Welcome back';
   $('e-login').textContent='';chkLogin()}
 $('tReg').onclick=function(){setLM('register')};$('tIn').onclick=function(){setLM('signin')};
 ['smob','semail','sname'].forEach(function(id){$(id).addEventListener('input',function(){$('e-login').textContent='';chkLogin()})});
