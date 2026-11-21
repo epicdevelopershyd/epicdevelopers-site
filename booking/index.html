@@ -376,7 +376,7 @@ $('signout').onclick=function(){store('epic_s',null);store('epic_sn',null);S.ses
 function celebrate(done){
   var nm=(S.sname||'').trim().split(/\s+/)[0]||'';
   var d=document.createElement('div');d.id='cele';
-  var h='<div class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>Congratulations'+(nm?', <em></em>':'')+'!</h2><p>You are now an official channel partner of Epic Developers. Welcome to the family. Let us sell some plots together.</p><div class="go">Opening your console…</div>';
+  var h='<div class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>Congratulations'+(nm?'<br>Dear <em></em>':'')+'!</h2><p>You are now an official channel partner of Epic Developers. Welcome to the family. Let us sell some plots together.</p><div class="go">Opening your console…</div>';
   d.innerHTML=h;document.body.appendChild(d);
   if(nm)d.querySelector('em').textContent=nm;
   var cols=['#a0792a','#111','#d9b45a','#2e8b57','#c9c9cf','#e0553d'];
