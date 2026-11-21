@@ -211,8 +211,8 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <p class="eyebrow" id="s-eyebrow"></p>
     <h1>Sign to hold it.</h1>
     <dl class="list" id="sum"></dl>
-    <div class="f" id="f-amt"><input id="amt" inputmode="numeric" autocomplete="off" placeholder=" "><label for="amt">Booking amount · minimum ₹50,000</label></div>
-    <p class="fine" style="margin:-2px 2px 20px">Every rupee you pay is adjusted in your plot cost. Some banks limit a new payee to ₹50,000 for the first 24 hours; you can pay the rest later. The first ₹50,000 is not refundable if you cancel.</p>
+    <div class="f" id="f-amt"><input id="amt" inputmode="numeric" autocomplete="off" placeholder=" " readonly><label for="amt">Booking amount</label></div>
+    <p class="fine" style="margin:-2px 2px 20px">The booking amount of ₹50,000 is adjusted in your plot cost. It is not refundable if you cancel.</p>
     <div class="pad" id="pad"><div class="hint">Sign here with your finger</div><div class="base"></div><canvas id="cv"></canvas></div>
     <div class="padrow"><span id="signer"></span><button class="link" id="clear" style="font-weight:600;color:var(--mute)">Clear</button></div>
     <p class="consent">By signing, I confirm that I have read and understood the <button class="link" id="openTerms">terms and conditions</button> and I agree to them.</p>
@@ -376,7 +376,7 @@ cv.addEventListener('pointermove',function(e){if(!drawing)return;var p=pos(e);ct
 ['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){drawing=false})});
 $('clear').onclick=clearPad;
 function amtVal(){return parseInt(($('amt').value||'').replace(/\D/g,''),10)||0}
-function checkAmt(){var d=S.link;if(!d)return;var a=amtVal(),msg='';
+function checkAmt(){var d=S.link;if(!d)return;$('amt').value=Number(d.advance).toLocaleString('en-IN');var a=amtVal(),msg='';
   if(a<d.advance)msg='To hold the plot, please pay at least '+inr(d.advance)+'.';else if(a>d.cost)msg='The amount cannot be more than the plot cost of '+inr(d.cost)+'.';
   $('f-amt').classList.toggle('bad',!!msg);$('e-sign').textContent=msg;$('go3').disabled=!(!msg&&S.hasInk)}
 $('amt').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';checkAmt()});
