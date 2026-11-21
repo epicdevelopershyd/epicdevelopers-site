@@ -103,7 +103,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
 .toast{pointer-events:auto;width:min(100%,400px);background:var(--surface);color:var(--fg);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.28);padding:12px 14px;font-size:13.5px;line-height:1.35;animation:in .4s}
 .toast small{display:block;color:var(--mute);font-size:11.5px;font-weight:600;margin-bottom:2px}.toast i{font-style:normal;font-weight:800;letter-spacing:.2em}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-.tabs{display:flex;gap:6px;margin-top:22px;background:var(--card,#f1f1f4);border-radius:14px;padding:4px}.tabs button{flex:1;border:0;background:transparent;font:600 15px var(--sans,inherit);padding:10px;border-radius:11px;color:var(--mute,#666);cursor:pointer}.tabs button.on{background:var(--bg,#fff);color:var(--fg,#111);box-shadow:0 1px 4px #0002}
+.tabs{display:flex;gap:6px;margin-top:22px;background:var(--card,#f1f1f4);border-radius:14px;padding:4px}.tabs button{flex:1;border:0;background:transparent;font:600 15px var(--sans,inherit);padding:10px;border-radius:11px;color:var(--mute,#666);cursor:pointer}.tabs button small{display:block;font:500 11.5px var(--sans,inherit);margin-top:3px;color:var(--mute,#666)}.tabs button.on{background:var(--bg,#fff);color:var(--fg,#111);box-shadow:0 1px 4px #0002}
 </style>
 </head>
 <body>
@@ -124,9 +124,9 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <section id="s-login">
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
     <div id="lg-form">
-      <div class="tabs" id="tabs"><button type="button" id="tReg" class="on">Register</button><button type="button" id="tIn">Sign in</button></div>
+      <div class="tabs" id="tabs"><button type="button" id="tReg" class="on">Register<small>New agent? Please register.</small></button><button type="button" id="tIn">Sign in<small>Returning agent? Please sign in.</small></button></div>
       <h1 id="lgH" style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Create your agent account</h1>
-      <p class="lead" id="loginLead" style="margin-top:0">Register once. Then you can create booking links for your buyers.</p>
+      
       <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
       <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your mobile number</label></div>
       <div class="f" id="f-se"><input id="semail" type="email" inputmode="email" autocomplete="email" placeholder=" "><label for="semail">Your email</label></div>
@@ -286,7 +286,6 @@ function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||(okMail($('se
 function setLM(m){LM=m;var r=m==='register';$('tReg').classList.toggle('on',r);$('tIn').classList.toggle('on',!r);
   $('f-se').hidden=!r;$('f-sn').hidden=!r;$('h-se').hidden=!r;$('h-sm').hidden=r;
   $('lgH').textContent=r?'Create your agent account':'Welcome back';
-  $('loginLead').textContent=r?'Register once. Then you can create booking links for your buyers.':'Enter your mobile number to sign in.';
   $('e-login').textContent='';chkLogin()}
 $('tReg').onclick=function(){setLM('register')};$('tIn').onclick=function(){setLM('signin')};
 ['smob','semail','sname'].forEach(function(id){$(id).addEventListener('input',function(){$('e-login').textContent='';chkLogin()})});
