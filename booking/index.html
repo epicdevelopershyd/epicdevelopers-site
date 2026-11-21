@@ -7,7 +7,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Epic Developers">
 <meta property="og:title" content="Sell Epic plots. Register in under a minute.">
-<meta property="og:description" content="Join Epic Developers as a sales agent. Register with your WhatsApp number and book plots at Park Central, Dundigal and The Greens, Kadthal for your buyers.">
+<meta property="og:description" content="Join Epic Developers as a Sales Partner. Register with your WhatsApp number and book plots at Park Central, Dundigal and The Greens, Kadthal for your buyers.">
 <meta property="og:image" content="https://epicdevelopers.in/assets/img/share-arch.jpg">
 <meta property="og:url" content="https://epicdevelopers.in/booking/">
 <meta name="twitter:card" content="summary_large_image">
@@ -177,7 +177,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
     <div id="lg-form">
       <div class="tabs" id="tabs" hidden><button type="button" id="tReg" class="on">Register<small>New here? Create your agent account.</small></button><button type="button" id="tIn">Sign in<small>Returning agent? Please sign in.</small></button></div>
-      <div class="hero"><p class="hero-eye"><i></i>New here?</p><h1 id="lgH" class="hero-h"><span>Register as a</span><em>channel partner /</em><em>sales agent</em></h1></div>
+      <div class="hero"><p class="hero-eye"><i></i>New here?</p><h1 id="lgH" class="hero-h"><span>Register as a</span><em>Sales Partner</em></h1></div>
       <p id="lgLead" hidden></p>
       
       <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
@@ -378,7 +378,7 @@ $('signout').onclick=function(){store('epic_s',null);store('epic_sn',null);S.ses
 function celebrate(done){
   var nm=(S.sname||'').trim().split(/\s+/)[0]||'';
   var d=document.createElement('div');d.id='cele';
-  var h='<div class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>Congratulations'+(nm?'<br>Dear <em></em>':'')+'!</h2><p>You are now an official channel partner of Epic Developers. Welcome to the family. Let us sell some plots together.</p><div class="go">Tap anywhere to continue</div>';
+  var h='<div class="ring"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>Congratulations'+(nm?'<br>Dear <em></em>':'')+'!</h2><p>You are now an official Sales Partner of Epic Developers. Welcome to the family. Let us sell some plots together.</p><div class="go">Tap anywhere to continue</div>';
   d.innerHTML=h;document.body.appendChild(d);
   if(nm)d.querySelector('em').textContent=nm;
   var cols=['#a0792a','#111','#d9b45a','#2e8b57','#c9c9cf','#e0553d'];
