@@ -72,6 +72,7 @@ select{appearance:none;-webkit-appearance:none;background:var(--surface) url("da
 .f input:focus{border-color:var(--fg);background:var(--surface)}
 .f label{position:absolute;left:16px;top:9px;font-size:12px;font-weight:600;color:var(--mute);pointer-events:none}
 .f input::placeholder{color:var(--mute);opacity:.5;font-weight:500}
+.f.one label{display:none}.f.one input{padding:0 16px;font-size:17px;letter-spacing:.02em}.f.one input:not(:placeholder-shown){letter-spacing:.3em;font-weight:700;font-size:20px}
 .f.bad input{border-color:var(--err)}
 .fine{color:var(--mute);font-size:13px;margin:6px 2px 0;text-wrap:pretty}
 .sec{display:flex;align-items:center;font-size:15px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);margin:30px 2px 12px}
@@ -166,7 +167,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div id="lg-code" hidden style="margin-top:4px">
       <h1 id="lgCodeH" hidden></h1>
       <div class="sentnote"><svg class="tick" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M7.2 12.6l3.2 3.2 6.4-6.8"/></svg><p id="codeLead"></p></div>
-      <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 digits"><label for="scode">Code from WhatsApp</label></div>
+      <div class="f one" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6-digit code from WhatsApp" aria-label="6-digit code from WhatsApp"><label for="scode">6-digit code from WhatsApp</label></div>
       <div class="err" id="e-login2"></div>
       <div class="cta" id="ctaV" hidden><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
       <p class="fine" style="text-align:center;margin-top:16px">Did not get it? <button class="link" id="resendSb" type="button">Resend code</button> <span id="rcount"></span><br><button class="link" id="backS" type="button" style="margin-top:10px">Change number</button></p>
