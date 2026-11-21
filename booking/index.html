@@ -125,10 +125,10 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
     <div class="tabs" id="tabs"><button type="button" id="tReg" class="on">Register</button><button type="button" id="tIn">Sign in</button></div>
     <p class="lead" id="loginLead" style="margin-top:6px">New agent? Fill in your details. We will send a code to the email you enter.</p>
+    <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
     <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your mobile number</label></div>
     <div class="f" id="f-se"><input id="semail" type="email" inputmode="email" autocomplete="email" placeholder=" "><label for="semail">Your email</label></div>
-    <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
-    <div class="f" id="f-sc" hidden><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code</label></div>
+    <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code from your email</label></div>
     <div class="err" id="e-login"></div>
     <p class="fine" id="resendS" hidden><button class="link" id="resendSb">Send the code again</button></p>
     <div class="cta"><button class="btn" id="sendS" disabled>Send code</button></div>
@@ -271,14 +271,14 @@ function loginMode(){
   show('s-login');
 }
 var lastS='';
-$('smob').addEventListener('input',function(){$('e-login').textContent='';var ok=okMob(this.value);$('sendS').disabled=!ok;if(!ok){$('f-sc').hidden=true;lastS=''}});
+$('smob').addEventListener('input',function(){$('e-login').textContent='';var ok=okMob(this.value);$('sendS').disabled=!ok;if(!ok){lastS=''}});
 function sendCode(){
   var b=$('sendS'),m=norm($('smob').value);busy(b,'Sending…');$('e-login').textContent='';
   api('/api/seller/code',{mobile:m,email:$('semail').value.trim(),mode:LM}).then(function(r){S.sTok=r.token;lastS=m;$('f-sc').hidden=false;$('scode').value='';$('resendS').hidden=false;b.textContent='Code sent to '+r.sentTo;b.disabled=true;setTimeout(function(){$('scode').focus()},150)}).catch(function(e){fail('e-login',e);idle(b)});
 }
 var LM='register';
 function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||(okMail($('semail').value)&&$('sname').value.trim().length>=2));$('sendS').disabled=!ok}
-function setLM(m){LM=m;$('tReg').classList.toggle('on',m==='register');$('tIn').classList.toggle('on',m==='signin');$('f-se').hidden=m==='signin';$('f-sn').hidden=m==='signin';$('loginLead').textContent=m==='signin'?'Already registered? Enter your mobile number. We will send a code to the email you registered with.':'New agent? Fill in your details. We will send a code to the email you enter.';$('f-sc').hidden=true;$('e-login').textContent='';chkLogin()}
+function setLM(m){LM=m;$('tReg').classList.toggle('on',m==='register');$('tIn').classList.toggle('on',m==='signin');$('f-se').hidden=m==='signin';$('f-sn').hidden=m==='signin';$('loginLead').textContent=m==='signin'?'Already registered? Enter your mobile number. We will send a code to the email you registered with.':'New agent? Fill in your details. We will send a code to the email you enter.';$('e-login').textContent='';chkLogin()}
 $('tReg').onclick=function(){setLM('register')};$('tIn').onclick=function(){setLM('signin')};
 ['smob','semail','sname'].forEach(function(id){$(id).addEventListener('input',chkLogin)});
 $('sendS').onclick=sendCode;$('resendSb').onclick=sendCode;
