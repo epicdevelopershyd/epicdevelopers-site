@@ -168,7 +168,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="sentnote"><svg class="tick" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M7.2 12.6l3.2 3.2 6.4-6.8"/></svg><p id="codeLead"></p></div>
       <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code from WhatsApp</label></div>
       <div class="err" id="e-login2"></div>
-      <div class="cta"><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
+      <div class="cta" id="ctaV" hidden><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
       <p class="fine" style="text-align:center;margin-top:16px">Did not get it? <button class="link" id="resendSb" type="button">Resend code</button> <span id="rcount"></span><br><button class="link" id="backS" type="button" style="margin-top:10px">Change number</button></p>
     </div>
     </div>
@@ -335,13 +335,13 @@ function sendCode(again){
 $('sendS').onclick=function(){sendCode()};
 $('resendSb').onclick=function(){if(!this.disabled)sendCode(true)};
 $('backS').onclick=function(){clearInterval(cnt);$('lg-code').hidden=true;$('ctaS').hidden=false;$('h-se').hidden=false;$('sname').readOnly=false;$('smob').readOnly=false;sentFor='';$('ctaS').hidden=true;$('h-se').textContent=H0||$('h-se').textContent;$('e-login2').textContent='';$('smob').focus();$('smob').select()};
-function verifyCode(){var el=$('scode');if(el.value.length!==6)return;var b=$('verifyS');busy(b,'Checking…');
+function verifyCode(){var el=$('scode');if(el.value.length!==6)return;var b=$('verifyS');busy(b,'Checking…');var L=$('codeLead'),L0=L.textContent;L.textContent='Checking your code…';L.classList.add('pulse');
   api('/api/seller/verify',{mobile:norm($('smob').value),code:el.value,token:S.sTok,name:$('sname').value.trim()}).then(function(r){
     idle(b);S.smob=norm($('smob').value);
     if(r.status==='verified'){S.sess=r.session;S.sname=r.name;store('epic_s',r.session);store('epic_sn',r.name);enter()}
     else if(r.status==='pending')show('s-pending');
     else{S.mv=r.mv;$('aad').value='';$('f-aotp').hidden=true;$('kycGo').textContent='Send Aadhaar code';$('kycGo').disabled=true;show('s-kyc')}
-  }).catch(function(e){idle(b);b.disabled=false;fail('e-login2',e);el.select()})}
+  }).catch(function(e){idle(b);b.disabled=false;L.classList.remove('pulse');L.textContent=L0;fail('e-login2',e);el.select()})}
 $('scode').addEventListener('input',function(){digits(this,6);$('e-login2').textContent='';$('verifyS').disabled=this.value.length!==6;if(this.value.length===6)verifyCode()});
 $('verifyS').onclick=verifyCode;
 $('aad').addEventListener('input',function(){var d=this.value.replace(/\D/g,'').slice(0,12);this.value=d.replace(/(\d{4})(?=\d)/g,'$1 ');$('e-kyc').textContent='';if($('f-aotp').hidden)$('kycGo').disabled=d.length!==12});
