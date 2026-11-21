@@ -136,7 +136,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="cta"><button class="btn" id="sendS" disabled>Send code</button></div>
     </div>
     <div id="lg-code" hidden>
-      <h1 style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Check your email</h1>
+      <h1 id="lgCodeH" style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Check your email</h1>
       <p class="lead" id="codeLead" style="margin-top:0"></p>
       <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">6-digit code</label></div>
       <div class="err" id="e-login2"></div>
@@ -296,7 +296,7 @@ function startCount(n){clearInterval(cnt);var b=$('resendSb');b.disabled=true;b.
 function sendCode(again){
   var b=again===true?null:$('sendS'),m=norm($('smob').value);if(b)busy(b,'Sending…');$('e-login').textContent='';$('e-login2').textContent='';
   return api('/api/seller/code',{mobile:m,email:$('semail').value.trim(),mode:LM}).then(function(r){
-    S.sTok=r.token;$('codeLead').textContent='We sent a 6-digit code to '+r.sentTo+'. It is valid for 10 minutes.';
+    S.sTok=r.token;$('lgCodeH').textContent=r.via==='email'?'Check your email':'Check your WhatsApp';$('codeLead').textContent='We sent a 6-digit code to '+r.sentTo+'. It is valid for 10 minutes.';
     $('lg-form').hidden=true;$('lg-code').hidden=false;$('scode').value='';$('verifyS').disabled=true;startCount(30);
     if(b)idle(b);setTimeout(function(){$('scode').focus()},150)}).catch(function(e){if(b){idle(b);fail('e-login',e)}else fail('e-login2',e)});
 }
