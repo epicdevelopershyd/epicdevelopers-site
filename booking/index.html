@@ -123,15 +123,26 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <!-- ===== SALES CONSOLE ===== -->
   <section id="s-login">
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
-    <div class="tabs" id="tabs"><button type="button" id="tReg" class="on">Register</button><button type="button" id="tIn">Sign in</button></div>
-    <p class="lead" id="loginLead" style="margin-top:6px">New agent? Fill in your details. We will send a code to the email you enter.</p>
-    <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
-    <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your mobile number</label></div>
-    <div class="f" id="f-se"><input id="semail" type="email" inputmode="email" autocomplete="email" placeholder=" "><label for="semail">Your email</label></div>
-    <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code from your email</label></div>
-    <div class="err" id="e-login"></div>
-    <p class="fine" id="resendS" hidden><button class="link" id="resendSb">Send the code again</button></p>
-    <div class="cta"><button class="btn" id="sendS" disabled>Send code</button></div>
+    <div id="lg-form">
+      <div class="tabs" id="tabs"><button type="button" id="tReg" class="on">Register</button><button type="button" id="tIn">Sign in</button></div>
+      <h1 id="lgH" style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Create your agent account</h1>
+      <p class="lead" id="loginLead" style="margin-top:0">Register once. Then you can create booking links for your buyers.</p>
+      <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
+      <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your mobile number</label></div>
+      <div class="f" id="f-se"><input id="semail" type="email" inputmode="email" autocomplete="email" placeholder=" "><label for="semail">Your email</label></div>
+      <p class="fine" id="h-se" style="margin:-4px 2px 14px">We will send a 6-digit code to this email.</p>
+      <p class="fine" id="h-sm" hidden style="margin:-4px 2px 14px">We will send a 6-digit code to the email you registered with.</p>
+      <div class="err" id="e-login"></div>
+      <div class="cta"><button class="btn" id="sendS" disabled>Send code</button></div>
+    </div>
+    <div id="lg-code" hidden>
+      <h1 style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Check your email</h1>
+      <p class="lead" id="codeLead" style="margin-top:0"></p>
+      <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">6-digit code</label></div>
+      <div class="err" id="e-login2"></div>
+      <div class="cta"><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
+      <p class="fine" style="text-align:center;margin-top:16px">Did not get it? <button class="link" id="resendSb" type="button">Resend code</button> <span id="rcount"></span><br><button class="link" id="backS" type="button" style="margin-top:10px">Change email or number</button></p>
+    </div>
   </section>
 
   <section id="s-kyc">
@@ -270,25 +281,37 @@ function loginMode(){
   var t=store('epic_s');if(t){try{var p=JSON.parse(atob(t.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')));if(p.exp&&p.exp>Date.now()){S.sess=t;S.sname=store('epic_sn')||'';S.smob=p.m||'';return enter()}}catch(e){}store('epic_s',null)}
   show('s-login');
 }
-var lastS='';
-$('smob').addEventListener('input',function(){$('e-login').textContent='';var ok=okMob(this.value);$('sendS').disabled=!ok;if(!ok){lastS=''}});
-function sendCode(){
-  var b=$('sendS'),m=norm($('smob').value);busy(b,'Sending…');$('e-login').textContent='';
-  api('/api/seller/code',{mobile:m,email:$('semail').value.trim(),mode:LM}).then(function(r){S.sTok=r.token;lastS=m;$('f-sc').hidden=false;$('scode').value='';$('resendS').hidden=false;b.textContent='Code sent to '+r.sentTo;b.disabled=true;setTimeout(function(){$('scode').focus()},150)}).catch(function(e){fail('e-login',e);idle(b)});
-}
-var LM='register';
+var LM='register',cnt=null;
 function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||(okMail($('semail').value)&&$('sname').value.trim().length>=2));$('sendS').disabled=!ok}
-function setLM(m){LM=m;$('tReg').classList.toggle('on',m==='register');$('tIn').classList.toggle('on',m==='signin');$('f-se').hidden=m==='signin';$('f-sn').hidden=m==='signin';$('loginLead').textContent=m==='signin'?'Already registered? Enter your mobile number. We will send a code to the email you registered with.':'New agent? Fill in your details. We will send a code to the email you enter.';$('e-login').textContent='';chkLogin()}
+function setLM(m){LM=m;var r=m==='register';$('tReg').classList.toggle('on',r);$('tIn').classList.toggle('on',!r);
+  $('f-se').hidden=!r;$('f-sn').hidden=!r;$('h-se').hidden=!r;$('h-sm').hidden=r;
+  $('lgH').textContent=r?'Create your agent account':'Welcome back';
+  $('loginLead').textContent=r?'Register once. Then you can create booking links for your buyers.':'Enter your mobile number to sign in.';
+  $('e-login').textContent='';chkLogin()}
 $('tReg').onclick=function(){setLM('register')};$('tIn').onclick=function(){setLM('signin')};
-['smob','semail','sname'].forEach(function(id){$(id).addEventListener('input',chkLogin)});
-$('sendS').onclick=sendCode;$('resendSb').onclick=sendCode;
-$('scode').addEventListener('input',function(){digits(this,6);$('e-login').textContent='';
-  if(this.value.length===6){var el=this;api('/api/seller/verify',{mobile:norm($('smob').value),code:el.value,token:S.sTok,name:$('sname').value.trim()}).then(function(r){
-    S.smob=norm($('smob').value);
+['smob','semail','sname'].forEach(function(id){$(id).addEventListener('input',function(){$('e-login').textContent='';chkLogin()})});
+function startCount(n){clearInterval(cnt);var b=$('resendSb');b.disabled=true;b.style.opacity='.45';
+  (function tick(){if(n<=0){clearInterval(cnt);b.disabled=false;b.style.opacity='';$('rcount').textContent='';return}$('rcount').textContent='in '+n+'s';n--})();
+  cnt=setInterval(function(){if(n<=0){clearInterval(cnt);b.disabled=false;b.style.opacity='';$('rcount').textContent='';return}$('rcount').textContent='in '+n+'s';n--},1000)}
+function sendCode(again){
+  var b=again===true?null:$('sendS'),m=norm($('smob').value);if(b)busy(b,'Sending…');$('e-login').textContent='';$('e-login2').textContent='';
+  return api('/api/seller/code',{mobile:m,email:$('semail').value.trim(),mode:LM}).then(function(r){
+    S.sTok=r.token;$('codeLead').textContent='We sent a 6-digit code to '+r.sentTo+'. It is valid for 10 minutes.';
+    $('lg-form').hidden=true;$('lg-code').hidden=false;$('scode').value='';$('verifyS').disabled=true;startCount(30);
+    if(b)idle(b);setTimeout(function(){$('scode').focus()},150)}).catch(function(e){if(b){idle(b);fail('e-login',e)}else fail('e-login2',e)});
+}
+$('sendS').onclick=function(){sendCode()};
+$('resendSb').onclick=function(){if(!this.disabled)sendCode(true)};
+$('backS').onclick=function(){clearInterval(cnt);$('lg-code').hidden=true;$('lg-form').hidden=false;$('e-login2').textContent=''};
+function verifyCode(){var el=$('scode');if(el.value.length!==6)return;var b=$('verifyS');busy(b,'Checking…');
+  api('/api/seller/verify',{mobile:norm($('smob').value),code:el.value,token:S.sTok,name:$('sname').value.trim()}).then(function(r){
+    idle(b);S.smob=norm($('smob').value);
     if(r.status==='verified'){S.sess=r.session;S.sname=r.name;store('epic_s',r.session);store('epic_sn',r.name);enter()}
     else if(r.status==='pending')show('s-pending');
     else{S.mv=r.mv;$('aad').value='';$('f-aotp').hidden=true;$('kycGo').textContent='Send Aadhaar code';$('kycGo').disabled=true;show('s-kyc')}
-  }).catch(function(e){fail('e-login',e);el.select()})}});
+  }).catch(function(e){idle(b);b.disabled=false;fail('e-login2',e);el.select()})}
+$('scode').addEventListener('input',function(){digits(this,6);$('e-login2').textContent='';$('verifyS').disabled=this.value.length!==6;if(this.value.length===6)verifyCode()});
+$('verifyS').onclick=verifyCode;
 $('aad').addEventListener('input',function(){var d=this.value.replace(/\D/g,'').slice(0,12);this.value=d.replace(/(\d{4})(?=\d)/g,'$1 ');$('e-kyc').textContent='';if($('f-aotp').hidden)$('kycGo').disabled=d.length!==12});
 $('kycGo').onclick=function(){var b=this,a=$('aad').value.replace(/\D/g,''),f=!$('f-aotp').hidden;
   if(!f){busy(b,'Sending…');api('/api/seller/kyc/start',{mv:S.mv,aadhaar:a}).then(function(r){S.kyc=r.kyc;$('f-aotp').hidden=false;$('aotp').value='';b.textContent='Verify';b.disabled=true;$('aad').readOnly=true;setTimeout(function(){$('aotp').focus()},150)}).catch(function(e){fail('e-kyc',e);idle(b)})}
