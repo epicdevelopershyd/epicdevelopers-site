@@ -164,6 +164,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <section id="s-pick">
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
     <div class="who" id="sellerOk" style="margin-top:18px"></div>
+    <div id="a2hs" hidden style="margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--card,#f1f1f4);font-size:13.5px;line-height:1.45"><b>Tip for iPhone:</b> to stay signed in, kindly tap the Share button, then <b>Add to Home Screen</b>. Next time, open Epic Booking from your home screen.<br><button type="button" class="link" id="a2hsOk" style="margin-top:6px;font-weight:600">Got it</button></div>
     <div class="sec">Buyer</div>
     <div class="f" id="f-who"><input id="who" autocomplete="off" placeholder=" "><label for="who">Buyer's full name</label></div>
     <div class="f" id="f-bmob"><input id="bmob" type="tel" inputmode="numeric" autocomplete="off" placeholder=" "><label for="bmob">Buyer's mobile number</label></div>
@@ -317,9 +318,11 @@ $('kycGo').onclick=function(){var b=this,a=$('aad').value.replace(/\D/g,''),f=!$
   else{busy(b,'Checking…');api('/api/seller/kyc/finish',{mv:S.mv,kyc:S.kyc,aadhaar:a,otp:$('aotp').value}).then(function(r){
     if(r.status==='verified'){S.sess=r.session;S.sname=r.name;store('epic_s',r.session);store('epic_sn',r.name);enter()}else show('s-pending')}).catch(function(e){fail('e-kyc',e);idle(b)})}};
 $('aotp').addEventListener('input',function(){digits(this,6);$('kycGo').disabled=this.value.length!==6;$('e-kyc').textContent=''});
+$('a2hsOk').onclick=function(){store('epic_a2hs','1');$('a2hs').hidden=true};
 $('signout').onclick=function(){store('epic_s',null);store('epic_sn',null);S.sess=null;location.reload()};
 
 function enter(){
+  try{var ios=/iPhone|iPad|iPod/.test(navigator.userAgent),sa=navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);if(ios&&!sa&&!store('epic_a2hs'))$('a2hs').hidden=false}catch(e){}
   api('/api/seller/renew',{},S.sess).then(function(r){if(r&&r.session){S.sess=r.session;store('epic_s',r.session)}}).catch(function(){});
   api('/api/config').then(function(c){S.cfg=c;
     var keys=Object.keys(c.projects);$('sproj').innerHTML=keys.map(function(k){return '<option value="'+k+'">'+c.projects[k].name+'</option>'}).join('');
