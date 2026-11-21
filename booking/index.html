@@ -187,7 +187,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="cta" id="ctaS" hidden><button class="btn" id="sendS" disabled>Send code</button></div>
       <div class="sentnote" id="sentnote" hidden><svg class="tick" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M7.2 12.6l3.2 3.2 6.4-6.8"/></svg><p id="codeLead"></p></div>
       <h1 id="lgCodeH" hidden></h1>
-      <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" " disabled><label for="scode">6-digit code from WhatsApp</label></div>
+      <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="off" placeholder=" " disabled><label for="scode">6-digit code from WhatsApp</label></div>
       <div class="err" id="e-login2"></div>
       <div class="cta" id="ctaV"><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
       <p class="fine" id="lg-links" hidden style="text-align:center">Did not get it? <button class="link" id="resendSb" type="button">Resend code</button> <span id="rcount"></span><br><button class="link" id="backS" type="button" style="margin-top:10px">Change number</button></p>
@@ -365,11 +365,6 @@ function verifyCode(){var el=$('scode');if(el.value.length!==6)return;var b=$('v
 $('scode').addEventListener('input',function(){digits(this,6);$('e-login2').textContent='';$('verifyS').disabled=this.value.length!==6});
 $('scode').addEventListener('keydown',function(e){if(e.key==='Enter'&&this.value.length===6)verifyCode()});
 $('verifyS').onclick=verifyCode;
-/* Best effort: when the agent copies the code in WhatsApp and comes back to this page, paste it for him (once per code sent). WhatsApp messages cannot be read by a web page, so this is the closest possible. */
-var pastedFor='';
-function tryPaste(){var sc=$('scode');if(!sc||sc.disabled||sc.value||pastedFor===S.sTok)return;
-  try{navigator.clipboard.readText().then(function(v){var m=String(v||'').trim().match(/^\D*(\d{6})\D*$/);if(m&&!sc.disabled&&!sc.value){pastedFor=S.sTok;sc.value=m[1];sc.dispatchEvent(new Event('input',{bubbles:true}))}}).catch(function(){})}catch(e){}}
-document.addEventListener('visibilitychange',function(){if(!document.hidden)tryPaste()});window.addEventListener('focus',tryPaste);
 $('aad').addEventListener('input',function(){var d=this.value.replace(/\D/g,'').slice(0,12);this.value=d.replace(/(\d{4})(?=\d)/g,'$1 ');$('e-kyc').textContent='';if($('f-aotp').hidden)$('kycGo').disabled=d.length!==12});
 $('kycGo').onclick=function(){var b=this,a=$('aad').value.replace(/\D/g,''),f=!$('f-aotp').hidden;
   if(!f){busy(b,'Sending…');api('/api/seller/kyc/start',{mv:S.mv,aadhaar:a}).then(function(r){S.kyc=r.kyc;$('f-aotp').hidden=false;$('aotp').value='';b.textContent='Verify';b.disabled=true;$('aad').readOnly=true;setTimeout(function(){$('aotp').focus()},150)}).catch(function(e){fail('e-kyc',e);idle(b)})}
