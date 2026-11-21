@@ -145,7 +145,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <section id="s-pending">
     <p class="eyebrow">Almost done</p>
     <h1>We are checking your details.</h1>
-    <p class="lead">Our office will approve your sign in shortly, and you will get a message on WhatsApp. For anything urgent, call 789 368 4545.</p>
+    <p class="lead">Our office will approve your sign in shortly, and you will get an email. For anything urgent, call 789 368 4545.</p>
   </section>
 
   <section id="s-pick">
@@ -185,7 +185,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <p class="eyebrow" id="d-eyebrow"></p>
     <p class="eyebrow" style="color:var(--ok);margin-top:-4px">Your agreed price</p>
     <h1 id="d-h">Hold your plot.</h1>
-    <p class="lead">To hold it, transfer a minimum of ₹50,000 after signing. You can pay more if you like.</p>
+    <p class="lead">To hold it, sign and transfer ₹50,000 within 24 hours. The 24 hours start when you sign. If the payment has not reached us by then, the plot is released for other buyers.</p>
     <div class="card">
       <div class="plotline"><label>Your plot</label><b id="d-plot"></b></div>
       <div class="price" id="cost">—</div>
@@ -193,7 +193,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     </div>
     <dl class="list"><div><dt>Name</dt><dd id="d-name"></dd></div><div><dt>Mobile</dt><dd id="d-mob"></dd></div></dl>
     <div class="f" id="f-email"><input id="email" type="email" autocomplete="email" autocapitalize="none" placeholder=" "><label for="email">Your email</label></div>
-    <p class="fine">We will send a code by WhatsApp or SMS, and to your email. Enter it from either one.</p>
+    <p class="fine">We will email you a 6-digit code. Enter it on the next screen.</p>
     <div class="err" id="e-details"></div>
     <div class="cta"><button class="btn" id="go1" disabled>Continue</button></div>
   </section>
@@ -358,7 +358,7 @@ $('email').addEventListener('input',function(){$('f-email').classList.remove('ba
 $('email').addEventListener('blur',function(){var v=this.value;$('f-email').classList.toggle('bad',!!v&&!okMail(v))});
 function sendBuyer(){return api('/api/buyer/code',{code:S.link.code,email:S.email}).then(function(r){S.vtok=r.token})}
 $('go1').onclick=function(){var b=this;S.email=$('email').value.trim().toLowerCase();busy(b,'Sending code…');$('e-details').textContent='';
-  sendBuyer().then(function(){$('codeLead').textContent='We sent a 6-digit code by WhatsApp or SMS ('+S.link.buyerMobileMasked+') and to '+S.email+'.';$('code').value='';$('e-code').textContent='';idle(b);show('s-code');setTimeout(function(){$('code').focus()},300)}).catch(function(e){idle(b);fail('e-details',e)})};
+  sendBuyer().then(function(){$('codeLead').textContent='We emailed a 6-digit code to '+S.email+'.';$('code').value='';$('e-code').textContent='';idle(b);show('s-code');setTimeout(function(){$('code').focus()},300)}).catch(function(e){idle(b);fail('e-details',e)})};
 $('code').addEventListener('input',function(){digits(this,6);$('e-code').textContent='';
   if(this.value.length===6){var el=this;api('/api/buyer/verify',{code:S.link.code,email:S.email,otp:el.value,token:S.vtok}).then(function(r){S.ver=r.verified;prepSign();show('s-sign')}).catch(function(e){fail('e-code',e);el.select()})}});
 $('resend').onclick=function(){var b=this;sendBuyer().then(function(){$('e-code').textContent='';b.textContent='Code sent again';setTimeout(function(){b.textContent='Send the code again'},4000)}).catch(function(e){fail('e-code',e)})};
@@ -390,14 +390,14 @@ function copyBtn(v){return '<button class="link" data-copy="'+esc(v)+'" style="f
 document.addEventListener('click',function(e){var t=e.target;if(t&&t.dataset&&t.dataset.copy){var v=t.dataset.copy;try{navigator.clipboard.writeText(v).then(function(){t.textContent='Copied'},function(){sel(t)})}catch(x){sel(t)}setTimeout(function(){t.textContent='Copy'},1800)}});
 function sel(t){var p=t.parentNode.querySelector('b');if(p&&window.getSelection){var r=document.createRange();r.selectNodeContents(p);var s=getSelection();s.removeAllRanges();s.addRange(r)}}
 function done(confirmed){var d=S.link;
-  if(confirmed){$('doneH').textContent='Plot '+d.plot+' is booked.';$('doneP').textContent='We have received your payment. Your signed form and receipt are on your email and WhatsApp. Our team will contact you for the next steps.';$('payBox').hidden=true;$('nextBox').innerHTML='';show('s-done');return}
+  if(confirmed){$('doneH').textContent='Plot '+d.plot+' is booked.';$('doneP').textContent='We have received your payment. Your signed form and receipt are on your email. Our team will contact you for the next steps.';$('payBox').hidden=true;$('nextBox').innerHTML='';show('s-done');return}
   $('doneH').textContent='Signed. Now transfer.';
-  $('doneP').textContent='Plot '+d.plot+' is held for you until '+stamp(d.holdUntil)+'. Transfer '+inr(d.amount)+' to the account below from any bank app. We confirm it automatically when it reaches us, and message you on WhatsApp.';
+  $('doneP').textContent='Plot '+d.plot+' is held for you for 24 hours, until '+stamp(d.holdUntil)+'. Please transfer '+inr(d.amount)+' to the account below before then. If it has not reached us by then, the plot is released for other buyers. We confirm it automatically when it arrives, and email you.';
   var p=d.pay;
   if(p){$('pb-plot').textContent=d.plot;var rows=[['Account name',p.name],['Account number',p.account],['IFSC',p.ifsc]];if(p.note)rows.push(['Add this in the payment note',p.note]);rows.push(['Amount',inr(d.amount)]);
     $('payList').innerHTML=rows.map(function(r){return '<div><dt>'+r[0]+'</dt><dd><b>'+esc(r[1])+'</b>'+(r[0]==='Amount'?'':copyBtn(r[1]))+'</dd></div>'}).join('');$('payBox').hidden=false}
   else $('payBox').hidden=true;
-  $('nextBox').innerHTML='<h3>Good to know</h3><p>A new payee can take about 30 minutes to activate, and some banks allow only ₹50,000 for the first 24 hours. You can pay the rest later.</p><p>The same account details are on your WhatsApp and email. If you need help, call or WhatsApp 789 368 4545.</p>';
+  $('nextBox').innerHTML='<h3>Good to know</h3><p>Your 24 hours started when you signed. A new payee can take about 30 minutes to activate, so please add us as a payee now.</p><p>The same account details are on your email. If you need help, call or WhatsApp 789 368 4545.</p>';
   show('s-done')}
 
 /* ================= start ================= */
