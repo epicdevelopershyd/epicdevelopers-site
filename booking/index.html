@@ -151,7 +151,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="cta" id="ctaS"><button class="btn" id="sendS" disabled>Send code</button></div>
     <div id="lg-code" hidden style="margin-top:4px">
       <h1 id="lgCodeH" hidden></h1>
-      <p class="fine" id="codeLead" style="margin:-16px 2px 10px;max-width:none;font-size:15px;color:var(--fg)"></p>
+      <p class="fine" id="codeLead" style="margin:-16px 2px 10px;max-width:none;font-size:13.5px;color:var(--fg)"></p>
       <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code from WhatsApp</label></div>
       <div class="err" id="e-login2"></div>
       <div class="cta"><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
@@ -311,7 +311,7 @@ function startCount(n){clearInterval(cnt);var b=$('resendSb');b.disabled=true;b.
 function sendCode(again){
   var b=again===true?null:$('sendS'),m=norm($('smob').value);if(b)busy(b,'Sending…');$('e-login').textContent='';$('e-login2').textContent='';
   return api('/api/seller/code',{mobile:m,email:$('semail').value.trim(),mode:LM}).then(function(r){
-    S.sTok=r.token;$('lgCodeH').textContent=r.via==='email'?'Check your email':'Check your WhatsApp';$('codeLead').textContent=(r.via==='email'?'Code sent to your email.':'Code sent to your WhatsApp.')+' Type it below.';
+    S.sTok=r.token;$('lgCodeH').textContent=r.via==='email'?'Check your email':'Check your WhatsApp';$('codeLead').textContent='We just sent a code to your '+(r.via==='email'?'email address':'WhatsApp number')+'. Please enter it in the box below.';
     $('ctaS').hidden=true;$('h-se').hidden=true;$('sname').readOnly=true;$('smob').readOnly=true;$('lg-code').hidden=false;$('scode').value='';$('verifyS').disabled=true;startCount(30);
     if(b)idle(b);setTimeout(function(){$('scode').focus()},150)}).catch(function(e){if(b){idle(b);fail('e-login',e)}else fail('e-login2',e)});
 }
