@@ -320,6 +320,7 @@ $('aotp').addEventListener('input',function(){digits(this,6);$('kycGo').disabled
 $('signout').onclick=function(){store('epic_s',null);store('epic_sn',null);S.sess=null;location.reload()};
 
 function enter(){
+  api('/api/seller/renew',{},S.sess).then(function(r){if(r&&r.session){S.sess=r.session;store('epic_s',r.session)}}).catch(function(){});
   api('/api/config').then(function(c){S.cfg=c;
     var keys=Object.keys(c.projects);$('sproj').innerHTML=keys.map(function(k){return '<option value="'+k+'">'+c.projects[k].name+'</option>'}).join('');
     $('sellerOk').textContent=(S.sname||'Signed in')+(S.smob?' · +91 '+S.smob.slice(0,5)+' '+S.smob.slice(5):'');
