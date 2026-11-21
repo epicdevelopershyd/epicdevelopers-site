@@ -235,7 +235,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <p class="fine" id="rate2msg" style="margin:-8px 2px 14px">This is the final price the buyer will see. Please type it once more.</p>
     <div class="alert" id="salert" role="alert" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/></svg><div><b id="atitle"></b><span id="abody"></span></div></div>
     <div class="err" id="serr"></div>
-    <div class="cta"><button class="btn" id="make" disabled>Send Epic's account details</button><p class="fine" style="text-align:center"><button class="link" id="signout" style="color:var(--mute);font-weight:500">Sign out</button></p></div>
+    <div class="cta"><button class="btn" id="make" disabled>Send Epic's account details</button></div>
   </section>
 
   <section id="s-sent">
@@ -359,7 +359,7 @@ $('backS').onclick=function(){clearInterval(cnt);$('sentnote').hidden=true;$('lg
 function verifyCode(){var el=$('scode');if(el.value.length!==6)return;var b=$('verifyS');busy(b,'Checking…');var L=$('codeLead'),L0=L.textContent;L.textContent='Checking your code…';L.classList.add('pulse');
   var t0v=Date.now();api('/api/seller/verify',{mobile:norm($('smob').value),code:el.value,token:S.sTok,name:$('sname').value.trim()}).then(function(r){
     S.smob=norm($('smob').value);if(r.status!=='verified'||!(typeof LM!=='undefined'&&LM==='register'))idle(b);
-    if(r.status==='verified'){S.sess=r.session;S.sname=r.name;store('epic_s',r.session);store('epic_sn',r.name);if(typeof LM!=='undefined'&&LM==='register'){var wt=Math.max(0,2400-(Date.now()-t0v));setTimeout(function(){celebrate(enter)},wt)}else enter()}
+    if(r.status==='verified'){S.sess=r.session;S.sname=r.name;store('epic_s',r.session);store('epic_sn',r.name);if(r.isNew){var wt=Math.max(0,2400-(Date.now()-t0v));setTimeout(function(){celebrate(enter)},wt)}else enter()}
     else if(r.status==='pending')show('s-pending');
     else{S.mv=r.mv;$('aad').value='';$('f-aotp').hidden=true;$('kycGo').textContent='Send Aadhaar code';$('kycGo').disabled=true;show('s-kyc')}
   }).catch(function(e){idle(b);b.disabled=false;L.classList.remove('pulse');L.textContent=L0;fail('e-login2',e);el.select()})}
@@ -373,7 +373,7 @@ $('kycGo').onclick=function(){var b=this,a=$('aad').value.replace(/\D/g,''),f=!$
     if(r.status==='verified'){S.sess=r.session;S.sname=r.name;store('epic_s',r.session);store('epic_sn',r.name);enter()}else show('s-pending')}).catch(function(e){fail('e-kyc',e);idle(b)})}};
 $('aotp').addEventListener('input',function(){digits(this,6);$('kycGo').disabled=this.value.length!==6;$('e-kyc').textContent=''});
 $('a2hsOk').onclick=function(){store('epic_a2hs','1');$('a2hs').hidden=true};
-$('signout').onclick=function(){store('epic_s',null);store('epic_sn',null);S.sess=null;location.reload()};
+
 
 function celebrate(done){
   var nm=(S.sname||'').trim().split(/\s+/)[0]||'';
