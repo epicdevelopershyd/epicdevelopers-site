@@ -337,11 +337,11 @@ function sfill(){var p=curP(),k=Object.keys(p.plots).map(Number).sort(function(a
   $('splot').innerHTML=k.length?k.map(function(n){return '<option value="'+n+'">Plot '+n+'</option>'}).join(''):'<option value="">No plots open</option>';
   var g=$('pgrid'),pi=$('pinfo'),t=null;pi.hidden=true;g.innerHTML='';
   all.forEach(function(n){var b=document.createElement('button');b.type='button';b.textContent=n;var taken=bk[n]!==undefined;
-    if(taken){b.className='bk';b.setAttribute('aria-label','Plot '+n+', booked. Press and hold for details');
-      var show=function(){var w=bk[n]||{};pi.innerHTML='<b>Plot '+n+' is booked.</b>'+(w.buyer?'<br>Buyer: '+esc(w.buyer):'')+(w.seller?'<br>Sold by: '+esc(w.seller):'');pi.hidden=false};
+    if(taken){b.className='bk';b.setAttribute('aria-label','Plot '+n+', sold. Press and hold for details');
+      var show=function(){var w=bk[n]||{};pi.innerHTML='<b>Plot '+n+' is sold.</b>'+(w.buyer?'<br>Buyer: '+esc(w.buyer):'')+(w.seller?'<br>Sold by: '+esc(w.seller):'');pi.hidden=false};
       b.onpointerdown=function(){clearTimeout(t);t=setTimeout(show,450)};['pointerup','pointerleave','pointercancel'].forEach(function(ev){b['on'+ev]=function(){clearTimeout(t)}});
       b.oncontextmenu=function(e){e.preventDefault();show()};
-      b.onclick=function(){if(pi.hidden){pi.innerHTML='Plot '+n+' is booked. Press and hold it to see who bought and sold it.';pi.hidden=false}}}
+      b.onclick=function(){if(pi.hidden){pi.innerHTML='Plot '+n+' is sold. Press and hold it to see who bought and sold it.';pi.hidden=false}}}
     else{b.onclick=function(){pi.hidden=true;$('splot').value=String(n);[].forEach.call(g.children,function(x){x.classList.remove('on')});b.classList.add('on');$('splot').onchange()}}
     g.appendChild(b)});
   var d=(k.indexOf(15)>=0&&$('sproj').value==='greens')?15:k[0];
@@ -441,7 +441,7 @@ function copyBtn(v){return '<button class="link" data-copy="'+esc(v)+'" style="f
 document.addEventListener('click',function(e){var t=e.target;if(t&&t.dataset&&t.dataset.copy){var v=t.dataset.copy;try{navigator.clipboard.writeText(v).then(function(){t.textContent='Copied'},function(){sel(t)})}catch(x){sel(t)}setTimeout(function(){t.textContent='Copy'},1800)}});
 function sel(t){var p=t.parentNode.querySelector('b');if(p&&window.getSelection){var r=document.createRange();r.selectNodeContents(p);var s=getSelection();s.removeAllRanges();s.addRange(r)}}
 function done(confirmed){var d=S.link;
-  if(confirmed){$('doneH').textContent='Plot '+d.plot+' is booked.';$('doneP').textContent='We have received your payment. Your signed form and receipt are on your email. Our team will contact you for the next steps.';$('payBox').hidden=true;$('nextBox').innerHTML='';show('s-done');return}
+  if(confirmed){$('doneH').textContent='Plot '+d.plot+' is sold.';$('doneP').textContent='We have received your payment. Your signed form and receipt are on your email. Our team will contact you for the next steps.';$('payBox').hidden=true;$('nextBox').innerHTML='';show('s-done');return}
   $('doneH').textContent='Signed. Now transfer.';
   $('doneP').textContent='Plot '+d.plot+' is being held for you for 48 hours, until '+stamp(d.holdUntil)+'. We kindly request you to transfer '+inr(d.amount)+' to the account below before then. Should you need a little more time, please call or WhatsApp us on 789 368 4545 and we will gladly help. We confirm your transfer automatically and will email you as soon as it arrives.';
   var p=d.pay;
