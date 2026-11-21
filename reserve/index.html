@@ -124,6 +124,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
     <p class="lead" style="margin-top:22px">Sign in with the mobile number linked to your Aadhaar. We send a code on WhatsApp and SMS.</p>
     <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your mobile number</label></div>
+    <div class="f" id="f-se"><input id="semail" type="email" inputmode="email" autocomplete="email" placeholder=" "><label for="semail">Your email (we send the code here)</label></div>
     <div class="f" id="f-sc" hidden><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code</label></div>
     <div class="err" id="e-login"></div>
     <p class="fine" id="resendS" hidden><button class="link" id="resendSb">Send the code again</button></p>
@@ -268,7 +269,7 @@ var lastS='';
 $('smob').addEventListener('input',function(){$('e-login').textContent='';var ok=okMob(this.value);$('sendS').disabled=!ok;if(!ok){$('f-sc').hidden=true;lastS=''}});
 function sendCode(){
   var b=$('sendS'),m=norm($('smob').value);busy(b,'Sending…');$('e-login').textContent='';
-  api('/api/seller/code',{mobile:m}).then(function(r){S.sTok=r.token;lastS=m;$('f-sc').hidden=false;$('scode').value='';$('resendS').hidden=false;b.textContent='Code sent';b.disabled=true;setTimeout(function(){$('scode').focus()},150)}).catch(function(e){fail('e-login',e);idle(b)});
+  api('/api/seller/code',{mobile:m,email:$('semail').value.trim()}).then(function(r){S.sTok=r.token;lastS=m;$('f-sc').hidden=false;$('scode').value='';$('resendS').hidden=false;b.textContent='Code sent to '+r.sentTo;b.disabled=true;setTimeout(function(){$('scode').focus()},150)}).catch(function(e){fail('e-login',e);idle(b)});
 }
 $('sendS').onclick=sendCode;$('resendSb').onclick=sendCode;
 $('scode').addEventListener('input',function(){digits(this,6);$('e-login').textContent='';
