@@ -145,18 +145,18 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
       <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your WhatsApp number</label></div>
       <input id="semail" type="hidden" value="">
-      <p class="fine" id="h-se" style="margin:-4px 2px 14px">We will send you a code on WhatsApp. Just type it on the next screen.</p>
-      <p class="fine" id="h-sm" hidden style="margin:-4px 2px 14px">We will send you a code on WhatsApp. Just type it on the next screen.</p>
+      <p class="fine" id="h-se" style="margin:-4px 2px 14px">We will send you a code on WhatsApp. Just type it here.</p>
+      <p class="fine" id="h-sm" hidden style="margin:-4px 2px 14px">We will send you a code on WhatsApp. Just type it here.</p>
       <div class="err" id="e-login"></div>
-      <div class="cta"><button class="btn" id="sendS" disabled>Send code</button></div>
-    </div>
-    <div id="lg-code" hidden>
-      <h1 id="lgCodeH" style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Check your email</h1>
-      <p class="lead" id="codeLead" style="margin-top:0"></p>
+      <div class="cta" id="ctaS"><button class="btn" id="sendS" disabled>Send code</button></div>
+    <div id="lg-code" hidden style="margin-top:4px">
+      <h1 id="lgCodeH" hidden></h1>
+      <p class="fine" id="codeLead" style="margin:0 2px 14px;font-size:15px;color:var(--fg)"></p>
       <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code from WhatsApp</label></div>
       <div class="err" id="e-login2"></div>
       <div class="cta"><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
       <p class="fine" style="text-align:center;margin-top:16px">Did not get it? <button class="link" id="resendSb" type="button">Resend code</button> <span id="rcount"></span><br><button class="link" id="backS" type="button" style="margin-top:10px">Change number</button></p>
+    </div>
     </div>
   </section>
 
@@ -311,13 +311,13 @@ function startCount(n){clearInterval(cnt);var b=$('resendSb');b.disabled=true;b.
 function sendCode(again){
   var b=again===true?null:$('sendS'),m=norm($('smob').value);if(b)busy(b,'Sending…');$('e-login').textContent='';$('e-login2').textContent='';
   return api('/api/seller/code',{mobile:m,email:$('semail').value.trim(),mode:LM}).then(function(r){
-    S.sTok=r.token;$('lgCodeH').textContent=r.via==='email'?'Check your email':'Check your WhatsApp';$('codeLead').textContent='We sent a code to '+r.sentTo+'. Please type it below. It works for 10 minutes.';
-    $('lg-form').hidden=true;$('lg-code').hidden=false;$('scode').value='';$('verifyS').disabled=true;startCount(30);
+    S.sTok=r.token;$('lgCodeH').textContent=r.via==='email'?'Check your email':'Check your WhatsApp';$('codeLead').textContent='We sent a code to '+r.sentTo+'. Please type it below.';
+    $('ctaS').hidden=true;$('h-se').hidden=true;$('sname').readOnly=true;$('smob').readOnly=true;$('lg-code').hidden=false;$('scode').value='';$('verifyS').disabled=true;startCount(30);
     if(b)idle(b);setTimeout(function(){$('scode').focus()},150)}).catch(function(e){if(b){idle(b);fail('e-login',e)}else fail('e-login2',e)});
 }
 $('sendS').onclick=function(){sendCode()};
 $('resendSb').onclick=function(){if(!this.disabled)sendCode(true)};
-$('backS').onclick=function(){clearInterval(cnt);$('lg-code').hidden=true;$('lg-form').hidden=false;$('e-login2').textContent=''};
+$('backS').onclick=function(){clearInterval(cnt);$('lg-code').hidden=true;$('ctaS').hidden=false;$('h-se').hidden=false;$('sname').readOnly=false;$('smob').readOnly=false;$('e-login2').textContent='';$('smob').focus()};
 function verifyCode(){var el=$('scode');if(el.value.length!==6)return;var b=$('verifyS');busy(b,'Checking…');
   api('/api/seller/verify',{mobile:norm($('smob').value),code:el.value,token:S.sTok,name:$('sname').value.trim()}).then(function(r){
     idle(b);S.smob=norm($('smob').value);
