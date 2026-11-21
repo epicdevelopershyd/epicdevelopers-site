@@ -136,7 +136,7 @@ $('rate').addEventListener('input',function(){var d=this.value.replace(/\D/g,'')
 $('make').onclick=function(){var b=this;b.disabled=true;$('err').textContent='';
   post({project:$('proj').value,plot:$('plot').value,rate:rv(),name:$('who').value})
   .then(function(j){$('url').textContent=j.url;$('out').hidden=false;var nm=$('who').value.trim();
-    $('wa').href='https://wa.me/?text='+encodeURIComponent((nm?'Hi '+nm+', here':'Here')+' is your personal link to reserve '+cfg.project.name+' Plot '+$('plot').value+' at '+inr(j.rate)+' per sq. yd.:\n'+j.url);
+    $('wa').href='https://wa.me/?text='+encodeURIComponent((nm?'Hi '+nm+', here':'Here')+' is your personal link to book '+cfg.project.name+' Plot '+$('plot').value+' at '+inr(j.rate)+' per sq. yd.:\n'+j.url);
     $('copy').onclick=function(){var t=j.url;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){$('copy').textContent='Copied'}).catch(function(){var r=document.createRange();r.selectNode($('url'));getSelection().removeAllRanges();getSelection().addRange(r);$('copy').textContent='Select and copy'});setTimeout(function(){$('copy').textContent='Copy link'},2500)};
     window.scrollTo(0,document.body.scrollHeight)})
   .catch(function(e){$('err').textContent=e.message}).then(function(){b.disabled=false})};

@@ -363,7 +363,7 @@ $('make').onclick=function(){var x=slist(),r=rv(),e=$('serr');e.textContent='';i
   S.seen[S.seller.mobile]=S.seller.name;var link=location.href.split('#')[0]+'#book-'+key+'-'+plot+'-'+r+'-'+m+'-'+S.seller.mobile;S.pre={name:nm};S.sname=S.seller.name;
   $('sentH').textContent='Sent to '+first+'.';$('sentP').textContent='The account details for Plot '+plot+' are on their way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by WhatsApp and SMS. He opens the link on his own phone, adds his email, enters the code and signs. Recorded against '+S.seller.name+'.';
   var msg='Hello '+first+', your booking link for Plot '+plot+' at '+x.p.name+'. Sign and get the account details to transfer the booking amount of ₹50,000 or more: '+link;
-  clearToasts();setTimeout(function(){toast('WhatsApp · Epic Developers',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/reserve/…</i>'));toast('SMS · EPICDV',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/r/…</i>'))},700);
+  clearToasts();setTimeout(function(){toast('WhatsApp · Epic Developers',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/booking/…</i>'));toast('SMS · EPICDV',msg.replace(link,'<i style="font-style:normal;text-decoration:underline">epicdevelopers.in/r/…</i>'))},700);
   $('openAs').onclick=function(){location.hash='book-'+key+'-'+plot+'-'+r+'-'+m+'-'+S.seller.mobile};
   show('s-sent')};
 $('again').onclick=function(){location.hash='';$('who').value='';$('bmob').value='';spick();show('s-pick')};
