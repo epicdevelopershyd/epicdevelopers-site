@@ -40,9 +40,9 @@ section.on{display:flex}
 .hero-h{margin:0!important;font-size:clamp(30px,9.2vw,42px)!important;line-height:1.02!important;letter-spacing:-.045em;font-weight:800;color:var(--fg)}
 .hero-h span{display:block;font-weight:500;color:var(--mute);letter-spacing:-.035em}
 .hero-h em{display:block;font-style:normal}
-.sentnote{display:flex;align-items:flex-start;gap:9px;margin:-27px 2px 26px;animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
+.sentnote{display:flex;align-items:flex-start;gap:7px;margin:-27px 2px 26px;animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
 .sentnote p{margin:0;font-size:13.5px;line-height:1.5;color:var(--fg)}
-.tick{flex:none;width:20px!important;height:20px!important;max-width:20px;margin-top:1px;fill:none;stroke:var(--ok);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tick{flex:none;width:13px!important;height:13px!important;max-width:13px;margin-top:4px;fill:none;stroke:var(--ok);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .tick circle{stroke-dasharray:66;stroke-dashoffset:66;animation:draw .55s .05s ease-out forwards}
 .tick path{stroke-dasharray:22;stroke-dashoffset:22;animation:draw .35s .5s ease-out forwards}
 #lg-code:not([hidden]) #f-sc{animation:rise .6s .15s cubic-bezier(.2,.8,.2,1) backwards}
@@ -165,7 +165,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="cta" id="ctaS" hidden><button class="btn" id="sendS" disabled>Send code</button></div>
     <div id="lg-code" hidden style="margin-top:4px">
       <h1 id="lgCodeH" hidden></h1>
-      <div class="sentnote"><svg class="tick" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M7.2 12.6l3.2 3.2 6.4-6.8"/></svg><p id="codeLead"></p></div>
+      <div class="sentnote"><svg class="tick" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M7.2 12.6l3.2 3.2 6.4-6.8"/></svg><p id="codeLead"></p></div>
       <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code from WhatsApp</label></div>
       <div class="err" id="e-login2"></div>
       <div class="cta" id="ctaV" hidden><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
