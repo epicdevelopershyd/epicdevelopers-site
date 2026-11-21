@@ -68,10 +68,10 @@ select{appearance:none;-webkit-appearance:none;background:var(--surface) url("da
 .meta{color:var(--mute);font-size:14px}
 .today{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .f{position:relative;margin-bottom:12px}
-.f input{width:100%;height:54px;border:2px solid transparent;border-radius:16px;background:var(--fill);padding:21px 16px 5px;font-size:15.5px;font-weight:500;outline:none;transition:border-color .15s,background .15s}
+.f input{width:100%;height:54px;border:2px solid transparent;border-radius:16px;background:var(--fill);padding:24px 16px 6px;font-size:17px;font-weight:600;outline:none;transition:border-color .15s,background .15s}
 .f input:focus{border-color:var(--fg);background:var(--surface)}
-.f label{position:absolute;left:16px;top:16px;font-size:15.5px;color:var(--mute);pointer-events:none;transition:all .15s;transform-origin:left}
-.f input:focus+label,.f input:not(:placeholder-shown)+label{top:8px;font-size:12px;font-weight:600}
+.f label{position:absolute;left:16px;top:9px;font-size:12px;font-weight:600;color:var(--mute);pointer-events:none}
+.f input::placeholder{color:var(--mute);opacity:.5;font-weight:500}
 .f.bad input{border-color:var(--err)}
 .fine{color:var(--mute);font-size:13px;margin:6px 2px 0;text-wrap:pretty}
 .sec{display:flex;align-items:center;font-size:15px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);margin:30px 2px 12px}
@@ -156,8 +156,8 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="hero"><p class="hero-eye"><i></i>New here?</p><h1 id="lgH" class="hero-h"><span>Register as a</span><em>channel partner /</em><em>sales agent</em></h1></div>
       <p id="lgLead" hidden></p>
       
-      <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
-      <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your WhatsApp number</label></div>
+      <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder="Full name"><label for="sname">Your name</label></div>
+      <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="10-digit number"><label for="smob">Your WhatsApp number</label></div>
       <input id="semail" type="hidden" value="">
       <p class="fine" id="h-se" style="margin:-4px 2px 14px">We will send you a code on WhatsApp. Just type it here.</p>
       <p class="fine" id="h-sm" hidden style="margin:-4px 2px 14px">We will send you a code on WhatsApp. Just type it here.</p>
@@ -166,7 +166,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div id="lg-code" hidden style="margin-top:4px">
       <h1 id="lgCodeH" hidden></h1>
       <div class="sentnote"><svg class="tick" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5"/><path d="M7.2 12.6l3.2 3.2 6.4-6.8"/></svg><p id="codeLead"></p></div>
-      <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">Code from WhatsApp</label></div>
+      <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 digits"><label for="scode">Code from WhatsApp</label></div>
       <div class="err" id="e-login2"></div>
       <div class="cta" id="ctaV" hidden><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
       <p class="fine" style="text-align:center;margin-top:16px">Did not get it? <button class="link" id="resendSb" type="button">Resend code</button> <span id="rcount"></span><br><button class="link" id="backS" type="button" style="margin-top:10px">Change number</button></p>
