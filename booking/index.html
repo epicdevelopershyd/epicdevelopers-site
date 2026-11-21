@@ -129,9 +129,9 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       
       <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
       <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your mobile number</label></div>
-      <div class="f" id="f-se"><input id="semail" type="email" inputmode="email" autocomplete="email" placeholder=" "><label for="semail">Your email</label></div>
-      <p class="fine" id="h-se" style="margin:-4px 2px 14px">We will send a 6-digit code to this email.</p>
-      <p class="fine" id="h-sm" hidden style="margin:-4px 2px 14px">We will send a 6-digit code to the email you registered with.</p>
+      <input id="semail" type="hidden" value="">
+      <p class="fine" id="h-se" style="margin:-4px 2px 14px">We will send a 6-digit code to your WhatsApp.</p>
+      <p class="fine" id="h-sm" hidden style="margin:-4px 2px 14px">We will send a 6-digit code to your WhatsApp.</p>
       <div class="err" id="e-login"></div>
       <div class="cta"><button class="btn" id="sendS" disabled>Send code</button></div>
     </div>
@@ -141,7 +141,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
       <div class="f" id="f-sc"><input id="scode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="scode">6-digit code</label></div>
       <div class="err" id="e-login2"></div>
       <div class="cta"><button class="btn" id="verifyS" disabled>Verify and continue</button></div>
-      <p class="fine" style="text-align:center;margin-top:16px">Did not get it? <button class="link" id="resendSb" type="button">Resend code</button> <span id="rcount"></span><br><button class="link" id="backS" type="button" style="margin-top:10px">Change email or number</button></p>
+      <p class="fine" style="text-align:center;margin-top:16px">Did not get it? <button class="link" id="resendSb" type="button">Resend code</button> <span id="rcount"></span><br><button class="link" id="backS" type="button" style="margin-top:10px">Change number</button></p>
     </div>
   </section>
 
@@ -283,9 +283,9 @@ function loginMode(){
   show('s-login');
 }
 var LM='register',cnt=null;
-function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||(okMail($('semail').value)&&$('sname').value.trim().length>=2));$('sendS').disabled=!ok}
+function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||$('sname').value.trim().length>=2);$('sendS').disabled=!ok}
 function setLM(m){LM=m;var r=m==='register';$('tReg').classList.toggle('on',r);$('tIn').classList.toggle('on',!r);
-  $('f-se').hidden=!r;$('f-sn').hidden=!r;$('h-se').hidden=!r;$('h-sm').hidden=r;
+  $('f-sn').hidden=!r;$('h-se').hidden=!r;$('h-sm').hidden=r;
   $('lgH').textContent=r?'Your details':'Welcome back';
   $('e-login').textContent='';chkLogin()}
 $('tReg').onclick=function(){setLM('register')};$('tIn').onclick=function(){setLM('signin')};
