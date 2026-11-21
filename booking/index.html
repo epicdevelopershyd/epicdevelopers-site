@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Epic Developers">
+<meta property="og:title" content="Sell Epic plots. Register in under a minute.">
+<meta property="og:description" content="Join Epic Developers as a sales agent. Register with your WhatsApp number and book plots at Park Central, Dundigal and The Greens, Kadthal for your buyers.">
+<meta property="og:image" content="https://epicdevelopers.in/assets/img/share-arch.jpg">
+<meta property="og:url" content="https://epicdevelopers.in/booking/">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="booking-api" content="https://epic-reserve-api.onrender.com">
 <title>Epic Plot Booking</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -126,7 +133,8 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
     <div id="lg-form">
       <div class="tabs" id="tabs"><button type="button" id="tReg" class="on">Register<small>New here? Create your agent account.</small></button><button type="button" id="tIn">Sign in<small>Returning agent? Please sign in.</small></button></div>
-      <h1 id="lgH" style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Your details</h1>
+      <h1 id="lgH" style="margin-top:22px;font-size:clamp(28px,8vw,36px)">Sell Epic plots.</h1>
+      <p class="fine" id="lgLead" style="margin:-2px 2px 16px;font-size:15px">Register with your name and WhatsApp number. It takes under a minute. Park Central, Dundigal and The Greens, Kadthal.</p>
       
       <div class="f" id="f-sn"><input id="sname" autocomplete="name" placeholder=" "><label for="sname">Your name</label></div>
       <div class="f" id="f-sm"><input id="smob" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder=" "><label for="smob">Your mobile number</label></div>
@@ -287,7 +295,7 @@ var LM='register',cnt=null;
 function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||$('sname').value.trim().length>=2);$('sendS').disabled=!ok}
 function setLM(m){LM=m;var r=m==='register';$('tReg').classList.toggle('on',r);$('tIn').classList.toggle('on',!r);
   $('f-sn').hidden=!r;$('h-se').hidden=!r;$('h-sm').hidden=r;
-  $('lgH').textContent=r?'Your details':'Welcome back';
+  $('lgH').textContent=r?'Sell Epic plots.':'Welcome back';$('lgLead').hidden=!r;
   $('e-login').textContent='';chkLogin()}
 $('tReg').onclick=function(){setLM('register')};$('tIn').onclick=function(){setLM('signin')};
 ['smob','semail','sname'].forEach(function(id){$(id).addEventListener('input',function(){$('e-login').textContent='';chkLogin()})});
