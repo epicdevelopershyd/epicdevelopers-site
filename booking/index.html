@@ -83,7 +83,7 @@ section.on{display:flex}
 /* staged, unhurried reveal of each block on the booking and confirmation screens */
 #s-pick>*,#s-sent>*{animation:rise 1.1s cubic-bezier(.22,.61,.36,1) both}
 #s-pick>*:nth-child(1){animation-delay:.05s}#s-pick>*:nth-child(2){animation-delay:.2s}#s-pick>*:nth-child(3){animation-delay:.3s}#s-pick>*:nth-child(4){animation-delay:.4s}#s-pick>*:nth-child(5){animation-delay:.5s}#s-pick>*:nth-child(6){animation-delay:.6s}#s-pick>*:nth-child(7){animation-delay:.75s}#s-pick>*:nth-child(8){animation-delay:.9s}#s-pick>*:nth-child(9){animation-delay:1s}#s-pick>*:nth-child(n+10){animation-delay:1.1s}
-#s-sent>.tick{animation:none}#s-sent>h1{animation-delay:1.1s}#s-sent>.lead{animation-delay:1.6s}#s-sent>.cta{animation-delay:2.1s}#s-sent>p.fine{animation-delay:2.9s}#s-sent>#sentNote{animation-delay:2.1s;font-size:13px;color:color-mix(in srgb,var(--fg) 72%,var(--bg))}
+#s-sent>.tick{animation:none}#s-sent>h1{animation-delay:1.1s}#s-sent>.lead{animation-delay:1.6s}#s-sent>.cta{animation-delay:2.1s}#s-sent{cursor:pointer}#s-sent>p.fine{animation-delay:2.9s}#s-sent>#sentNote{animation-delay:2.1s;font-size:13px;color:color-mix(in srgb,var(--fg) 72%,var(--bg))}
 @media (prefers-reduced-motion:reduce){#s-pick>*,#s-sent>*,section{animation:none!important}}
 
 /* day-one booking screen: plot picked from the Plot number list; no grid, no sold table, no second rate box */
@@ -273,7 +273,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <p class="lead" id="sentP"></p>
     <p class="fine" id="sentNote" style="text-align:center;max-width:320px;margin:10px auto 0">Kindly follow up with the buyer today. The plot goes to whoever pays first, so please aim to have his payment in within 48 hours.</p>
     <div class="cta" id="waBox" hidden><a class="btn" id="waBtn" href="#" target="_blank" rel="noopener">Send on WhatsApp</a></div>
-    <p class="fine" style="text-align:center;margin-top:14px"><button class="link" id="again" style="color:var(--mute);font-weight:500">Start another booking</button></p>
+    <p class="fine" id="again" style="text-align:center;margin-top:18px;font-size:12px">Tap anywhere on the screen to go back to the booking screen.</p>
   </section>
 
   <!-- ===== BUYER ===== -->
@@ -346,7 +346,7 @@ function api(path,body,token){
 }
 var S={cfg:null,sess:null,sname:'',smob:'',mv:null,kyc:null,sTok:null,link:null,email:'',vtok:null,ver:null,hasInk:false};
 var order=['s-details','s-code','s-sign','s-done'],cur='s-load';
-function show(id){if(id==='s-sent'){$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';try{rate2ui()}catch(e){}}cur=id;[].forEach.call(document.querySelectorAll('section'),function(s){s.classList.toggle('on',s.id===id)});
+function show(id){if(id==='s-sent'){S.sentAt=Date.now();$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';try{rate2ui()}catch(e){}}cur=id;[].forEach.call(document.querySelectorAll('section'),function(s){s.classList.toggle('on',s.id===id)});
   var i=order.indexOf(id);$('bar').hidden=!(i>=0&&i<3);[].forEach.call($('bar').children,function(b,k){b.classList.toggle('on',k<=i)});$('back').hidden=!(i===1||i===2);window.scrollTo(0,0)}
 $('back').onclick=function(){show(order[order.indexOf(cur)-1])};
 function norm(m){m=String(m||'').replace(/[\s\-()]/g,'');return m.replace(/^(\+?91)(?=\d{10}$)/,'')}
@@ -497,7 +497,7 @@ $('make').onclick=function(){var b=this,nm=$('who').value.trim(),m=norm($('bmob'
     $('sentH').textContent=via?'Sent to '+first+'.':'Not delivered to '+first+'.';
     $('sentP').textContent=via?'Epic\'s account details for Plot '+$('splot').value+' are on their way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by '+via+'. We confirm his payment automatically. The plot is not held; it is his once his payment arrives.':'The message could not be delivered by WhatsApp or SMS. Please call the office on 789 368 4545 and we will send it.';
     idle(b);show('s-sent')}).catch(function(e){idle(b);if(e.status===401){store('epic_s',null);location.reload();return}$('serr').textContent=e.message;api('/api/config').then(function(c){S.cfg=c;sfill()}).catch(function(){})})};
-$('again').onclick=function(){$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';rate2ui();api('/api/config').then(function(c){S.cfg=c;sfill();show('s-pick')}).catch(function(){show('s-pick')})};
+$('s-sent').onclick=function(e){if(e&&e.target&&e.target.closest&&e.target.closest('#waBtn'))return;if(Date.now()-(S.sentAt||0)<1800)return;$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';rate2ui();api('/api/config').then(function(c){S.cfg=c;sfill();show('s-pick')}).catch(function(){show('s-pick')})};
 
 /* ================= BUYER ================= */
 function stamp(ms){try{return new Date(ms).toLocaleString('en-IN',{day:'numeric',month:'long',hour:'numeric',minute:'2-digit',hour12:true,timeZone:'Asia/Kolkata'})}catch(e){return ''}}
