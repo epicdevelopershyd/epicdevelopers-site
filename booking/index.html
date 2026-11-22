@@ -411,7 +411,7 @@ function celebrate(done){
 }
 function enter(){
   try{var ios=/iPhone|iPad|iPod/.test(navigator.userAgent),sa=navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);if(ios&&!sa&&!store('epic_a2hs'))$('a2hs').hidden=false}catch(e){}
-  api('/api/seller/renew',{},S.sess).then(function(r){if(r&&r.session){S.sess=r.session;store('epic_s',r.session)}}).catch(function(){});
+  api('/api/seller/renew',{},S.sess).then(function(r){if(r&&r.session){S.sess=r.session;store('epic_s',r.session)}}).catch(function(e){if(e&&e.status===401){store('epic_s',null);store('epic_sn',null);location.reload()}});
   api('/api/config').then(function(c){S.cfg=c;
     var keys=Object.keys(c.projects);$('sproj').innerHTML=keys.map(function(k){return '<option value="'+k+'">'+c.projects[k].name+'</option>'}).join('');
     $('sellerOk').textContent=(S.sname||'Signed in')+(S.smob?' · +91 '+S.smob.slice(0,5)+' '+S.smob.slice(5):'');
