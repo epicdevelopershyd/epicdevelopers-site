@@ -129,7 +129,7 @@ select{appearance:none;-webkit-appearance:none;background:var(--surface) url("da
 .ratebox .tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);margin-top:14px;padding-top:12px;color:var(--mute);font-weight:600;font-size:14px}.ratebox .tot b{font-size:22px;letter-spacing:-.02em;color:var(--fg);font-weight:800}
 .lockup .for{display:block;margin-top:5px;font-size:13px;font-weight:600;color:var(--mute);letter-spacing:.01em}.lockup .for b{display:inline;font-size:inherit;color:var(--fg)}.lockup .mono{margin-left:auto;flex:none;width:42px;height:42px;border-radius:50%;background:var(--fg);color:var(--bg);display:none;align-items:center;justify-content:center;font-weight:800;font-size:17px;letter-spacing:.02em;box-shadow:0 0 0 3px var(--bg),0 0 0 4.5px var(--line)}
 .nat{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;overflow:hidden}
-.dd{position:relative}
+.dd{position:relative;z-index:30}#s-pick>*:has(#dd){position:relative;z-index:30}#s-pick .card:has(#dd),#s-pick div:has(>.plotline){position:relative;z-index:30}
 #ddb{display:flex;align-items:center;gap:9px;background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 12px 6px 14px;font-size:13px;font-weight:600;color:var(--fg);cursor:pointer;outline:0;transition:border-color .2s,background .2s}
 #ddb svg{color:var(--mute);transition:transform .25s cubic-bezier(.22,.61,.36,1)}
 #ddb:hover{background:var(--surface)}#ddb[aria-expanded=true]{border-color:var(--mute);background:var(--surface)}#ddb[aria-expanded=true] svg{transform:rotate(180deg)}
