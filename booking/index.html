@@ -227,7 +227,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <section id="s-kyc">
     <p class="eyebrow">One time only</p>
     <h1>Verify with Aadhaar.</h1>
-    <p class="lead">Enter your 12 digit Aadhaar number. A code goes to the mobile linked with it. We keep only the last 4 digits and the verification record.</p>
+    <p class="lead">Enter your 12 digit Aadhaar number. A code goes to the mobile linked with it. Once verified, your name and mobile number are fixed to your Aadhaar. We keep only the last 4 digits and the verification record.</p>
     <div class="f" id="f-aad"><input id="aad" inputmode="numeric" maxlength="14" autocomplete="off" placeholder=" "><label for="aad">Aadhaar number</label></div>
     <div class="f" id="f-aotp" hidden><input id="aotp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder=" "><label for="aotp">Code sent by UIDAI</label></div>
     <div class="err" id="e-kyc"></div>
@@ -363,14 +363,18 @@ function loginMode(){
   show('s-login');
 }
 var LM='register',cnt=null;
-function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||$('sname').value.trim().length>=2);$('sendS').disabled=!ok}
+function chkLogin(){var ok=okMob($('smob').value)&&(LM==='signin'||S.aadReg||$('sname').value.trim().length>=2);$('sendS').disabled=!ok}
 function setLM(m){LM=m;var r=m==='register';$('tReg').classList.toggle('on',r);$('tIn').classList.toggle('on',!r);
-  $('f-sn').hidden=!r;$('h-se').hidden=!r;
+  $('f-sn').hidden=!r||!!S.aadReg;$('h-se').hidden=!r||!!S.aadReg;try{document.querySelector('label[for=smob]').textContent=(r&&S.aadReg)?'Your Aadhaar-linked mobile number':'Your WhatsApp number'}catch(x){}
   $('lgH').textContent=r?'Sell Epic plots.':'Welcome back';$('lgLead').hidden=!r;
   $('e-login').textContent='';chkLogin()}
+try{api('/api/seller/mode').then(function(r){S.aadReg=!!(r&&r.aadhaar);setLM(LM)}).catch(function(){})}catch(x){}
 $('tReg').onclick=function(){setLM('register')};$('tIn').onclick=function(){setLM('signin')};
 var sentFor='',H0='';
-function autoSend(){var m=norm($('smob').value);if(LM!=='register'||!okMob(m)||$('sname').value.trim().length<2||sentFor===m||$('smob').readOnly)return;
+function aadBegin(m){sentFor=m;$('e-login').textContent='';$('smob').blur();
+  api('/api/seller/register/begin',{mobile:m}).then(function(r){if(r.status==='pending'){show('s-pending');return}S.mv=r.mv;S.smob=m;$('aad').value='';$('aad').readOnly=false;$('f-aotp').hidden=true;$('kycGo').textContent='Send Aadhaar code';$('kycGo').disabled=true;show('s-kyc');setTimeout(function(){$('aad').focus()},200)}).catch(function(e){sentFor='';fail('e-login',e)})}
+function autoSend(){var m=norm($('smob').value);if(LM==='register'&&S.aadReg){if(okMob(m)&&sentFor!==m&&!$('smob').readOnly)aadBegin(m);return}
+  if(LM!=='register'||!okMob(m)||$('sname').value.trim().length<2||sentFor===m||$('smob').readOnly)return;
   sentFor=m;$('h-se').textContent='Sending your code…';$('h-se').hidden=false;$('h-se').classList.add('pulse');$('smob').blur();sendCode(true)}
 ['smob','semail','sname'].forEach(function(id){$(id).addEventListener('input',function(){$('e-login').textContent='';chkLogin();autoSend()})});
 function startCount(n){clearInterval(cnt);var b=$('resendSb');b.disabled=true;b.style.opacity='.45';
