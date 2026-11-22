@@ -445,7 +445,7 @@ function same(){var a=rv(),b=rv2();return !!a&&a===b}
 function rate2ui(){var a=rv(),b=rv2(),bad=!!b&&b!==a&&String(b).length>=String(a).length;$('f-rate2').classList.toggle('bad',bad);$('rate2msg').textContent=bad?'The two rates do not match. Please check.':(same()?'Confirmed.':'This is the final price the buyer will see. Please type it once more.')}
 function rv(){return parseInt(($('rate').value||'').replace(/\D/g,''),10)||0}
 function spick(){var pl=curPl();if(!pl){$('sinfo').innerHTML='';supd(null);return}
-  $('sinfo').innerHTML='<span>'+pl.area+' sq. yds.</span><span>'+(pl.facing==='east'?'East':'West')+' facing</span>'+(pl.corner?'<span>Corner</span>':'')+'<span>List '+inr(pl.list)+'</span>';supd(null)}
+  $('sinfo').innerHTML='<span>'+pl.area+' sq. yds.</span><span>'+(pl.facing==='east'?'East':'West')+' facing</span>'+(pl.corner?'<span>Corner</span>':'');supd(null)}
 var chkT=0,chkSeq=0,chk=null;
 function supd(r0){
   var r=rv(),pl=curPl(),bad=!pl||!r,t='',bd='';$('serr').textContent='';
