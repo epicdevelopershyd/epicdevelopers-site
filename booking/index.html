@@ -469,7 +469,7 @@ function supd(r0){
   var r=rv(),pl=curPl(),bad=!pl||!r,t='',bd='';$('serr').textContent='';
   if(pl&&r&&String(r).length>=5){
     var seq=++chkSeq;clearTimeout(chkT);
-    chkT=setTimeout(function(){api('/api/seller/check',{project:$('sproj').value,plot:$('splot').value,rate:r},S.sess).then(function(c){if(seq!==chkSeq)return;chk={r:r,ok:c.ok,reason:c.reason,floor:c.floor,list:c.list,plot:$('splot').value,proj:$('sproj').value};paint()}).catch(function(e){if(e.status===401){store('epic_s',null);location.reload()}})},250);
+    chkT=setTimeout(function(){api('/api/seller/check',{project:$('sproj').value,plot:$('splot').value,rate:r},S.sess).then(function(c){if(seq!==chkSeq)return;chk={r:r,ok:c.ok,reason:c.reason,list:c.list,plot:$('splot').value,proj:$('sproj').value};paint()}).catch(function(e){if(e.status===401){store('epic_s',null);location.reload()}})},250);
     if(!chk||chk.r!==r||chk.plot!==$('splot').value||chk.proj!==$('sproj').value)bad=true
   }else{chk=null}
   $('f-rate').classList.remove('bad');$('salert').hidden=true;
@@ -479,7 +479,7 @@ function supd(r0){
 }
 function paint(){
   var pl=curPl(),r=rv();if(!pl||!chk||chk.r!==r)return;var t='',bd='',ok=chk.ok;
-  if(!ok&&chk.reason==='below'){t='Below the cut off price';bd='We cannot proceed at '+inr(r)+' per sq. yd. '+(chk.floor?'Please enter a rate higher than '+inr(chk.floor-1)+'.':'Please enter a higher rate.')}
+  if(!ok&&chk.reason==='below'){t='Below the cut off price';bd='We cannot proceed at that price.'}
   else if(!ok&&chk.reason==='above'){t='Above the listed price';bd='The listed price for this plot is '+inr(chk.list)+(pl.prem?', including the '+(pl.facing==='east'?(pl.corner?'east and corner':'east'):'corner')+' premium.':', and there is no premium.')+' Please enter a lower rate.'}
   $('f-rate').classList.toggle('bad',!!t);$('salert').hidden=!t;$('atitle').textContent=t;$('abody').textContent=bd;
   $('scost').textContent=ok?inr(Math.round(r*pl.area)):'—';
