@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Epic Booking">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Epic Developers">
 <meta property="og:title" content="Sell Epic plots. Register in under a minute.">
@@ -220,7 +228,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <section id="s-pick">
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
     <div class="who" id="sellerOk" style="margin-top:18px"></div>
-    <div id="a2hs" hidden style="margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--card,#f1f1f4);font-size:13.5px;line-height:1.45"><b>Tip for iPhone:</b> to stay signed in, kindly tap the Share button, then <b>Add to Home Screen</b>. Next time, open Epic Booking from your home screen.<br><button type="button" class="link" id="a2hsOk" style="margin-top:6px;font-weight:600">Got it</button></div>
+    <div id="a2hs" hidden style="margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--card,#f1f1f4);font-size:13.5px;line-height:1.45"><b>Tip for iPhone:</b> to stay signed in, kindly tap the Share button, then <b>Add to Home Screen</b>. Next time, open Epic Booking from your home screen.<br><button type="button" class="link" id="a2hsInstall" hidden style="margin-top:6px;margin-right:18px;font-weight:700">Install the app</button><button type="button" class="link" id="a2hsOk" style="margin-top:6px;font-weight:600">Got it</button></div>
     <div class="sec">Buyer</div>
     <div class="f" id="f-who"><input id="who" autocomplete="off" placeholder=" "><label for="who">Buyer's full name</label></div>
     <div class="f" id="f-bmob"><input id="bmob" type="tel" inputmode="numeric" autocomplete="off" placeholder=" "><label for="bmob">Buyer's mobile number</label></div>
@@ -379,6 +387,9 @@ $('kycGo').onclick=function(){var b=this,a=$('aad').value.replace(/\D/g,''),f=!$
     if(r.status==='verified'){S.sess=r.session;S.sname=r.name;store('epic_s',r.session);store('epic_sn',r.name);enter()}else show('s-pending')}).catch(function(e){fail('e-kyc',e);idle(b)})}};
 $('aotp').addEventListener('input',function(){digits(this,6);$('kycGo').disabled=this.value.length!==6;$('e-kyc').textContent=''});
 $('a2hsOk').onclick=function(){store('epic_a2hs','1');$('a2hs').hidden=true};
+var dip=null;window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dip=e;try{if(!store('epic_a2hs')&&$('a2hs')){$('a2hs').querySelector('b').textContent='Keep Epic Booking on your home screen:';$('a2hs').childNodes[1].textContent=' one tap to open, with the Epic logo, like any other app. ';$('a2hsInstall').hidden=false;if(cur==='s-pick')$('a2hs').hidden=false}}catch(x){}});
+$('a2hsInstall').onclick=function(){if(!dip)return;dip.prompt();dip.userChoice.then(function(){dip=null;store('epic_a2hs','1');$('a2hs').hidden=true}).catch(function(){})};
+window.addEventListener('appinstalled',function(){store('epic_a2hs','1');try{$('a2hs').hidden=true}catch(x){}});
 
 
 function celebrate(done){
@@ -531,6 +542,7 @@ var qs=new URLSearchParams(location.search),code=(qs.get('c')||'').trim();
 if(code)buyerMode(code);else loginMode();
 })();
 
+if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js',{scope:'/booking/'}).catch(function(){})}catch(e){}})}
 </script>
 </body>
 </html>
