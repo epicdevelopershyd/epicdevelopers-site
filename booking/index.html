@@ -469,6 +469,16 @@ function sfill(){var p=curP(),k=Object.keys(p.plots).map(Number).sort(function(a
   if(d!==undefined){$('splot').value=String(d);[].forEach.call(g.children,function(x){if(x.textContent===String(d)&&!x.classList.contains('bk'))x.classList.add('on')})}
   ddBuild();$('rate').value='';$('rate2').value='';rate2ui();spick()}
 $('splot').onchange=function(){$('rate').value='';$('rate2').value='';rate2ui();spick()};
+/* A plot that has just taken its booking advance leaves the list by itself: the screen re-reads the plots every 20 seconds and whenever it comes back into view, keeping whatever the agent has already typed. */
+function plotSig(c){var o=[];try{Object.keys(c.projects).forEach(function(k){o.push(k+':'+Object.keys(c.projects[k].plots).join(',')+'|'+Object.keys(c.projects[k].booked||{}).join(','))})}catch(e){}return o.join(';')}
+function quietRefresh(){if(cur!=='s-pick'||document.hidden||!S.cfg)return;
+  api('/api/config').then(function(c){if(cur!=='s-pick'||plotSig(c)===plotSig(S.cfg))return;
+    var pj=$('sproj').value,pl=$('splot').value,r1=$('rate').value,r2=$('rate2').value,w=$('who').value,bm=$('bmob').value,er=$('serr').textContent;
+    S.cfg=c;sfill();var op=[].some.call($('splot').options,function(o){return o.value===pl});
+    if(op){$('splot').value=pl;ddBuild();$('rate').value=r1;$('rate2').value=r2;try{rate2ui()}catch(e){}spick();$('serr').textContent=er}
+    else if(pl){$('serr').textContent='Plot '+pl+' has just been booked. Kindly choose another plot.'}
+    $('who').value=w;$('bmob').value=bm}).catch(function(){})}
+setInterval(quietRefresh,20000);document.addEventListener('visibilitychange',quietRefresh);
 function ddBuild(){var sel=$('splot'),l=$('ddl'),o=[].slice.call(sel.options);$('ddv').textContent=o.length&&sel.selectedIndex>=0?sel.options[sel.selectedIndex].text:'No plots open';l.innerHTML='';o.forEach(function(x,i){var li=document.createElement('li');li.setAttribute('role','option');li.textContent=x.text;li.setAttribute('aria-selected',i===sel.selectedIndex?'true':'false');li.onclick=function(e){e.stopPropagation();ddClose();if(sel.selectedIndex!==i){sel.selectedIndex=i;sel.onchange&&sel.onchange()}ddBuild()};l.appendChild(li)})}
 function ddClose(){$('ddl').hidden=true;$('ddb').setAttribute('aria-expanded','false')}
 $('ddb').onclick=function(e){e.stopPropagation();var l=$('ddl'),open=l.hidden;if(open&&!$('splot').options.length)return;l.hidden=!open;this.setAttribute('aria-expanded',open?'true':'false');if(open){var a=l.querySelector('[aria-selected=true]');if(a)l.scrollTop=a.offsetTop-60}};
