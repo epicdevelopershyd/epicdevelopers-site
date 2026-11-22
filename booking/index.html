@@ -127,6 +127,7 @@ select{appearance:none;-webkit-appearance:none;background:var(--surface) url("da
 .ratebox .inp{display:flex;align-items:baseline;gap:6px;margin-top:4px}.ratebox .inp b{font-size:22px;font-weight:700}
 .ratebox input{border:0;background:transparent;font:800 30px var(--sans);letter-spacing:-.02em;width:100%;min-width:0;outline:0;color:var(--fg);padding:0}.ratebox input::placeholder{color:var(--line)}.ratebox .inp small{white-space:nowrap;color:var(--mute);font-weight:600;font-size:13px}
 .ratebox .tot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);margin-top:14px;padding-top:12px;color:var(--mute);font-weight:600;font-size:14px}.ratebox .tot b{font-size:22px;letter-spacing:-.02em;color:var(--fg);font-weight:800}
+.lockup .for{display:block;margin-top:5px;font-size:13px;font-weight:600;color:var(--mute);letter-spacing:.01em}.lockup .for b{display:inline;font-size:inherit;color:var(--fg)}.lockup .mono{margin-left:auto;flex:none;width:42px;height:42px;border-radius:50%;background:var(--fg);color:var(--bg);display:none;align-items:center;justify-content:center;font-weight:800;font-size:17px;letter-spacing:.02em;box-shadow:0 0 0 3px var(--bg),0 0 0 4.5px var(--line)}
 .who{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--ok) 11%,var(--surface));color:var(--ok);border-radius:16px;padding:14px 16px;font-weight:700;font-size:15px}.who:before{content:"✓";font-weight:800}
 .alert{display:flex;gap:8px;align-items:flex-start;margin:10px 4px 0;font-size:13.5px;line-height:1.45;color:var(--mute)}
 .alert svg{width:15px;height:15px;flex:none;fill:none;stroke:var(--err);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:2px;opacity:.85}.alert b{font-weight:600;color:var(--fg)}.alert b:after{content:'.';margin-right:4px}
@@ -229,7 +230,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   </section>
 
   <section id="s-pick">
-    <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b></div></div>
+    <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b><span class="for" id="lockFor"></span></div><span class="mono" id="mono" aria-hidden="true"></span></div>
     <div class="who" id="sellerOk" style="margin-top:18px"></div>
     <div id="a2hs" hidden style="margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--card,#f1f1f4);font-size:13.5px;line-height:1.45"><b>Tip for iPhone:</b> to stay signed in, kindly tap the Share button, then <b>Add to Home Screen</b>. Next time, open Epic Booking from your home screen.<br><button type="button" class="link" id="a2hsInstall" hidden style="margin-top:6px;margin-right:18px;font-weight:700">Install the app</button><button type="button" class="link" id="a2hsOk" style="margin-top:6px;font-weight:600">Got it</button></div>
     <div class="sec">Buyer</div>
@@ -414,6 +415,7 @@ function enter(){
   api('/api/seller/renew',{},S.sess).then(function(r){if(r&&r.session){S.sess=r.session;store('epic_s',r.session)}}).catch(function(e){if(e&&e.status===401){store('epic_s',null);store('epic_sn',null);location.reload()}});
   api('/api/config').then(function(c){S.cfg=c;
     var keys=Object.keys(c.projects);$('sproj').innerHTML=keys.map(function(k){return '<option value="'+k+'">'+c.projects[k].name+'</option>'}).join('');
+    (function(){var n=(S.sname||'').trim(),f=n.split(/\s+/)[0]||'',h=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Kolkata'})).getHours(),g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';if(f){f=f.charAt(0).toUpperCase()+f.slice(1);$('lockFor').innerHTML=g+', <b></b>';$('lockFor').lastChild.textContent=f;var ps=n.split(/\s+/),m=$('mono');m.textContent=(ps[0][0]+(ps.length>1?ps[ps.length-1][0]:'')).toUpperCase();m.style.display='flex'}})();
     $('sellerOk').textContent=(S.sname||'Signed in')+(S.smob?' · +91 '+S.smob.slice(0,5)+' '+S.smob.slice(5):'');
     var first=keys.indexOf('greens')>=0?'greens':keys[0];$('sproj').value=first;setSeg(first);sfill();show('s-pick')}).catch(function(e){S.cfg=null;$('errH').textContent='Cannot open the console.';$('errP').textContent=e.message;show('s-error')});
 }
