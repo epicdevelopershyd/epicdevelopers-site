@@ -479,6 +479,7 @@ function supd(r0){
 }
 function paint(){
   var pl=curPl(),r=rv();if(!pl||!chk||chk.r!==r)return;var t='',bd='',ok=chk.ok;
+  /* LOCKED (TPR, 22 Nov 2026): below-minimum wording stays exactly this, with no figures */
   if(!ok&&chk.reason==='below'){t='Below the cut off price';bd='We cannot proceed at that price.'}
   else if(!ok&&chk.reason==='above'){t='Above the listed price';bd='The listed price for this plot is '+inr(chk.list)+(pl.prem?', including the '+(pl.facing==='east'?(pl.corner?'east and corner':'east'):'corner')+' premium.':', and there is no premium.')+' Please enter a lower rate.'}
   $('f-rate').classList.toggle('bad',!!t);$('salert').hidden=!t;$('atitle').textContent=t;$('abody').textContent=bd;
