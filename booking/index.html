@@ -496,7 +496,7 @@ $('make').onclick=function(){var b=this,nm=$('who').value.trim(),m=norm($('bmob'
     var via=r.whatsapp&&r.sms?'WhatsApp and SMS':r.whatsapp?'WhatsApp':r.sms?'SMS':'';
     $('sentH').textContent=via?'Sent to '+first+'.':'Not delivered to '+first+'.';
     $('sentP').textContent=via?'Epic\'s account details for Plot '+$('splot').value+' are on their way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by '+via+'. We confirm his payment automatically. The plot is not held; it is his once his payment arrives.':'The message could not be delivered by WhatsApp or SMS. Please call the office on 789 368 4545 and we will send it.';
-    idle(b);show('s-sent')}).catch(function(e){idle(b);if(e.status===401){store('epic_s',null);location.reload();return}$('serr').textContent=e.message;api('/api/config').then(function(c){S.cfg=c;sfill()}).catch(function(){})})};
+    idle(b);show('s-sent')}).catch(function(e){idle(b);if(e.status===401){store('epic_s',null);location.reload();return}var msg=e.message||'Something went wrong. Please try again.';$('serr').textContent=msg;try{$('serr').scrollIntoView({block:'center',behavior:'smooth'})}catch(x){}if(e.status===409){var rv0=$('rate').value,w0=$('who').value,b0=$('bmob').value;api('/api/config').then(function(c){S.cfg=c;sfill();$('who').value=w0;$('bmob').value=b0;$('serr').textContent=msg}).catch(function(){})}})};
 $('s-sent').onclick=function(e){if(e&&e.target&&e.target.closest&&e.target.closest('#waBtn'))return;if(Date.now()-(S.sentAt||0)<1800)return;$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';rate2ui();api('/api/config').then(function(c){S.cfg=c;sfill();show('s-pick')}).catch(function(){show('s-pick')})};
 
 /* ================= BUYER ================= */
