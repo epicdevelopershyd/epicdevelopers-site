@@ -39,6 +39,7 @@ button,input,select{font:inherit;color:inherit}
 .brand{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
 .back{border:0;background:none;color:var(--mute);font-size:14px;font-weight:500;cursor:pointer;padding:6px 0}
 .bar{display:flex;gap:6px;margin-bottom:34px}.bar i{flex:1;height:3px;border-radius:3px;background:var(--line);transition:background .3s}.bar i.on{background:var(--fg)}
+.ackr{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:13px 0;border-bottom:1px solid color-mix(in srgb,var(--fg) 9%,transparent)}.ackr small{color:var(--mute);font-size:12.5px;font-weight:600}.ackr b{font-size:15px;font-weight:700;text-align:right;word-break:break-all}
 section{display:none;flex:1;flex-direction:column;animation:in 1s cubic-bezier(.22,.61,.36,1)}
 section.on{display:flex}
 @keyframes in{from{opacity:0;transform:translateY(14px);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
@@ -276,6 +277,19 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <p class="fine" id="again" style="text-align:center;margin-top:18px;font-size:12px">Tap anywhere on the screen to go back to the booking screen.</p>
   </section>
 
+  <section id="s-ack">
+    <svg class="tick" viewBox="0 0 92 92" aria-hidden="true"><circle cx="46" cy="46" r="40"/><path d="M29 47l12 12 23-26"/></svg>
+    <h1 id="ackH"></h1>
+    <p class="lead" id="ackP"></p>
+    <div id="ackBox" style="background:var(--fill);border-radius:20px;padding:6px 18px;margin:6px 0 0">
+      <div class="ackr"><small>Account name</small><b id="ackN"></b></div>
+      <div class="ackr"><small>Account number</small><b id="ackA"></b></div>
+      <div class="ackr"><small>IFSC</small><b id="ackI"></b></div>
+      <div class="ackr" style="border:0"><small>Amount</small><b id="ackM"></b></div>
+    </div>
+    <p class="fine" style="text-align:center;margin-top:16px">We confirm your transfer automatically and will message you as soon as it arrives. The plot is not held; it is yours once your payment arrives.</p>
+  </section>
+
   <!-- ===== BUYER ===== -->
   <section id="s-details">
     <p class="eyebrow" id="d-eyebrow"></p>
@@ -511,6 +525,7 @@ $('s-sent').onclick=function(e){if(e&&e.target&&e.target.closest&&e.target.close
 function stamp(ms){try{return new Date(ms).toLocaleString('en-IN',{day:'numeric',month:'long',hour:'numeric',minute:'2-digit',hour12:true,timeZone:'Asia/Kolkata'})}catch(e){return ''}}
 function buyerMode(code){
   api('/api/link/'+encodeURIComponent(code)).then(function(d){S.link=d;
+    if(d.direct){var fn=String(d.buyerName||'').trim().split(/\s+/)[0];$('ackH').textContent='Thank you, '+fn+'.';$('ackP').textContent='Your booking details for Plot '+d.plot+' at '+d.project.name+' are confirmed. Kindly transfer '+inr(d.amount)+' to Epic\'s account below.';$('ackN').textContent=d.pay.name;$('ackA').textContent=d.pay.account;$('ackI').textContent=d.pay.ifsc;$('ackM').textContent=inr(d.amount);show('s-ack');return}
     if(d.status==='confirmed')return done(true);
     if(d.status==='signed')return done(false);
     if(d.status==='registered'||d.status==='paid')return done(true);
