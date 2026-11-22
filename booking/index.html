@@ -271,6 +271,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <svg class="tick" viewBox="0 0 92 92" aria-hidden="true"><circle cx="46" cy="46" r="40"/><path d="M29 47l12 12 23-26"/></svg>
     <h1 id="sentH"></h1>
     <p class="lead" id="sentP"></p>
+    <p class="fine" id="sentNote" style="text-align:center;max-width:320px;margin:10px auto 0">Kindly remind the buyer to make his payment soon: the plot goes to whoever pays first.</p>
     <div class="cta" id="waBox" hidden><a class="btn" id="waBtn" href="#" target="_blank" rel="noopener">Send on WhatsApp</a></div>
     <p class="fine" style="text-align:center;margin-top:14px"><button class="link" id="again" style="color:var(--mute);font-weight:500">Start another booking</button></p>
   </section>
@@ -345,7 +346,7 @@ function api(path,body,token){
 }
 var S={cfg:null,sess:null,sname:'',smob:'',mv:null,kyc:null,sTok:null,link:null,email:'',vtok:null,ver:null,hasInk:false};
 var order=['s-details','s-code','s-sign','s-done'],cur='s-load';
-function show(id){cur=id;[].forEach.call(document.querySelectorAll('section'),function(s){s.classList.toggle('on',s.id===id)});
+function show(id){if(id==='s-sent'){$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';try{rate2ui()}catch(e){}}cur=id;[].forEach.call(document.querySelectorAll('section'),function(s){s.classList.toggle('on',s.id===id)});
   var i=order.indexOf(id);$('bar').hidden=!(i>=0&&i<3);[].forEach.call($('bar').children,function(b,k){b.classList.toggle('on',k<=i)});$('back').hidden=!(i===1||i===2);window.scrollTo(0,0)}
 $('back').onclick=function(){show(order[order.indexOf(cur)-1])};
 function norm(m){m=String(m||'').replace(/[\s\-()]/g,'');return m.replace(/^(\+?91)(?=\d{10}$)/,'')}
