@@ -346,7 +346,7 @@ function api(path,body,token){
 }
 var S={cfg:null,sess:null,sname:'',smob:'',mv:null,kyc:null,sTok:null,link:null,email:'',vtok:null,ver:null,hasInk:false};
 var order=['s-details','s-code','s-sign','s-done'],cur='s-load';
-function show(id){if(id==='s-sent'){S.sentAt=Date.now();$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';try{rate2ui()}catch(e){}}cur=id;[].forEach.call(document.querySelectorAll('section'),function(s){s.classList.toggle('on',s.id===id)});
+function show(id){if(id==='s-sent'){S.sentAt=Date.now();S.waDone=false;$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';try{rate2ui()}catch(e){}}cur=id;[].forEach.call(document.querySelectorAll('section'),function(s){s.classList.toggle('on',s.id===id)});
   var i=order.indexOf(id);$('bar').hidden=!(i>=0&&i<3);[].forEach.call($('bar').children,function(b,k){b.classList.toggle('on',k<=i)});$('back').hidden=!(i===1||i===2);window.scrollTo(0,0)}
 $('back').onclick=function(){show(order[order.indexOf(cur)-1])};
 function norm(m){m=String(m||'').replace(/[\s\-()]/g,'');return m.replace(/^(\+?91)(?=\d{10}$)/,'')}
@@ -495,13 +495,17 @@ $('rate').addEventListener('input',function(){var d=this.value.replace(/\D/g,'')
 $('rate2').addEventListener('input',function(){var d=this.value.replace(/\D/g,'');this.value=d?Number(d).toLocaleString('en-IN'):'';rate2ui();if(chk)paint();else $('make').disabled=true});
 $('make').onclick=function(){var b=this,nm=$('who').value.trim(),m=norm($('bmob').value),first=nm.split(/\s+/)[0];$('serr').textContent='';busy(b,'Sending…');
   api('/api/link',{project:$('sproj').value,plot:$('splot').value,rate:rv(),rateConfirm:rv2(),buyerName:nm,buyerMobile:m},S.sess).then(function(r){
-    $('waBox').hidden=!r.manual;
-    if(r.manual){$('waBtn').href=r.wa;$('sentH').textContent='Account details ready for '+first+'.';$('sentP').textContent='Tap Send on WhatsApp. The message with the account details for Plot '+$('splot').value+' opens on your phone, already written for +91 '+m.slice(0,5)+' '+m.slice(5)+'. Send it. We confirm his payment automatically. The plot is not held; it is his once his payment arrives.';idle(b);show('s-sent');return}
+    if(r.manual){var wo=null;try{wo=window.open(r.wa,'_blank')}catch(x){}
+      var ph='+91 '+m.slice(0,5)+' '+m.slice(5);S.waDone=!!wo;$('again').style.visibility=wo?'':'hidden';$('waBox').hidden=!!wo;$('waBtn').href=r.wa;
+      $('sentH').textContent=wo?'Opening WhatsApp for '+first+'.':'Account details ready for '+first+'.';
+      $('sentP').textContent=(wo?'The message with Epic\'s account details for Plot '+$('splot').value+' is opening in your WhatsApp, already written for '+ph+'. Just tap send there.':'Tap Send on WhatsApp. The message with Epic\'s account details for Plot '+$('splot').value+' opens on your phone, already written for '+ph+'.')+' We confirm his payment automatically. The plot is not held; it is his once his payment arrives.';idle(b);show('s-sent');return}
+    $('waBox').hidden=true;
     var via=r.whatsapp&&r.sms?'WhatsApp and SMS':r.whatsapp?'WhatsApp':r.sms?'SMS':'';
     $('sentH').textContent=via?'Sent to '+first+'.':'Not delivered to '+first+'.';
     $('sentP').textContent=via?'Epic\'s account details for Plot '+$('splot').value+' are on their way to +91 '+m.slice(0,5)+' '+m.slice(5)+' by '+via+'. We confirm his payment automatically. The plot is not held; it is his once his payment arrives.':'The message could not be delivered by WhatsApp or SMS. Please call the office on 789 368 4545 and we will send it.';
     idle(b);show('s-sent')}).catch(function(e){idle(b);if(e.status===401){store('epic_s',null);location.reload();return}var msg=e.message||'Something went wrong. Please try again.';$('serr').textContent=msg;try{$('serr').scrollIntoView({block:'center',behavior:'smooth'})}catch(x){}if(e.status===409){var rv0=$('rate').value,w0=$('who').value,b0=$('bmob').value;api('/api/config').then(function(c){S.cfg=c;sfill();$('who').value=w0;$('bmob').value=b0;$('serr').textContent=msg}).catch(function(){})}})};
-$('s-sent').onclick=function(e){if(e&&e.target&&e.target.closest&&e.target.closest('#waBtn'))return;if(Date.now()-(S.sentAt||0)<1800)return;$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';rate2ui();api('/api/config').then(function(c){S.cfg=c;sfill();show('s-pick')}).catch(function(){show('s-pick')})};
+$('waBtn').addEventListener('click',function(){S.waDone=true;$('again').style.visibility=''});
+$('s-sent').onclick=function(e){if(e&&e.target&&e.target.closest&&e.target.closest('#waBtn'))return;if(!$('waBox').hidden&&!S.waDone)return;if(Date.now()-(S.sentAt||0)<1800)return;$('who').value='';$('bmob').value='';$('rate').value='';$('rate2').value='';rate2ui();api('/api/config').then(function(c){S.cfg=c;sfill();show('s-pick')}).catch(function(){show('s-pick')})};
 
 /* ================= BUYER ================= */
 function stamp(ms){try{return new Date(ms).toLocaleString('en-IN',{day:'numeric',month:'long',hour:'numeric',minute:'2-digit',hour12:true,timeZone:'Asia/Kolkata'})}catch(e){return ''}}
