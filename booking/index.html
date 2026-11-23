@@ -624,7 +624,7 @@ function done(confirmed){var d=S.link;
   if(p){$('pb-plot').textContent=d.plot;var rows=[['Account name',p.name],['Account number',p.account],['IFSC',p.ifsc]];if(p.note)rows.push(['Add this in the payment note',p.note]);rows.push(['Amount',inr(d.amount)]);
     $('payList').innerHTML=rows.map(function(r){return '<div><dt>'+r[0]+'</dt><dd><b>'+esc(r[1])+'</b>'+(r[0]==='Amount'?'':copyBtn(r[1]))+'</dd></div>'}).join('');$('payBox').hidden=false}
   else $('payBox').hidden=true;
-  $('nextBox').innerHTML='<h3>Good to know</h3><p>Your 48 hours began when you signed. A new payee can take about 30 minutes to activate, so it may help to add us as a payee a little early.</p><p>The same account details are on your email. If you need help, call or WhatsApp 789 368 4545.</p>';
+  $('nextBox').innerHTML='<h3>Good to know</h3><p>A new payee can take about 30 minutes to activate, so it may help to add us as a payee a little early.</p><p>The same account details are on your email. If you need help, call or WhatsApp 789 368 4545.</p>';
   show('s-done')}
 
 /* ================= start ================= */
