@@ -140,6 +140,8 @@ select{appearance:none;-webkit-appearance:none;background:var(--surface) url("da
 #ddl li:hover{background:var(--fill)}#ddl li[aria-selected=true]{font-weight:700;background:var(--fill)}
 @keyframes ddin{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
 #s-pick .chips{gap:6px;margin-top:12px}#s-pick .chips span{padding:6px 13px;font-size:12.5px;font-weight:600;line-height:1.25}
+.mylink{display:block;margin:12px 2px 0;padding:0;border:0;background:none;color:var(--accent);font:700 15px var(--sans);text-align:left;cursor:pointer}
+.crow{display:flex;flex-direction:column;gap:10px;align-items:flex-start;padding:15px 0;border-bottom:1px solid var(--line)}.crow:last-child{border-bottom:0}.crow .nm{font-weight:700;font-size:16px;letter-spacing:-.01em;overflow-wrap:anywhere}.crow .pl{color:var(--mute);font-size:13.5px;margin-top:3px}.crow .st{font-size:13.5px;font-weight:700;margin-top:6px}.crow .st.f{color:var(--accent)}.crow .st.d{color:var(--ok)}.crow .st.x{color:var(--mute)}.crow .ac{display:flex;gap:8px;flex:none}.crow .ac a{display:inline-block;padding:9px 14px;border-radius:999px;background:var(--fill);color:var(--fg);font-size:13.5px;font-weight:700;text-decoration:none}
 .who{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--ok) 11%,var(--surface));color:var(--ok);border-radius:16px;padding:14px 16px;font-weight:700;font-size:15px}.who:before{content:"✓";font-weight:800}
 .alert{display:flex;gap:8px;align-items:flex-start;margin:10px 4px 0;font-size:13.5px;line-height:1.45;color:var(--mute)}
 .alert svg{width:15px;height:15px;flex:none;fill:none;stroke:var(--err);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:2px;opacity:.85}.alert b{font-weight:600;color:var(--fg)}.alert b:after{content:'.';margin-right:4px}
@@ -244,6 +246,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
   <section id="s-pick">
     <div class="lockup"><span class="mark" role="img" aria-label="Epic Developers"></span><div><small>Epic Developers</small><b>Plot Booking Console</b><span class="for" id="lockFor"></span></div><span class="mono" id="mono" aria-hidden="true"></span></div>
     <div class="who" id="sellerOk" hidden></div>
+    <button type="button" class="mylink" id="myClients">My clients &rsaquo;</button>
     <div id="a2hs" hidden style="margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--card,#f1f1f4);font-size:13.5px;line-height:1.45"><b>Tip for iPhone:</b> to stay signed in, kindly tap the Share button, then <b>Add to Home Screen</b>. Next time, open Epic Booking from your home screen.<br><button type="button" class="link" id="a2hsInstall" hidden style="margin-top:6px;margin-right:18px;font-weight:700">Install the app</button><button type="button" class="link" id="a2hsOk" style="margin-top:6px;font-weight:600">Got it</button></div>
     <div class="sec">Buyer</div>
     <div class="f" id="f-who"><input id="who" autocomplete="off" placeholder=" "><label for="who">Buyer's full name</label></div>
@@ -266,6 +269,13 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <div class="alert" id="salert" role="alert" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/></svg><div><b id="atitle"></b><span id="abody"></span></div></div>
     <div class="err" id="serr"></div>
     <div class="cta"><button class="btn" id="make" disabled>Send Epic's account details</button></div>
+  </section>
+
+  <section id="s-mine">
+    <h1>My clients.</h1>
+    <p class="lead" id="mineLead">Everyone you have messaged, newest first.</p>
+    <div class="card" id="mineList" style="margin-top:18px"></div>
+    <div class="cta"><button class="btn" id="mineBack">Back</button></div>
   </section>
 
   <section id="s-sent">
@@ -479,6 +489,29 @@ function quietRefresh(){if(cur!=='s-pick'||document.hidden||!S.cfg)return;
     else if(pl){$('serr').textContent='Plot '+pl+' has just been booked. Kindly choose another plot.'}
     $('who').value=w;$('bmob').value=bm}).catch(function(){})}
 setInterval(quietRefresh,20000);document.addEventListener('visibilitychange',quietRefresh);
+function mineOpen(){
+  var L=$('mineList');L.textContent='Loading…';$('mineLead').textContent='Everyone you have messaged, newest first.';show('s-mine');
+  api('/api/seller/mine',{},S.sess).then(function(rows){
+    L.textContent='';
+    if(!rows.length){L.textContent='You have not messaged any buyer yet.';return}
+    var due=rows.filter(function(r){return r.follow}).length;
+    $('mineLead').textContent=due?(due+(due===1?' buyer is':' buyers are')+' waiting for a follow-up.'):'Everyone you have messaged is settled.';
+    rows.forEach(function(r){
+      var row=document.createElement('div');row.className='crow';
+      var l=document.createElement('div'),n=document.createElement('div'),p=document.createElement('div'),t=document.createElement('div');
+      n.className='nm';n.textContent=r.name;
+      p.className='pl';p.textContent=r.project+' · Plot '+r.plot+' · +91 '+String(r.mobile).slice(0,5)+' '+String(r.mobile).slice(5)+' · '+new Date(r.at).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+      t.className='st '+(r.status==='confirmed'?'d':r.follow?'f':'x');t.textContent=r.stage+(r.note?' · '+r.note:'');
+      l.appendChild(n);l.appendChild(p);l.appendChild(t);row.appendChild(l);
+      if(r.status!=='confirmed'&&r.status!=='cancelled'){var ac=document.createElement('div');ac.className='ac';
+        var c=document.createElement('a');c.href='tel:+91'+r.mobile;c.textContent='Call';
+        var w=document.createElement('a');w.href='https://wa.me/91'+r.mobile;w.target='_blank';w.rel='noopener';w.textContent='WhatsApp';
+        ac.appendChild(c);ac.appendChild(w);row.appendChild(ac)}
+      L.appendChild(row)})
+  }).catch(function(e){L.textContent=e.message||'Please try again.'})
+}
+$('myClients').addEventListener('click',mineOpen);
+$('mineBack').addEventListener('click',function(){show('s-pick')});
 function ddBuild(){var sel=$('splot'),l=$('ddl'),o=[].slice.call(sel.options);$('ddv').textContent=o.length&&sel.selectedIndex>=0?sel.options[sel.selectedIndex].text:'No plots open';l.innerHTML='';o.forEach(function(x,i){var li=document.createElement('li');li.setAttribute('role','option');li.textContent=x.text;li.setAttribute('aria-selected',i===sel.selectedIndex?'true':'false');li.onclick=function(e){e.stopPropagation();ddClose();if(sel.selectedIndex!==i){sel.selectedIndex=i;sel.onchange&&sel.onchange()}ddBuild()};l.appendChild(li)})}
 function ddClose(){$('ddl').hidden=true;$('ddb').setAttribute('aria-expanded','false')}
 $('ddb').onclick=function(e){e.stopPropagation();var l=$('ddl'),open=l.hidden;if(open&&!$('splot').options.length)return;l.hidden=!open;this.setAttribute('aria-expanded',open?'true':'false');if(open){var a=l.querySelector('[aria-selected=true]');if(a)l.scrollTop=a.offsetTop-60}};
