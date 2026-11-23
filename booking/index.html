@@ -305,7 +305,7 @@ footer{color:var(--mute);font-size:12.5px;text-align:center;padding:10px 0 26px}
     <p class="eyebrow" id="d-eyebrow"></p>
     <p class="eyebrow" style="color:var(--ok);margin-top:-4px">Your agreed price</p>
     <h1 id="d-h">Hold your plot.</h1>
-    <p class="lead">We will gladly hold this plot for you for 48 hours from the time you sign. We kindly request you to transfer ₹50,000 within this time. Should you need a little more time, please call us and we will be happy to help.</p>
+    <p class="lead">After you sign, we will share Epic's account details. The plot goes to the first confirmed payment, so we kindly request you to transfer ₹50,000 at your earliest convenience. Should you need any help, please call us and we will be happy to assist.</p>
     <div class="card">
       <div class="plotline"><label>Your plot</label><b id="d-plot"></b></div>
       <div class="price" id="cost">—</div>
@@ -619,7 +619,7 @@ function sel(t){var p=t.parentNode.querySelector('b');if(p&&window.getSelection)
 function done(confirmed){var d=S.link;
   if(confirmed){$('doneH').textContent='Plot '+d.plot+' is booked.';$('doneP').textContent='We have received your payment. Your signed form and receipt are on your email. Our team will contact you for the next steps.';$('payBox').hidden=true;$('nextBox').innerHTML='';show('s-done');return}
   $('doneH').textContent='Signed. Now transfer.';
-  $('doneP').textContent='Plot '+d.plot+' is being held for you for 48 hours, until '+stamp(d.holdUntil)+'. We kindly request you to transfer '+inr(d.amount)+' to the account below before then. Should you need a little more time, please call or WhatsApp us on 789 368 4545 and we will gladly help. We confirm your transfer automatically and will email you as soon as it arrives.';
+  $('doneP').textContent='Plot '+d.plot+' is confirmed for you as soon as your transfer of '+inr(d.amount)+' reaches the account below. The plot goes to the first confirmed payment, so we kindly request you to transfer at your earliest convenience. Should you need any help, please call or WhatsApp us on 789 368 4545 and we will gladly help. We confirm your transfer automatically and will email you as soon as it arrives.';
   var p=d.pay;
   if(p){$('pb-plot').textContent=d.plot;var rows=[['Account name',p.name],['Account number',p.account],['IFSC',p.ifsc]];if(p.note)rows.push(['Add this in the payment note',p.note]);rows.push(['Amount',inr(d.amount)]);
     $('payList').innerHTML=rows.map(function(r){return '<div><dt>'+r[0]+'</dt><dd><b>'+esc(r[1])+'</b>'+(r[0]==='Amount'?'':copyBtn(r[1]))+'</dd></div>'}).join('');$('payBox').hidden=false}
